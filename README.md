@@ -1,5 +1,7 @@
 # FrameworkContainers
-Useful parts of Frameworks wrapped into single types.
+Useful parts of Frameworks wrapped into single types.  
+
+[PM> Install-Package FrameworkContainers(https://www.nuget.org/packages/FrameworkContainers/)  
 
 ### LogContainer
 
