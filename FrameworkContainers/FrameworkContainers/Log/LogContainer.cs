@@ -18,6 +18,9 @@ namespace FrameworkContainers.Log
         /// <returns></returns>
         public Response Error(Action func, string message, params object[] args)
         {
+            if (func == null)
+                throw new ArgumentNullException(nameof(func));
+
             var response = new Response();
 
             try
