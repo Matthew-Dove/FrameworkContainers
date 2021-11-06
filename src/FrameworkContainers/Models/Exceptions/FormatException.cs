@@ -16,12 +16,6 @@ namespace FrameworkContainers.Models.Exceptions
             TargetType = targetType;
             Input = input;
         }
-
-        public override string ToString()
-        {
-            var nl = Environment.NewLine;
-            return $"[Deserialize Exception]{nl}Format: {Format}{nl}Target Type: {TargetType.FullName}{nl}Input: {Input}{nl}Inner Exception: {Message}{nl}{base.ToString()}";
-        }
     }
 
     public class FormatSerializeException : Exception
@@ -33,12 +27,6 @@ namespace FrameworkContainers.Models.Exceptions
         {
             Format = format;
             Model = model;
-        }
-
-        public override string ToString()
-        {
-            var nl = Environment.NewLine;
-            return $"[Serialize Exception]{nl}Format: {Format}{nl}Model Type: {Model?.GetType()?.FullName ?? "null"}{nl}Model: {Model?.ToString() ?? "null"}{nl}Inner Exception: {Message}{nl}{base.ToString()}";
         }
     }
 }

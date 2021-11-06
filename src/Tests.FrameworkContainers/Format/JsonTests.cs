@@ -1,4 +1,6 @@
-﻿using FrameworkContainers.Format;
+﻿using ContainerExpressions.Containers;
+using FrameworkContainers.Format;
+using FrameworkContainers.Models.Exceptions;
 using FrameworkContainers.Models.JsonConverters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -10,18 +12,6 @@ namespace Tests.FrameworkContainers.Format
     [TestClass]
     public class JsonTests
     {
-        /**
-         * JSON TESTS:
-         * 
-         * object => {}
-         * array => []
-         * case => Case
-         * 
-         * GetInt64
-         * GetSingle
-         * 
-         * Errors: To / From Model.
-        **/
         #region Test Models
 
         private enum Enum
@@ -104,6 +94,16 @@ namespace Tests.FrameworkContainers.Format
 
             [JsonConverter(typeof(DefaultLongConverter))]
             public long Long { get; set; }
+
+            public string PascalCase { get; set; }
+
+            public string camelCase { get; set; }
+        }
+
+        private class ErrorModel
+        {
+            public Guid Id { get; } = Guid.NewGuid();
+            public string Error { get { throw new Exception("Error!!!"); } }
         }
 
         #endregion
@@ -255,6 +255,18 @@ namespace Tests.FrameworkContainers.Format
         }
 
         [TestMethod]
+        public void Std_Object_Null()
+        {
+            var target = (object)null;
+
+            var reference = Json.ToModel<VanillaReference>(Json.FromModel(new VanillaReference { Object = target }));
+            var valueeeee = Json.ToModel<VanillaValueeeee>(Json.FromModel(new VanillaValueeeee { Object = target }));
+
+            Assert.AreEqual(target, reference.Object);
+            Assert.AreEqual(target, valueeeee.Object);
+        }
+
+        [TestMethod]
         public void Std_Array()
         {
             var target = new object[] { 420, "420.69", 420.69F };
@@ -264,6 +276,46 @@ namespace Tests.FrameworkContainers.Format
 
             Assert.AreEqual(string.Join(",", target.Select(x => x.ToString())), string.Join(",", reference.Array.Select(x => x.ToString())));
             Assert.AreEqual(string.Join(",", target.Select(x => x.ToString())), string.Join(",", valueeeee.Array.Select(x => x.ToString())));
+        }
+
+        [TestMethod]
+        public void Std_Empty()
+        {
+            var target = new object[] { };
+
+            var reference = Json.ToModel<VanillaReference>(Json.FromModel(new VanillaReference { Array = target }));
+            var valueeeee = Json.ToModel<VanillaValueeeee>(Json.FromModel(new VanillaValueeeee { Array = target }));
+
+            Assert.AreEqual(target.Length, reference.Array.Length);
+            Assert.AreEqual(target.Length, valueeeee.Array.Length);
+        }
+
+        [TestMethod]
+        public void Std_Array_Null()
+        {
+            var target = (object[])null;
+
+            var reference = Json.ToModel<VanillaReference>(Json.FromModel(new VanillaReference { Array = target }));
+            var valueeeee = Json.ToModel<VanillaValueeeee>(Json.FromModel(new VanillaValueeeee { Array = target }));
+
+            Assert.AreEqual(target, reference.Array);
+            Assert.AreEqual(target, valueeeee.Array);
+        }
+
+        [TestMethod]
+        public void Std_Array_Null_Value()
+        {
+            var target = new object[] { null, 1 };
+
+            var reference = Json.ToModel<VanillaReference>(Json.FromModel(new VanillaReference { Array = target }));
+            var valueeeee = Json.ToModel<VanillaValueeeee>(Json.FromModel(new VanillaValueeeee { Array = target }));
+
+            Assert.AreEqual(target.Length, reference.Array.Length);
+            Assert.AreEqual(target.Length, valueeeee.Array.Length);
+            Assert.AreEqual(target[0], reference.Array[0]);
+            Assert.AreEqual(target[1].ToString(), reference.Array[1].ToString());
+            Assert.AreEqual(target[0], valueeeee.Array[0]);
+            Assert.AreEqual(target[1].ToString(), valueeeee.Array[1].ToString());
         }
 
         #endregion
@@ -679,6 +731,311 @@ namespace Tests.FrameworkContainers.Format
             Assert.AreEqual(target, model.Long);
         }
 
+        [TestMethod]
+        public void EC_ModelPascalCase_JsonCamelCase()
+        {
+            var target = "Hello World!";
+            var json = $"{{\"pascalCase\": \"{target}\"}}";
+
+            var model = Json.ToModel<Model>(json, JsonOptions.PerformantCamelCase);
+
+            Assert.AreEqual(target, model.PascalCase);
+        }
+
+        [TestMethod]
+        public void EC_ModelPascalCase_JsonPascal()
+        {
+            var target = "Hello World!";
+            var json = $"{{\"PascalCase\": \"{target}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.PascalCase);
+        }
+
+        [TestMethod]
+        public void EC_ModelCamelCase_JsonPascalCase()
+        {
+            var target = "Hello World!";
+            var json = $"{{\"CamelCase\": \"{target}\"}}";
+
+            var model = Json.ToModel<Model>(json, JsonOptions.Permissive);
+
+            Assert.AreEqual(target, model.camelCase);
+        }
+
+        [TestMethod]
+        public void EC_ModelCamelCase_JsonCamelCase()
+        {
+            var target = "Hello World!";
+            var json = $"{{\"camelCase\": \"{target}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.camelCase);
+        }
+
+        #endregion
+
+        #region Serialization Errors
+
+        [TestMethod]
+        public void Error_Deserialize_IsCustomType()
+        {
+            var isCustomType = false;
+            var json = $"{{\"Int\": \"{420.69}\"}}";
+
+            try
+            {
+                var model = Json.ToModel<VanillaReference>(json);
+            }
+            catch (FormatDeserializeException)
+            {
+                isCustomType = true;
+            }
+            catch (Exception)
+            {
+
+            }
+
+            Assert.IsTrue(isCustomType);
+        }
+
+        [TestMethod]
+        public void Error_Deserialize_Input()
+        {
+            var isInputValid = false;
+            var json = $"{{\"Int\": \"{420.69}\"}}";
+
+            try
+            {
+                var model = Json.ToModel<VanillaReference>(json);
+            }
+            catch (FormatDeserializeException fde)
+            {
+                isInputValid = fde.Input.Equals(json);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            Assert.IsTrue(isInputValid);
+        }
+
+        [TestMethod]
+        public void Error_Deserialize_TargetType()
+        {
+            var isTargetTypeValid = false;
+            var json = $"{{\"Int\": \"{420.69}\"}}";
+
+            try
+            {
+                var model = Json.ToModel<VanillaReference>(json);
+            }
+            catch (FormatDeserializeException fde)
+            {
+                isTargetTypeValid = fde.TargetType.Equals(typeof(VanillaReference));
+            }
+            catch (Exception)
+            {
+
+            }
+
+            Assert.IsTrue(isTargetTypeValid);
+        }
+
+        [TestMethod]
+        public void Error_Deserialize_Format()
+        {
+            var isFormatValid = false;
+            var json = $"{{\"Int\": \"{420.69}\"}}";
+
+            try
+            {
+                var model = Json.ToModel<VanillaReference>(json);
+            }
+            catch (FormatDeserializeException fde)
+            {
+                isFormatValid = fde.Format.Equals(FormatRange.Json);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            Assert.IsTrue(isFormatValid);
+        }
+
+        [TestMethod]
+        public void Error_Serialize_IsCustomType()
+        {
+            var isCustomType = false;
+            var model = new ErrorModel();
+
+            try
+            {
+                var json = Json.FromModel(model);
+            }
+            catch (FormatSerializeException)
+            {
+                isCustomType = true;
+            }
+            catch (Exception)
+            {
+
+            }
+
+            Assert.IsTrue(isCustomType);
+        }
+
+        [TestMethod]
+        public void Error_Serialize_Model()
+        {
+            var isModelValid = false;
+            var model = new ErrorModel();
+
+            try
+            {
+                var json = Json.FromModel(model);
+            }
+            catch (FormatSerializeException fse)
+            {
+                isModelValid = fse.Model is ErrorModel em && em.Id.Equals(model.Id);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            Assert.IsTrue(isModelValid);
+        }
+
+        [TestMethod]
+        public void Error_Serialize_Format()
+        {
+            var isFormatValid = false;
+            var model = new ErrorModel();
+
+            try
+            {
+                var json = Json.FromModel(model);
+            }
+            catch (FormatSerializeException fse)
+            {
+                isFormatValid = fse.Format.Equals(FormatRange.Json);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            Assert.IsTrue(isFormatValid);
+        }
+
+        #endregion
+
+        #region Response Maybe
+
+        [TestMethod]
+        public void Response_Deserialize_IsValid()
+        {
+            var target = 420;
+            var json = $"{{\"Int\": {target}}}";
+
+            var model = Json.Response.ToModel<Model>(json);
+
+            Assert.IsTrue(model);
+            Assert.AreEqual(target, model.Value.Int);
+        }
+
+        [TestMethod]
+        public void Response_Deserialize_IsNotValid()
+        {
+            var json = "{\"Int\": \"420.69\"}";
+
+            var model = Json.Response.ToModel<Model>(json);
+
+            Assert.IsFalse(model);
+        }
+
+        [TestMethod]
+        public void Response_Serialize_IsValid()
+        {
+            var model = new Model { Int = 420 };
+
+            var json = Json.Response.FromModel(model);
+            var result = json.Bind(Json.Response.ToModel<Model>);
+
+            Assert.IsTrue(json);
+            Assert.IsTrue(result);
+            Assert.AreEqual(model.Int, result.Value.Int);
+        }
+
+        [TestMethod]
+        public void Response_Serialize_IsNotValid()
+        {
+            var model = new ErrorModel();
+
+            var json = Json.Response.FromModel(model);
+            var result = json.Bind(Json.Response.ToModel<Model>);
+
+            Assert.IsFalse(json);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void Maybe_Deserialize_IsValid()
+        {
+            var target = 420;
+            var json = $"{{\"Int\": {target}}}";
+
+            var model = Json.Maybe.ToModel<Model>(json);
+
+            Assert.IsTrue(model.Match(x => target == x.Int, _ => false));
+        }
+
+        [TestMethod]
+        public void Maybe_Deserialize_IsNotValid()
+        {
+            var json = "{\"Int\": \"420.69\"}";
+
+            var model = Json.Maybe.ToModel<Model>(json);
+
+            Assert.IsFalse(model.Match(_ => true, _ => false));
+        }
+
+        [TestMethod]
+        public void Maybe_Deserialize_IsNotValid_HasJson()
+        {
+            var json = "{\"Int\": \"420.69\"}";
+
+            var model = Json.Maybe.ToModel<Model>(json);
+            var input = model.Match(_ => string.Empty, x => x.Input);
+
+            Assert.AreEqual(json, input);
+        }
+
+        [TestMethod]
+        public void Maybe_Serialize_IsValid()
+        {
+            var model = new Model { Int = 420 };
+
+            var json = Json.Maybe.FromModel(model);
+
+            Assert.IsTrue(json.Match(_ => true, _ => false));
+            Assert.IsTrue(json.Match(x => x.Contains(model.Int.ToString()), _ => false));
+        }
+
+        [TestMethod]
+        public void Maybe_Serialize_IsNotValid()
+        {
+            var model = new ErrorModel();
+
+            var json = Json.Maybe.FromModel(model);
+
+            Assert.IsFalse(json.Match(_ => true, _ => false));
+        }
         #endregion
     }
 }
