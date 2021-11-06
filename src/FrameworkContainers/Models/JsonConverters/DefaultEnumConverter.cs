@@ -17,11 +17,13 @@ namespace FrameworkContainers.Models.JsonConverters
         private static TEnum Read(ref Utf8JsonReader reader)
         {
             TEnum result = default;
+
             if (reader.TokenType == JsonTokenType.Number || reader.TokenType == JsonTokenType.String)
             {
                 var value = reader.TokenType == JsonTokenType.Number ? reader.GetInt32().ToString() : reader.GetString();
                 if (!string.IsNullOrEmpty(value) && !Enum.TryParse(value, true, out result)) throw new JsonException($"Unable to convert \"{value}\" to Enum \"{typeof(TEnum).FullName}\".");
             }
+
             return result;
         }
 

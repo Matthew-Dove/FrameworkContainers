@@ -13,22 +13,12 @@ namespace Tests.FrameworkContainers.Format
         /**
          * JSON TESTS:
          * 
-         * int => ""
-         * int => null
-         * enum => ""
-         * enum => null
-         * enum => "local"
-         * enum => int
-         * string => null
-         * case => Case
-         * guid => string
-         * datetime => string
-         * string => JSON
-         * bool => "true"
-         * bool => "True"
-         * bool => "1"
          * object => {}
          * array => []
+         * case => Case
+         * 
+         * GetInt64
+         * GetSingle
          * 
          * Errors: To / From Model.
         **/
@@ -99,6 +89,21 @@ namespace Tests.FrameworkContainers.Format
 
             [JsonConverter(typeof(DefaultIntConverter))]
             public int Int { get; set; }
+
+            [JsonConverter(typeof(DefaultGuidConverter))]
+            public Guid Guid { get; set; }
+
+            [JsonConverter(typeof(DefaultDateTimeConverter))]
+            public DateTime DateTime { get; set; }
+
+            [JsonConverter(typeof(DefaultBoolConverter))]
+            public bool Bool { get; set; }
+
+            [JsonConverter(typeof(DefaultFloatConverter))]
+            public float Float { get; set; }
+
+            [JsonConverter(typeof(DefaultLongConverter))]
+            public long Long { get; set; }
         }
 
         #endregion
@@ -322,6 +327,17 @@ namespace Tests.FrameworkContainers.Format
         }
 
         [TestMethod]
+        public void EC_Enum_Value()
+        {
+            var target = Enum.One;
+            var json = $"{{\"Enum\": \"{target}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.Enum);
+        }
+
+        [TestMethod]
         public void EC_Int_StringValue()
         {
             var json = $"{{\"Int\": \"1\"}}";
@@ -351,6 +367,316 @@ namespace Tests.FrameworkContainers.Format
             var model = Json.ToModel<Model>(json);
 
             Assert.AreEqual(0, model.Int);
+        }
+
+        [TestMethod]
+        public void EC_Int_Value()
+        {
+            var target = 1;
+            var json = $"{{\"Int\": {target}}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.Int);
+        }
+
+        [TestMethod]
+        public void EC_String_Empty()
+        {
+            var target = string.Empty;
+
+            var reference = Json.ToModel<VanillaReference>(Json.FromModel(new VanillaReference { String = target }));
+            var valueeeee = Json.ToModel<VanillaValueeeee>(Json.FromModel(new VanillaValueeeee { String = target }));
+
+            Assert.AreEqual(target, reference.String);
+            Assert.AreEqual(target, valueeeee.String);
+        }
+
+        [TestMethod]
+        public void EC_String_Null()
+        {
+            var target = (string)null;
+
+            var reference = Json.ToModel<VanillaReference>(Json.FromModel(new VanillaReference { String = target }));
+            var valueeeee = Json.ToModel<VanillaValueeeee>(Json.FromModel(new VanillaValueeeee { String = target }));
+
+            Assert.AreEqual(target, reference.String);
+            Assert.AreEqual(target, valueeeee.String);
+        }
+
+        [TestMethod]
+        public void EC_Guid_Default()
+        {
+            var target = new Guid();
+
+            var reference = Json.ToModel<VanillaReference>(Json.FromModel(new VanillaReference { Guid = target }));
+            var valueeeee = Json.ToModel<VanillaValueeeee>(Json.FromModel(new VanillaValueeeee { Guid = target }));
+
+            Assert.AreEqual(target, reference.Guid);
+            Assert.AreEqual(target, valueeeee.Guid);
+        }
+
+        [TestMethod]
+        public void EC_Guid_String()
+        {
+            var target = Guid.NewGuid();
+            var json = $"{{\"Guid\": \"{target}\"}}";
+
+            var reference = Json.ToModel<VanillaReference>(json);
+            var valueeeee = Json.ToModel<VanillaValueeeee>(json);
+
+            Assert.AreEqual(target, reference.Guid);
+            Assert.AreEqual(target, valueeeee.Guid);
+        }
+
+        [TestMethod]
+        public void EC_Guid_EmptyString()
+        {
+            var json = $"{{\"Guid\": \"\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(new Guid(), model.Guid);
+        }
+
+        [TestMethod]
+        public void EC_Guid_NullString()
+        {
+            var json = $"{{\"Guid\": null}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(new Guid(), model.Guid);
+        }
+
+        [TestMethod]
+        public void EC_Guid_Value()
+        {
+            var target = Guid.NewGuid();
+            var json = $"{{\"Guid\": \"{target}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.Guid);
+        }
+
+        [TestMethod]
+        public void EC_DateTime_EmptyString()
+        {
+            var json = $"{{\"DateTime\": \"\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(new DateTime(), model.DateTime);
+        }
+
+        [TestMethod]
+        public void EC_DateTime_NullString()
+        {
+            var json = $"{{\"DateTime\": null}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(new DateTime(), model.DateTime);
+        }
+
+        [TestMethod]
+        public void EC_DateTime_Value()
+        {
+            var target = DateTime.Now;
+            var json = $"{{\"DateTime\": \"{target:o}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.DateTime);
+        }
+
+        [TestMethod]
+        public void EC_Bool_Value()
+        {
+            var target = true;
+            var json = $"{{\"Bool\": {target.ToString().ToLower()}}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.Bool);
+        }
+
+        [TestMethod]
+        public void EC_Bool_StringTrue()
+        {
+            var target = true;
+            var json = $"{{\"Bool\": \"{target.ToString().ToLower()}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.Bool);
+        }
+
+        [TestMethod]
+        public void EC_Bool_StringFalse()
+        {
+            var target = false;
+            var json = $"{{\"Bool\": \"{target.ToString().ToLower()}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.Bool);
+        }
+
+        [TestMethod]
+        public void EC_Bool_StringTrueUpperCase()
+        {
+            var target = true;
+            var json = $"{{\"Bool\": \"{target.ToString().ToUpper()}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.Bool);
+        }
+
+        [TestMethod]
+        public void EC_Bool_StringEmpty()
+        {
+            var json = $"{{\"Bool\": \"\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(false, model.Bool);
+        }
+
+        [TestMethod]
+        public void EC_Bool_StringNull()
+        {
+            var json = $"{{\"Bool\": null}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(false, model.Bool);
+        }
+
+        [TestMethod]
+        public void EC_Bool_StringIntTrue()
+        {
+            var json = $"{{\"Bool\": \"1\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(true, model.Bool);
+        }
+
+        [TestMethod]
+        public void EC_Bool_StringIntFalse()
+        {
+            var json = $"{{\"Bool\": \"0\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(false, model.Bool);
+        }
+
+        [TestMethod]
+        public void EC_Bool_IntTrue()
+        {
+            var json = $"{{\"Bool\": 1}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(true, model.Bool);
+        }
+
+        [TestMethod]
+        public void EC_Bool_IntFalse()
+        {
+            var json = $"{{\"Bool\": 0}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(false, model.Bool);
+        }
+
+        [TestMethod]
+        public void EC_Float_EmptyString()
+        {
+            var json = $"{{\"Float\": \"\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(0F, model.Float);
+        }
+
+        [TestMethod]
+        public void EC_Float_NullString()
+        {
+            var json = $"{{\"Float\": null}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(0F, model.Float);
+        }
+
+        [TestMethod]
+        public void EC_Float_Value()
+        {
+            var target = 1F;
+            var json = $"{{\"Float\": {target}}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.Float);
+        }
+
+        [TestMethod]
+        public void EC_Float_ValueString()
+        {
+            var target = 1F;
+            var json = $"{{\"Float\": \"{target}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.Float);
+        }
+
+        [TestMethod]
+        public void EC_Long_EmptyString()
+        {
+            var json = $"{{\"Long\": \"\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(0F, model.Long);
+        }
+
+        [TestMethod]
+        public void EC_Long_NullString()
+        {
+            var json = $"{{\"Long\": null}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(0L, model.Long);
+        }
+
+        [TestMethod]
+        public void EC_Long_Value()
+        {
+            var target = 1L;
+            var json = $"{{\"Long\": {target}}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.Long);
+        }
+
+        [TestMethod]
+        public void EC_Long_ValueString()
+        {
+            var target = 1L;
+            var json = $"{{\"Long\": \"{target}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.Long);
         }
 
         #endregion
