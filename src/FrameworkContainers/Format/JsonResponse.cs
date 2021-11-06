@@ -22,7 +22,7 @@ namespace FrameworkContainers.Format
             }
             catch (Exception ex)
             {
-                ex.Log($"Error deserializing json to type {typeof(T).FullName}: {ex}");
+                ex.LogValue($"Error deserializing json to type {typeof(T).FullName}: {ex}");
             }
 
             return response;
@@ -41,7 +41,7 @@ namespace FrameworkContainers.Format
             }
             catch (Exception ex)
             {
-                ex.Log($"Error deserializing json to type {typeof(T).FullName}: {ex}");
+                ex.LogValue($"Error deserializing json to type {typeof(T).FullName}: {ex}");
             }
 
             return response;

@@ -26,7 +26,7 @@ namespace FrameworkContainers.Format
             }
             catch (Exception ex)
             {
-                ex.Log($"Error deserializing format to type {typeof(T).FullName}: {ex}");
+                ex.LogValue($"Error deserializing format to type {typeof(T).FullName}: {ex}");
                 maybe = maybe.With(new FormatDeserializeException(DESERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, typeof(T), json));
             }
 
@@ -46,7 +46,7 @@ namespace FrameworkContainers.Format
             }
             catch (Exception ex)
             {
-                ex.Log($"Error serializing format to type {typeof(T).FullName}: {ex}");
+                ex.LogValue($"Error serializing format to type {typeof(T).FullName}: {ex}");
                 maybe = maybe.With(new FormatSerializeException(SERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, model));
             }
 
