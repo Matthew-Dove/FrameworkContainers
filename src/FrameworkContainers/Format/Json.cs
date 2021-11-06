@@ -1,4 +1,5 @@
-﻿using FrameworkContainers.Models.Exceptions;
+﻿using FrameworkContainers.Models;
+using FrameworkContainers.Models.Exceptions;
 using System;
 using System.Text.Json;
 
@@ -23,7 +24,7 @@ namespace FrameworkContainers.Format
             }
             catch (Exception ex)
             {
-                throw new FormatDeserializeException(JsonMaybe.DESERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, typeof(T), json);
+                throw new FormatDeserializeException(Constants.Format.DESERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, typeof(T), json);
             }
         }
 
@@ -37,7 +38,7 @@ namespace FrameworkContainers.Format
             }
             catch (Exception ex)
             {
-                throw new FormatSerializeException(JsonMaybe.SERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, model);
+                throw new FormatSerializeException(Constants.Format.SERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, model);
             }
         }
     }

@@ -1,23 +1,20 @@
 ﻿using ContainerExpressions.Containers;
 using System;
-using System.Text.Json;
 
 namespace FrameworkContainers.Format
 {
-    /// <summary>Access to JSON serialize, and deserialize methods that return the result in a Response container.</summary>
-    public sealed class JsonResponse
+    /// <summary>Access to XML serialize, and deserialize methods that return the result in a Response container.</summary>
+    public sealed class XmlResponse
     {
-        internal JsonResponse() { }
+        internal XmlResponse() { }
 
-        public Response<T> ToModel<T>(string json) => ToModel<T>(json, JsonOptions.Performant);
-
-        public Response<T> ToModel<T>(string json, JsonOptions options)
+        public Response<T> ToModel<T>(string xml)
         {
             var response = new Response<T>();
 
             try
             {
-                var model = JsonSerializer.Deserialize<T>(json, options.SerializerSettings);
+                var model = ExtensibleMarkupLanguage.XmlToModel<T>(xml);
                 response = response.With(model);
             }
             catch (Exception ex)
@@ -28,15 +25,15 @@ namespace FrameworkContainers.Format
             return response;
         }
 
-        public Response<string> FromModel<T>(T model) => FromModel(model, JsonOptions.Performant);
+        public Response<string> FromModel<T>(T model) => FromModel(model, XmlOptions.Default);
 
-        public Response<string> FromModel<T>(T model, JsonOptions options)
+        public Response<string> FromModel<T>(T model, XmlOptions options)
         {
             var response = new Response<string>();
 
             try
             {
-                var json = JsonSerializer.Serialize<T>(model, options.SerializerSettings);
+                var json = ExtensibleMarkupLanguage.ModelToXml<T>(model, options);
                 response = response.With(json);
             }
             catch (Exception ex)
