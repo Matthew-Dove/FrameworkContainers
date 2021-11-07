@@ -91,7 +91,7 @@ namespace FrameworkContainers.Data
         }
     }
 
-    public static class DatabaseExtensions
+    public static class DataReaderExtensions
     {
         public static T Get<T>(this IDataReader dr, string fieldName)
         {
