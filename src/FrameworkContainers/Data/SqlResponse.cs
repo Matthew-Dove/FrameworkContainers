@@ -10,18 +10,18 @@ namespace FrameworkContainers.Data
     {
         internal SqlResponse() { }
 
-        public Task<Response<T>> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
+        public Task<Response<T>> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
-            return ExecuteReader(reader, usp, Sql.ConnectionString, parameters);
+            return ExecuteReaderAsync(reader, usp, Sql.ConnectionString, parameters);
         }
 
-        public async Task<Response<T>> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public async Task<Response<T>> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
         {
             var response = new Response<T>();
 
             try
             {
-                var result = await StructuredQueryLanguage.ExecuteReader(reader, usp, connectionString, parameters);
+                var result = await StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, connectionString, parameters);
                 response = response.With(result);
             }
             catch (AggregateException ae)
@@ -39,18 +39,18 @@ namespace FrameworkContainers.Data
             return response;
         }
 
-        public Task<Response<int>> ExecuteNonQuery(string usp, params SqlParameter[] parameters)
+        public Task<Response<int>> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters)
         {
-            return ExecuteNonQuery(usp, Sql.ConnectionString, parameters);
+            return ExecuteNonQueryAsync(usp, Sql.ConnectionString, parameters);
         }
 
-        public async Task<Response<int>> ExecuteNonQuery(string usp, string connectionString, params SqlParameter[] parameters)
+        public async Task<Response<int>> ExecuteNonQueryAsync(string usp, string connectionString, params SqlParameter[] parameters)
         {
             var response = new Response<int>();
 
             try
             {
-                var result = await StructuredQueryLanguage.ExecuteNonQuery(usp, connectionString, parameters);
+                var result = await StructuredQueryLanguage.ExecuteNonQueryAsync(usp, connectionString, parameters);
                 response = response.With(result);
             }
             catch (AggregateException ae)
@@ -68,18 +68,18 @@ namespace FrameworkContainers.Data
             return response;
         }
 
-        public Task<Response> BulkInsert(string tableName, DataTable dataTable)
+        public Task<Response> BulkInsertAsync(string tableName, DataTable dataTable)
         {
-            return BulkInsert(tableName, dataTable, Sql.ConnectionString);
+            return BulkInsertAsync(tableName, dataTable, Sql.ConnectionString);
         }
 
-        public async Task<Response> BulkInsert(string tableName, DataTable dataTable, string connectionString)
+        public async Task<Response> BulkInsertAsync(string tableName, DataTable dataTable, string connectionString)
         {
             var response = new Response();
 
             try
             {
-                await StructuredQueryLanguage.BulkInsert(tableName, dataTable, connectionString);
+                await StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, connectionString);
                 response = response.AsValid();
             }
             catch (AggregateException ae)

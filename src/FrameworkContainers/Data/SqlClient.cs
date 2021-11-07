@@ -9,12 +9,12 @@ namespace FrameworkContainers.Data
     {
         SqlMaybe Maybe { get; }
         SqlResponse Response { get; }
-        Task<T> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters);
-        Task<T> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters);
-        Task<int> ExecuteNonQuery(string usp, params SqlParameter[] parameters);
-        Task<int> ExecuteNonQuery(string usp, string connectionString, params SqlParameter[] parameters);
-        Task BulkInsert(string tableName, DataTable dataTable);
-        Task BulkInsert(string tableName, DataTable dataTable, string connectionString);
+        Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters);
+        Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters);
+        Task<int> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters);
+        Task<int> ExecuteNonQueryAsync(string usp, string connectionString, params SqlParameter[] parameters);
+        Task BulkInsertAsync(string tableName, DataTable dataTable);
+        Task BulkInsertAsync(string tableName, DataTable dataTable, string connectionString);
     }
 
     public sealed class SqlClient : ISqlClient
@@ -22,13 +22,13 @@ namespace FrameworkContainers.Data
         public SqlMaybe Maybe => Sql.Maybe;
         public SqlResponse Response => Sql.Response;
 
-        public Task<T> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters) => Sql.ExecuteReader(reader, usp, parameters);
-        public Task<T> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters) => Sql.ExecuteReader(reader, usp, connectionString, parameters);
+        public Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters) => Sql.ExecuteReaderAsync(reader, usp, parameters);
+        public Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters) => Sql.ExecuteReaderAsync(reader, usp, connectionString, parameters);
 
-        public Task<int> ExecuteNonQuery(string usp, params SqlParameter[] parameters) => Sql.ExecuteNonQuery(usp, parameters);
-        public Task<int> ExecuteNonQuery(string usp, string connectionString, params SqlParameter[] parameters) => Sql.ExecuteNonQuery(usp, connectionString, parameters);
+        public Task<int> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters) => Sql.ExecuteNonQueryAsync(usp, parameters);
+        public Task<int> ExecuteNonQueryAsync(string usp, string connectionString, params SqlParameter[] parameters) => Sql.ExecuteNonQueryAsync(usp, connectionString, parameters);
 
-        public Task BulkInsert(string tableName, DataTable dataTable) => Sql.BulkInsert(tableName, dataTable);
-        public Task BulkInsert(string tableName, DataTable dataTable, string connectionString) => Sql.BulkInsert(tableName, dataTable, connectionString);
+        public Task BulkInsertAsync(string tableName, DataTable dataTable) => Sql.BulkInsertAsync(tableName, dataTable);
+        public Task BulkInsertAsync(string tableName, DataTable dataTable, string connectionString) => Sql.BulkInsertAsync(tableName, dataTable, connectionString);
     }
 }

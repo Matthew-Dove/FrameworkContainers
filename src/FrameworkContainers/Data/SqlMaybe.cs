@@ -11,18 +11,18 @@ namespace FrameworkContainers.Data
     {
         internal SqlMaybe() { }
 
-        public Task<Maybe<T, Exception[]>> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
+        public Task<Maybe<T, Exception[]>> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
-            return ExecuteReader(reader, usp, Sql.ConnectionString, parameters);
+            return ExecuteReaderAsync(reader, usp, Sql.ConnectionString, parameters);
         }
 
-        public async Task<Maybe<T, Exception[]>> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public async Task<Maybe<T, Exception[]>> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
         {
             var maybe = new Maybe<T, Exception[]>();
 
             try
             {
-                var result = await StructuredQueryLanguage.ExecuteReader(reader, usp, connectionString, parameters);
+                var result = await StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, connectionString, parameters);
                 maybe = maybe.With(result);
             }
             catch (AggregateException ae)
@@ -37,18 +37,18 @@ namespace FrameworkContainers.Data
             return maybe;
         }
 
-        public Task<Maybe<int, Exception[]>> ExecuteNonQuery(string usp, params SqlParameter[] parameters)
+        public Task<Maybe<int, Exception[]>> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters)
         {
-            return ExecuteNonQuery(usp, Sql.ConnectionString, parameters);
+            return ExecuteNonQueryAsync(usp, Sql.ConnectionString, parameters);
         }
 
-        public async Task<Maybe<int, Exception[]>> ExecuteNonQuery(string usp, string connectionString, params SqlParameter[] parameters)
+        public async Task<Maybe<int, Exception[]>> ExecuteNonQueryAsync(string usp, string connectionString, params SqlParameter[] parameters)
         {
             var maybe = new Maybe<int, Exception[]>();
 
             try
             {
-                var result = await StructuredQueryLanguage.ExecuteNonQuery(usp, connectionString, parameters);
+                var result = await StructuredQueryLanguage.ExecuteNonQueryAsync(usp, connectionString, parameters);
                 maybe = maybe.With(result);
             }
             catch (AggregateException ae)
@@ -63,18 +63,18 @@ namespace FrameworkContainers.Data
             return maybe;
         }
 
-        public Task<Maybe<bool, Exception[]>> BulkInsert(string tableName, DataTable dataTable)
+        public Task<Maybe<bool, Exception[]>> BulkInsertAsync(string tableName, DataTable dataTable)
         {
-            return BulkInsert(tableName, dataTable, Sql.ConnectionString);
+            return BulkInsertAsync(tableName, dataTable, Sql.ConnectionString);
         }
 
-        public async Task<Maybe<bool, Exception[]>> BulkInsert(string tableName, DataTable dataTable, string connectionString)
+        public async Task<Maybe<bool, Exception[]>> BulkInsertAsync(string tableName, DataTable dataTable, string connectionString)
         {
             var maybe = new Maybe<bool, Exception[]>();
 
             try
             {
-                await StructuredQueryLanguage.BulkInsert(tableName, dataTable, connectionString);
+                await StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, connectionString);
                 maybe = maybe.With(true);
             }
             catch (AggregateException ae)
