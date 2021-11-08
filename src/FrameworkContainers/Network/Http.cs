@@ -12,9 +12,17 @@ using System.Threading.Tasks;
 
 namespace FrameworkContainers.Network
 {
-    class Http
+    public static class Http
     {
+        public static string Post(string body, string url, string mediaType, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Post(body, url, mediaType, headers).Match(response => response, ex => throw ex);
+        }
 
+        public static Task<string> PostAsync(string body, string url, string mediaType, params Header[] headers)
+        {
+            return HypertextTransferProtocol.PostAsync(body, url, mediaType, headers).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
+        }
     }
 
     internal static class HypertextTransferProtocol
