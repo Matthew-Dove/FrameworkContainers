@@ -27,7 +27,8 @@ namespace FrameworkContainers.Network
 
         public async Task<string> TryGetBody()
         {
-            try { return await Message?.Content?.ReadAsStringAsync() ?? string.Empty; }
+            if (Message?.Content == null) return String.Empty;
+            try { return await Message.Content.ReadAsStringAsync() ?? string.Empty; }
             catch (Exception) { return string.Empty; }
         }
 

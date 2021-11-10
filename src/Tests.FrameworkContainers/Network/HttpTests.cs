@@ -9,16 +9,33 @@ namespace Tests.FrameworkContainers.Network
     [TestClass]
     public class HttpTests
     {
-        private const string _mediaType = "application/json";
+        private const string _contentType = "application/json";
 
         private static string GetUrl(string path) => $"http://localhost:8080/api/mock{path}";
+
+        [TestMethod]
+        public void Post()
+        {
+            try
+            {
+                var response = Http.Response.Post("{}", GetUrl("/create"), _contentType);
+            }
+            catch (HttpException he)
+            {
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
         [TestMethod]
         public async Task PostAsync()
         {
             try
             {
-                var response = await Http.DeleteAsync(GetUrl("/users/1"), new Header("Authorization", "Bearer QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
+                var response = await Http.Response.PostAsync("{}", GetUrl("/create"), _contentType);
             }
             catch (HttpException he)
             {

@@ -14,6 +14,8 @@ namespace FrameworkContainers.Network
 {
     public static class Http
     {
+        public static readonly HttpResponse Response = new HttpResponse();
+
         public static string Post(string body, string url, string contentType, params Header[] headers)
         {
             return Post(body, url, contentType, HttpOptions.Default, headers);
