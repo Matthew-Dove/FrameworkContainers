@@ -15,28 +15,11 @@ namespace Tests.FrameworkContainers.Network
         private static string GetUrl(string path) => $"http://localhost:8080/api/mock{path}";
 
         [TestMethod]
-        public void Post()
-        {
-            try
-            {
-                var response = Http.Get(GetUrl("/users"), new Header("Authorization", "Bearer QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
-            }
-            catch (HttpException he)
-            {
-
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
-
-        [TestMethod]
         public async Task PostAsync()
         {
             try
             {
-                var response = await Http.PostAsync("{}", GetUrl("/error"), _mediaType, new Header("Authorization", "Bearer QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
+                var response = await Http.PutAsync("{}", GetUrl("/users/2"), _mediaType, new Header("Authorization", "Bearer QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
             }
             catch (HttpException he)
             {

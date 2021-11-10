@@ -36,7 +36,12 @@ namespace FrameworkContainers.Network
 
         public static Task<string> PostAsync(string body, string url, string mediaType, params Header[] headers)
         {
-            return HypertextTransferProtocol.PostAsync(body, url, mediaType, headers).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
+            return HypertextTransferProtocol.SendAsync(body, url, mediaType, headers, HttpMethod.Post).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
+        }
+
+        public static Task<string> PutAsync(string body, string url, string mediaType, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(body, url, mediaType, headers, HttpMethod.Put).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
         }
     }
 
@@ -71,16 +76,16 @@ namespace FrameworkContainers.Network
             }
         }
 
-        public static Either<string, HttpException> Send(string body, string url, string mediaType, Header[] headers, string verb)
+        public static Either<string, HttpException> Send(string body, string url, string mediaType, Header[] headers, string method)
         {
             var response = new Either<string, HttpException>(string.Empty);
 
             try
             {
                 var request = WebRequest.Create(url);
-                request.Method = verb;
+                request.Method = method;
                 foreach (var header in headers) request.Headers.Add(header.Key, header.Value);
-                if (("POST".Equals(verb) || "PUT".Equals(verb)) && !string.IsNullOrEmpty(body))
+                if (("POST".Equals(method) || "PUT".Equals(method)) && !string.IsNullOrEmpty(body))
                 {
                     var data = Encoding.UTF8.GetBytes(body);
                     request.ContentType = mediaType;
@@ -105,27 +110,27 @@ namespace FrameworkContainers.Network
                 var responseContent = string.Empty;
                 using (var sr = new StreamReader(httpResponse.GetResponseStream())) { responseContent = sr.ReadToEnd(); }
                 httpResponse.Dispose();
-                response = new HttpException($"Error calling {verb}: [{url}].", statusCode, responseContent, we, responseheaders);
+                response = new HttpException($"Error calling {method}: [{url}].", statusCode, responseContent, we, responseheaders);
             }
             catch (Exception ex)
             {
-                response = new HttpException($"Error calling {verb}: [{url}].", 504, string.Empty, ex, new Header[0]);
+                response = new HttpException($"Error calling {method}: [{url}].", 504, string.Empty, ex, new Header[0]);
             }
 
             return response;
         }
 
-        public static async Task<Either<string, HttpException>> PostAsync(string body, string url, string mediaType, params Header[] headers)
+        public static async Task<Either<string, HttpException>> SendAsync(string body, string url, string mediaType, Header[] headers, HttpMethod httpMethod)
         {
             var response = new Either<string, HttpException>(string.Empty);
 
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, url) { Content = new StringContent(body, Encoding.UTF8, mediaType) })
+            using (var httpRequest = new HttpRequestMessage(httpMethod, url) { Content = new StringContent(body, Encoding.UTF8, mediaType) })
             {
                 AddDnsRenew(httpRequest.RequestUri);
                 foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
                 using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead).ContinueWith(x => new HttpTimeoutResult(x)))
                 {
-                    if (httpResponse.IsComplete && httpResponse.Message.IsSuccessStatusCode && httpResponse.Message.Content is object && httpResponse.Message.Content.Headers.ContentType.MediaType == mediaType)
+                    if (httpResponse.IsComplete && httpResponse.Message.IsSuccessStatusCode && httpResponse.Message.Content is object)
                     {
                         var raw = await httpResponse.Message.Content.ReadAsStringAsync().ContinueWith(x => new SocketTimeoutResult(x));
                         response = raw.IsComplete ? raw.Body : string.Empty;
