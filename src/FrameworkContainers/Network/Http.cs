@@ -1,6 +1,5 @@
 ﻿using ContainerExpressions.Containers;
 using FrameworkContainers.Models.Exceptions;
-using FrameworkContainers.Models.Network;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FrameworkContainers.Network
@@ -16,42 +16,82 @@ namespace FrameworkContainers.Network
     {
         public static string Post(string body, string url, string contentType, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(body, url, contentType, headers, "POST").Match(response => response, ex => throw ex);
+            return Post(body, url, contentType, HttpOptions.Default, headers);
+        }
+
+        public static string Post(string body, string url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(body, url, contentType, options, headers, "POST").Match(response => response, ex => throw ex);
         }
 
         public static string Put(string body, string url, string contentType, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(body, url, contentType, headers, "PUT").Match(response => response, ex => throw ex);
+            return Put(body, url, contentType, HttpOptions.Default, headers);
+        }
+
+        public static string Put(string body, string url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(body, url, contentType, options, headers, "PUT").Match(response => response, ex => throw ex);
         }
 
         public static string Get(string url, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, headers, "GET").Match(response => response, ex => throw ex);
+            return Get(url, HttpOptions.Default, headers);
+        }
+
+        public static string Get(string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, options, headers, "GET").Match(response => response, ex => throw ex);
         }
 
         public static string Delete(string url, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, headers, "DELETE").Match(response => response, ex => throw ex);
+            return Delete(url, HttpOptions.Default, headers);
+        }
+
+        public static string Delete(string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, options, headers, "DELETE").Match(response => response, ex => throw ex);
         }
 
         public static Task<string> PostAsync(string body, string url, string contentType, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(body, url, contentType, headers, HttpMethod.Post).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
+            return PostAsync(body, url, contentType, HttpOptions.Default, headers);
+        }
+
+        public static Task<string> PostAsync(string body, string url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(body, url, contentType, options, headers, HttpMethod.Post).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
         }
 
         public static Task<string> PutAsync(string body, string url, string contentType, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(body, url, contentType, headers, HttpMethod.Put).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
+            return PutAsync(body, url, contentType, HttpOptions.Default, headers);
+        }
+
+        public static Task<string> PutAsync(string body, string url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(body, url, contentType, options, headers, HttpMethod.Put).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
         }
 
         public static Task<string> GetAsync(string url, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, headers, HttpMethod.Get).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
+            return GetAsync(url, HttpOptions.Default, headers);
+        }
+
+        public static Task<string> GetAsync(string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, headers, HttpMethod.Get).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
         }
 
         public static Task<string> DeleteAsync(string url, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, headers, HttpMethod.Delete).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
+            return DeleteAsync( url, HttpOptions.Default, headers);
+        }
+
+        public static Task<string> DeleteAsync(string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, headers, HttpMethod.Delete).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
         }
     }
 
@@ -86,7 +126,7 @@ namespace FrameworkContainers.Network
             }
         }
 
-        public static Either<string, HttpException> Send(string body, string url, string contentType, Header[] headers, string httpMethod)
+        public static Either<string, HttpException> Send(string body, string url, string contentType, HttpOptions options, Header[] headers, string httpMethod)
         {
             var response = new Either<string, HttpException>(string.Empty);
 
@@ -94,6 +134,7 @@ namespace FrameworkContainers.Network
             {
                 var request = WebRequest.Create(url);
                 request.Method = httpMethod;
+                request.Timeout = options.TimeoutSeconds * 1000;
                 foreach (var header in headers) request.Headers.Add(header.Key, header.Value);
                 if (("POST".Equals(httpMethod) || "PUT".Equals(httpMethod)) && !string.IsNullOrEmpty(body))
                 {
@@ -130,10 +171,11 @@ namespace FrameworkContainers.Network
             return response;
         }
 
-        public static async Task<Either<string, HttpException>> SendAsync(string body, string url, string contentType, Header[] headers, HttpMethod httpMethod)
+        public static async Task<Either<string, HttpException>> SendAsync(string body, string url, string contentType, HttpOptions options, Header[] headers, HttpMethod httpMethod)
         {
             var response = new Either<string, HttpException>(string.Empty);
 
+            using (var cts = new CancellationTokenSource(options.TimeoutSeconds * 1000))
             using (var httpRequest = new HttpRequestMessage(httpMethod, url))
             {
                 AddDnsRenew(httpRequest.RequestUri);
@@ -142,7 +184,7 @@ namespace FrameworkContainers.Network
                 {
                     httpRequest.Content = new StringContent(body, Encoding.UTF8, contentType);
                 }
-                using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead).ContinueWith(x => new HttpTimeoutResult(x)))
+                using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token).ContinueWith(x => new HttpTimeoutResult(x)))
                 {
                     if (httpResponse.IsComplete && httpResponse.Message.IsSuccessStatusCode && httpResponse.Message.Content is object)
                     {

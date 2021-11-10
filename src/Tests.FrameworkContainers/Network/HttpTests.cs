@@ -1,5 +1,4 @@
 ﻿using FrameworkContainers.Models.Exceptions;
-using FrameworkContainers.Models.Network;
 using FrameworkContainers.Network;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
