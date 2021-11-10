@@ -19,7 +19,7 @@ namespace Tests.FrameworkContainers.Network
         {
             try
             {
-                var response = await Http.PutAsync("{}", GetUrl("/users/2"), _mediaType, new Header("Authorization", "Bearer QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
+                var response = await Http.DeleteAsync(GetUrl("/users/1"), new Header("Authorization", "Bearer QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
             }
             catch (HttpException he)
             {
