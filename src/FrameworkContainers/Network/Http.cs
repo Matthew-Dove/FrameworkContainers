@@ -72,7 +72,6 @@ namespace FrameworkContainers.Network
                 {
                     requestStream.Write(data, 0, data.Length);
                 }
-
                 using (var webResponse = request.GetResponse())
                 using (var responseStream = webResponse.GetResponseStream())
                 using (var sr = new StreamReader(responseStream))
@@ -80,23 +79,15 @@ namespace FrameworkContainers.Network
                     response = sr.ReadToEnd();
                 }
             }
-            catch (WebException we)
+            catch (WebException we) when (we.Response is HttpWebResponse httpResponse)
             {
-                var httpResponse = we.Response as HttpWebResponse;
-                if (httpResponse == null)
-                {
-                    response = new HttpException($"Error calling POST: [{url}].", 504, string.Empty, we, new Header[0]);
-                }
-                else
-                {
-                    var responseheaders = new Header[httpResponse.Headers.Count];
-                    for (int i = 0; i < httpResponse.Headers.Count; i++) responseheaders[i] = new Header(httpResponse.Headers.Keys[i], httpResponse.Headers[i]);
-                    var statusCode = (int)httpResponse.StatusCode;
-                    var responseContent = string.Empty;
-                    using (var sr = new StreamReader(httpResponse.GetResponseStream())) { responseContent = sr.ReadToEnd(); }
-                    httpResponse.Dispose();
-                    response = new HttpException($"Error calling POST: [{url}].", statusCode, responseContent, we, responseheaders);
-                }
+                var responseheaders = new Header[httpResponse.Headers.Count];
+                for (int i = 0; i < httpResponse.Headers.Count; i++) responseheaders[i] = new Header(httpResponse.Headers.Keys[i], httpResponse.Headers[i]);
+                var statusCode = (int)httpResponse.StatusCode;
+                var responseContent = string.Empty;
+                using (var sr = new StreamReader(httpResponse.GetResponseStream())) { responseContent = sr.ReadToEnd(); }
+                httpResponse.Dispose();
+                response = new HttpException($"Error calling POST: [{url}].", statusCode, responseContent, we, responseheaders);
             }
             catch (Exception ex)
             {

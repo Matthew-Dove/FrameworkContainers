@@ -20,7 +20,7 @@ namespace FrameworkContainers.Models.JsonConverters
             if (reader.TokenType == JsonTokenType.String)
             {
                 if (reader.TryGetGuid(out Guid value)) result = value;
-                else if (string.IsNullOrEmpty(reader.GetString()));
+                else if (string.IsNullOrEmpty(reader.GetString())) { }
                 else throw new JsonException($"Unable to convert \"{reader.GetString()}\" to Guid.");
             }
 
