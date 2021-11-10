@@ -2,7 +2,7 @@
 
 namespace FrameworkContainers.Network
 {
-    internal struct SocketTimeoutResult
+    internal readonly struct SocketTimeoutResult
     {
         public bool IsComplete { get; }
         public string Body { get; }

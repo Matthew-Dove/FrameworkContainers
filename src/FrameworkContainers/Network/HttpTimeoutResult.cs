@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace FrameworkContainers.Network
 {
-    internal struct HttpTimeoutResult : IDisposable
+    internal readonly struct HttpTimeoutResult : IDisposable
     {
         public bool IsComplete { get; }
         public HttpResponseMessage Message { get; }

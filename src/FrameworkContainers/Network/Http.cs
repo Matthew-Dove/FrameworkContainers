@@ -16,7 +16,22 @@ namespace FrameworkContainers.Network
     {
         public static string Post(string body, string url, string mediaType, params Header[] headers)
         {
-            return HypertextTransferProtocol.Post(body, url, mediaType, headers).Match(response => response, ex => throw ex);
+            return HypertextTransferProtocol.Send(body, url, mediaType, headers, "POST").Match(response => response, ex => throw ex);
+        }
+
+        public static string Put(string body, string url, string mediaType, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(body, url, mediaType, headers, "PUT").Match(response => response, ex => throw ex);
+        }
+
+        public static string Get(string url, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, headers, "GET").Match(response => response, ex => throw ex);
+        }
+
+        public static string Delete(string url, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, headers, "DELETE").Match(response => response, ex => throw ex);
         }
 
         public static Task<string> PostAsync(string body, string url, string mediaType, params Header[] headers)
@@ -56,21 +71,24 @@ namespace FrameworkContainers.Network
             }
         }
 
-        public static Either<string, HttpException> Post(string body, string url, string mediaType, params Header[] headers)
+        public static Either<string, HttpException> Send(string body, string url, string mediaType, Header[] headers, string verb)
         {
             var response = new Either<string, HttpException>(string.Empty);
 
             try
             {
-                var data = Encoding.UTF8.GetBytes(body);
                 var request = WebRequest.Create(url);
-                request.Method = "POST";
-                request.ContentType = mediaType;
-                request.ContentLength = data.Length;
+                request.Method = verb;
                 foreach (var header in headers) request.Headers.Add(header.Key, header.Value);
-                using (var requestStream = request.GetRequestStream())
+                if (("POST".Equals(verb) || "PUT".Equals(verb)) && !string.IsNullOrEmpty(body))
                 {
-                    requestStream.Write(data, 0, data.Length);
+                    var data = Encoding.UTF8.GetBytes(body);
+                    request.ContentType = mediaType;
+                    request.ContentLength = data.Length;
+                    using (var requestStream = request.GetRequestStream())
+                    {
+                        requestStream.Write(data, 0, data.Length);
+                    }
                 }
                 using (var webResponse = request.GetResponse())
                 using (var responseStream = webResponse.GetResponseStream())
@@ -87,11 +105,11 @@ namespace FrameworkContainers.Network
                 var responseContent = string.Empty;
                 using (var sr = new StreamReader(httpResponse.GetResponseStream())) { responseContent = sr.ReadToEnd(); }
                 httpResponse.Dispose();
-                response = new HttpException($"Error calling POST: [{url}].", statusCode, responseContent, we, responseheaders);
+                response = new HttpException($"Error calling {verb}: [{url}].", statusCode, responseContent, we, responseheaders);
             }
             catch (Exception ex)
             {
-                response = new HttpException($"Error calling POST: [{url}].", 504, string.Empty, ex, new Header[0]);
+                response = new HttpException($"Error calling {verb}: [{url}].", 504, string.Empty, ex, new Header[0]);
             }
 
             return response;

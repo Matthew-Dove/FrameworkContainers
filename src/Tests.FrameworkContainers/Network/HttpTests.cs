@@ -19,7 +19,7 @@ namespace Tests.FrameworkContainers.Network
         {
             try
             {
-                var response = Http.Post("{}", GetUrl("/error"), _mediaType, new Header("Authorization", "Bearer QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
+                var response = Http.Get(GetUrl("/users"), new Header("Authorization", "Bearer QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
             }
             catch (HttpException he)
             {
