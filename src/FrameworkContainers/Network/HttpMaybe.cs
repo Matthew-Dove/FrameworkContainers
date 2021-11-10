@@ -7,6 +7,8 @@ namespace FrameworkContainers.Network
 {
     public sealed class HttpMaybe
     {
+        internal HttpMaybe() { }
+
         public Maybe<string, HttpException> Post(string body, string url, string contentType, params Header[] headers)
         {
             return Post(body, url, contentType, HttpOptions.Default, headers);

@@ -204,7 +204,7 @@ namespace FrameworkContainers.Network
                         {
                             rawHeaders = httpResponse.Message.Headers.Select(x => new Header(x.Key, x.Value.First())).ToArray();
                         }
-                        response = new HttpException($"Error calling POST: [{url}].", rawStatusCode, rawBody, null, rawHeaders);
+                        response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, rawBody, null, rawHeaders);
                     }
                 }
             }

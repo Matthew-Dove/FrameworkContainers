@@ -6,6 +6,8 @@ namespace FrameworkContainers.Network
 {
     public sealed class HttpResponse
     {
+        internal HttpResponse() { }
+
         public Response<string> Post(string body, string url, string contentType, params Header[] headers)
         {
             return Post(body, url, contentType, HttpOptions.Default, headers);
