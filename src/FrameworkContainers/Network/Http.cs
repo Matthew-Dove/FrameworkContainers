@@ -190,7 +190,7 @@ namespace FrameworkContainers.Network
 
     internal static class HypertextTransferProtocol
     {
-        private static readonly int DNS_RENEW_MILLISECONDS = (int)TimeSpan.FromMinutes(5).TotalMilliseconds;
+        private static readonly int DNS_RENEW_MILLISECONDS = (int)TimeSpan.FromSeconds(60).TotalMilliseconds;
         private readonly static HttpClient _client = new HttpClient();
         private readonly static HashSet<Uri> _uris = new HashSet<Uri>();
         private readonly static object _lock = new object();
