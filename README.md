@@ -250,7 +250,7 @@ int rows = sql.ExecuteNonQuery("usp_insert_user", new SqlParameter("@name", "Joh
 
 * Started a changelog - reset the project.
 * Added `Sql` for `ExecuteReader`, `ExecuteNonQuery`, and `BulkInsert` database operations.
-* Added `Http` for `Get`, `Pos`t`, `Put`, and `Delete` network operations.
+* Added `Http` for `Get`, `Post`, `Put`, and `Delete` network operations.
 * Added `Json` for `Serialize`, and `Deserialize` model operations.
 * Added `Xml` for `Serialize`, and `Deserialize` model operations.
 * Updated nuget pack settings, to make the project easier to deploy.
