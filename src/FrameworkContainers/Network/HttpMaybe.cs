@@ -1,6 +1,7 @@
 ﻿using ContainerExpressions.Containers;
 using FrameworkContainers.Format;
 using FrameworkContainers.Models.Exceptions;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -20,14 +21,19 @@ namespace FrameworkContainers.Network
             return HypertextTransferProtocol.Send(body, url, contentType, options, headers, "POST").Match(x => new Maybe<string, HttpException>(x), ex => new Maybe<string, HttpException>(ex));
         }
 
-        public Maybe<TResponse, HttpException> PostJson<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
+        public Maybe<TResponse, Exception> PostJson<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
         {
             return PostJson<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
         }
 
-        public Maybe<TResponse, HttpException> PostJson<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers)
+        public Maybe<TResponse, Exception> PostJson<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(Json.FromModel(model), url, "application/json", options, Http.AddJsonAccept(headers), "POST").Match(x => new Maybe<TResponse, HttpException>(Json.ToModel<TResponse>(x)), ex => new Maybe<TResponse, HttpException>(ex));
+            return Json.Maybe.FromModel(model).Match(
+                json => HypertextTransferProtocol
+                    .Send(json, url, "application/json", options, Http.AddJsonAccept(headers), "POST")
+                    .Match(x => Json.Maybe.ToModel<TResponse>(x).Match(y => new Maybe<TResponse, Exception>(y), ex => new Maybe<TResponse, Exception>(ex)), ex => new Maybe<TResponse, Exception>(ex)),
+                ex => new Maybe<TResponse, Exception>(ex)
+            );
         }
 
         public Maybe<string, HttpException> Put(string body, string url, string contentType, params Header[] headers)
