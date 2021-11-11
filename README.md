@@ -240,3 +240,17 @@ Using `ISqlClient`:
 ISqlClient sql = new SqlClient();
 int rows = sql.ExecuteNonQuery("usp_insert_user", new SqlParameter("@name", "John Smith"));
 ```
+
+# Credits
+* [Icon](https://www.flaticon.com/free-icon/bird_2630452) made by [Vitaly Gorbachev](https://www.flaticon.com/authors/vitaly-gorbachev) from [Flaticon](https://www.flaticon.com/).
+
+# Changelog
+
+## 2.0.0
+
+* Started a changelog - reset the project.
+* Added `Sql` for `ExecuteReader`, `ExecuteNonQuery`, and `BulkInsert` database operations.
+* Added `Http` for `Get`, `Pos`t`, `Put`, and `Delete` network operations.
+* Added `Json` for `Serialize`, and `Deserialize` model operations.
+* Added `Xml` for `Serialize`, and `Deserialize` model operations.
+* Updated nuget pack settings, to make the project easier to deploy.
