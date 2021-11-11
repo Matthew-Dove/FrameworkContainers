@@ -1,6 +1,5 @@
 ﻿using ContainerExpressions.Containers;
 using System;
-using System.Text.Json;
 
 namespace FrameworkContainers.Format
 {
@@ -17,7 +16,7 @@ namespace FrameworkContainers.Format
 
             try
             {
-                var model = JsonSerializer.Deserialize<T>(json, options.SerializerSettings);
+                var model = JavaScriptObjectNotation.JsonToModel<T>(json, options);
                 response = response.With(model);
             }
             catch (Exception ex)
@@ -36,7 +35,7 @@ namespace FrameworkContainers.Format
 
             try
             {
-                var json = JsonSerializer.Serialize<T>(model, options.SerializerSettings);
+                var json = JavaScriptObjectNotation.ModelToJson<T>(model, options);
                 response = response.With(json);
             }
             catch (Exception ex)

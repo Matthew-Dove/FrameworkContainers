@@ -1,4 +1,5 @@
 ﻿using ContainerExpressions.Containers;
+using FrameworkContainers.Format;
 using FrameworkContainers.Models.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,17 @@ namespace FrameworkContainers.Network
 
         public static string Post(string body, string url, string contentType, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(body, url, contentType, options, headers, "POST").Match(response => response, ex => throw ex);
+            return HypertextTransferProtocol.Send(body, url, contentType, options, headers, "POST").Match(x => x, ex => throw ex);
+        }
+
+        public static TResponse PostJson<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
+        {
+            return PostJson<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static TResponse PostJson<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(Json.FromModel(model), url, "application/json", options, AddJsonAccept(headers), "POST").Match(x => Json.ToModel<TResponse>(x), ex => throw ex);
         }
 
         public static string Put(string body, string url, string contentType, params Header[] headers)
@@ -35,7 +46,17 @@ namespace FrameworkContainers.Network
 
         public static string Put(string body, string url, string contentType, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(body, url, contentType, options, headers, "PUT").Match(response => response, ex => throw ex);
+            return HypertextTransferProtocol.Send(body, url, contentType, options, headers, "PUT").Match(x => x, ex => throw ex);
+        }
+
+        public static TResponse PutJson<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
+        {
+            return PutJson<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static TResponse PutJson<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(Json.FromModel(model), url, "application/json", options, AddJsonAccept(headers), "PUT").Match(x => Json.ToModel<TResponse>(x), ex => throw ex);
         }
 
         public static string Get(string url, params Header[] headers)
@@ -45,7 +66,17 @@ namespace FrameworkContainers.Network
 
         public static string Get(string url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, options, headers, "GET").Match(response => response, ex => throw ex);
+            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, options, headers, "GET").Match(x => x, ex => throw ex);
+        }
+
+        public static TResponse GetJson<TResponse>(string url, params Header[] headers)
+        {
+            return GetJson<TResponse>(url, HttpOptions.Default, headers);
+        }
+
+        public static TResponse GetJson<TResponse>(string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, options, AddJsonAccept(headers), "GET").Match(x => Json.ToModel<TResponse>(x), ex => throw ex);
         }
 
         public static string Delete(string url, params Header[] headers)
@@ -55,7 +86,17 @@ namespace FrameworkContainers.Network
 
         public static string Delete(string url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, options, headers, "DELETE").Match(response => response, ex => throw ex);
+            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, options, headers, "DELETE").Match(x => x, ex => throw ex);
+        }
+
+        public static TResponse DeleteJson<TResponse>(string url, params Header[] headers)
+        {
+            return DeleteJson<TResponse>(url, HttpOptions.Default, headers);
+        }
+
+        public static TResponse DeleteJson<TResponse>(string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(string.Empty, url, string.Empty, options, AddJsonAccept(headers), "DELETE").Match(x => Json.ToModel<TResponse>(x), ex => throw ex);
         }
 
         public static Task<string> PostAsync(string body, string url, string contentType, params Header[] headers)
@@ -65,7 +106,17 @@ namespace FrameworkContainers.Network
 
         public static Task<string> PostAsync(string body, string url, string contentType, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(body, url, contentType, options, headers, HttpMethod.Post).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
+            return HypertextTransferProtocol.SendAsync(body, url, contentType, options, headers, HttpMethod.Post).ContinueWith(x => x.Result.Match(y => y, ex => throw ex));
+        }
+
+        public static Task<TResponse> PostJsonAsync<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
+        {
+            return PostJsonAsync<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static Task<TResponse> PostJsonAsync<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(Json.FromModel(model), url, "application/json", options, AddJsonAccept(headers), HttpMethod.Post).ContinueWith(x => x.Result.Match(y => Json.ToModel<TResponse>(y), ex => throw ex));
         }
 
         public static Task<string> PutAsync(string body, string url, string contentType, params Header[] headers)
@@ -75,7 +126,17 @@ namespace FrameworkContainers.Network
 
         public static Task<string> PutAsync(string body, string url, string contentType, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(body, url, contentType, options, headers, HttpMethod.Put).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
+            return HypertextTransferProtocol.SendAsync(body, url, contentType, options, headers, HttpMethod.Put).ContinueWith(x => x.Result.Match(y => y, ex => throw ex));
+        }
+
+        public static Task<TResponse> PutJsonAsync<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
+        {
+            return PutJsonAsync<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static Task<TResponse> PutJsonAsync<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(Json.FromModel(model), url, "application/json", options, AddJsonAccept(headers), HttpMethod.Put).ContinueWith(x => x.Result.Match(y => Json.ToModel<TResponse>(y), ex => throw ex));
         }
 
         public static Task<string> GetAsync(string url, params Header[] headers)
@@ -85,17 +146,45 @@ namespace FrameworkContainers.Network
 
         public static Task<string> GetAsync(string url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, headers, HttpMethod.Get).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
+            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, headers, HttpMethod.Get).ContinueWith(x => x.Result.Match(y => y, ex => throw ex));
+        }
+
+        public static Task<TResponse> GetJsonAsync<TResponse>(string url, params Header[] headers)
+        {
+            return GetJsonAsync<TResponse>(url, HttpOptions.Default, headers);
+        }
+
+        public static Task<TResponse> GetJsonAsync<TResponse>(string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, AddJsonAccept(headers), HttpMethod.Get).ContinueWith(x => x.Result.Match(y => Json.ToModel<TResponse>(y), ex => throw ex));
         }
 
         public static Task<string> DeleteAsync(string url, params Header[] headers)
         {
-            return DeleteAsync( url, HttpOptions.Default, headers);
+            return DeleteAsync(url, HttpOptions.Default, headers);
         }
 
         public static Task<string> DeleteAsync(string url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, headers, HttpMethod.Delete).ContinueWith(x => x.Result.Match(response => response, ex => throw ex));
+            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, headers, HttpMethod.Delete).ContinueWith(x => x.Result.Match(y => y, ex => throw ex));
+        }
+
+        public static Task<TResponse> DeleteJsonAsync<TResponse>(string url, params Header[] headers)
+        {
+            return DeleteJsonAsync<TResponse>(url, HttpOptions.Default, headers);
+        }
+
+        public static Task<TResponse> DeleteJsonAsync<TResponse>(string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, AddJsonAccept(headers), HttpMethod.Delete).ContinueWith(x => x.Result.Match(y => Json.ToModel<TResponse>(y), ex => throw ex));
+        }
+
+        internal static Header[] AddJsonAccept(Header[] headers)
+        {
+            foreach (var header in headers) if ("Accept".Equals(header.Key, StringComparison.OrdinalIgnoreCase)) return headers;
+            Array.Resize(ref headers, headers.Length + 1);
+            headers[headers.Length - 1] = new Header("Accept", "application/json");
+            return headers;
         }
     }
 
@@ -132,7 +221,7 @@ namespace FrameworkContainers.Network
 
         public static Either<string, HttpException> Send(string body, string url, string contentType, HttpOptions options, Header[] headers, string httpMethod)
         {
-            var response = new Either<string, HttpException>(string.Empty);
+            var response = new Either<string, HttpException>();
 
             try
             {
@@ -177,7 +266,7 @@ namespace FrameworkContainers.Network
 
         public static async Task<Either<string, HttpException>> SendAsync(string body, string url, string contentType, HttpOptions options, Header[] headers, HttpMethod httpMethod)
         {
-            var response = new Either<string, HttpException>(string.Empty);
+            var response = new Either<string, HttpException>();
 
             using (var cts = new CancellationTokenSource(options.TimeoutSeconds * 1000))
             using (var httpRequest = new HttpRequestMessage(httpMethod, url))

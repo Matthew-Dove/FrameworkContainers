@@ -20,7 +20,7 @@ namespace FrameworkContainers.Format
         {
             try
             {
-                return JsonSerializer.Deserialize<T>(json, options.SerializerSettings);
+                return JavaScriptObjectNotation.JsonToModel<T>(json, options);
             }
             catch (Exception ex)
             {
@@ -34,12 +34,25 @@ namespace FrameworkContainers.Format
         {
             try
             {
-                return JsonSerializer.Serialize<T>(model, options.SerializerSettings);
+                return JavaScriptObjectNotation.ModelToJson<T>(model, options);
             }
             catch (Exception ex)
             {
                 throw new FormatSerializeException(Constants.Format.SERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, model);
             }
+        }
+    }
+
+    internal static class JavaScriptObjectNotation
+    {
+        public static T JsonToModel<T>(string json, JsonOptions options)
+        {
+            return JsonSerializer.Deserialize<T>(string.IsNullOrEmpty(json) ? "null" : json, options.SerializerSettings);
+        }
+
+        public static string ModelToJson<T>(T model, JsonOptions options)
+        {
+            return JsonSerializer.Serialize<T>(model, options.SerializerSettings);
         }
     }
 }

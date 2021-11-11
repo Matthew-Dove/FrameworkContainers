@@ -2,7 +2,6 @@
 using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
 using System;
-using System.Text.Json;
 
 namespace FrameworkContainers.Format
 {
@@ -19,7 +18,7 @@ namespace FrameworkContainers.Format
 
             try
             {
-                var model = JsonSerializer.Deserialize<T>(json, options.SerializerSettings);
+                var model = JavaScriptObjectNotation.JsonToModel<T>(json, options);
                 maybe = maybe.With(model);
             }
             catch (Exception ex)
@@ -39,7 +38,7 @@ namespace FrameworkContainers.Format
 
             try
             {
-                var json = JsonSerializer.Serialize<T>(model, options.SerializerSettings);
+                var json = JavaScriptObjectNotation.ModelToJson<T>(model, options);
                 maybe = maybe.With(json);
             }
             catch (Exception ex)
