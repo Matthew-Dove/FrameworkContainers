@@ -27,6 +27,7 @@ namespace FrameworkContainers.Infrastructure
         {
             var assembly = Assembly.GetExecutingAssembly();
             var explicitAssemblies = explicitlyNamedAssemblies.Select(x => Assembly.Load(x));
+
             var referencedAssemblies = Enumerable.Empty<Assembly>();
             var explicitReferencedAssemblies = Enumerable.Empty<Assembly>();
             if (!string.IsNullOrEmpty(assemblyStartsWith))
@@ -34,6 +35,7 @@ namespace FrameworkContainers.Infrastructure
                 referencedAssemblies = assembly.GetReferencedAssemblies().Where(x => x.Name.StartsWith(assemblyStartsWith)).Select(y => Assembly.Load(y));
                 explicitReferencedAssemblies = explicitAssemblies.SelectMany(x => x.GetReferencedAssemblies().Where(y => y.Name.StartsWith(assemblyStartsWith)).Select(z => Assembly.Load(z)));
             }
+
             var assemblies = new Assembly[] { assembly }.Concat(referencedAssemblies).Concat(explicitAssemblies).Concat(explicitReferencedAssemblies).Distinct();
             return assemblies.SelectMany(x => x.GetExportedTypes()).ToArray();
         }

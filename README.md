@@ -254,3 +254,7 @@ int rows = sql.ExecuteNonQuery("usp_insert_user", new SqlParameter("@name", "Joh
 * Added `Json` for `Serialize`, and `Deserialize` model operations.
 * Added `Xml` for `Serialize`, and `Deserialize` model operations.
 * Updated nuget pack settings, to make the project easier to deploy.
+
+## 2.1.0
+
+* Added a Dependency Injection helper, to add types from assemblies by naming convention (IService => Service).
