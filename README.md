@@ -241,6 +241,29 @@ ISqlClient sql = new SqlClient();
 int rows = sql.ExecuteNonQuery("usp_insert_user", new SqlParameter("@name", "John Smith"));
 ```
 
+## Dependency Injection Component
+
+Adds types to your DI framework of choice.  
+You provide a mapper, and `DependencyInjection` will provide the types.  
+Types are added by a naming convention: interface `IService` will match implementation `Service`.  
+There is a "sandbox mode", for cases when you'd like to provide different implementations.  
+When enabled any implementation of `ServiceSandbox`, will override `Service`.
+
+### [Things we do for you]
+
+  * Scan assemblies, find all exported types, and match IService, to Service.
+  * Provide a "sandbox mode", so services can be swapped out.
+
+### [Examples]
+
+Using ASP.NET CORE's `IServiceCollection`:
+```cs
+public void ConfigureServices(IServiceCollection services)
+{
+	DependencyInjection.AddServicesByConvention((x, y) => services.AddSingleton(x, y));
+}
+```
+
 # Credits
 * [Icon](https://www.flaticon.com/free-icon/bird_2630452) made by [Vitaly Gorbachev](https://www.flaticon.com/authors/vitaly-gorbachev) from [Flaticon](https://www.flaticon.com/).
 
@@ -258,3 +281,7 @@ int rows = sql.ExecuteNonQuery("usp_insert_user", new SqlParameter("@name", "Joh
 ## 2.1.0
 
 * Added a Dependency Injection helper, to add types from assemblies by naming convention (IService => Service).
+
+## 2.2.0
+
+* Removed the "Standalone" option for from `DependencyInjection`, as it was not needed when we already have "Sandbox" options.

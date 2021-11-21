@@ -9,7 +9,7 @@ namespace FrameworkContainers.Infrastructure
     {
         /// <summary>
         /// Matches IService to Service.
-        /// <para>In sandbox mode, matches IService to ServiceSandbox, or ServiceStandalone.</para>
+        /// <para>In sandbox mode, matches IService to ServiceSandbox.</para>
         /// <para>Example usage with ASP.NET's IServiceCollection: DependencyInjection.AddServicesByConvention((x, y) => services.AddSingleton(x, y));.</para>
         /// </summary>
         /// <param name="isSandbox">When in sandbox mode, check if a sandbox implementation exists, and prefer that version.</param>
@@ -53,7 +53,7 @@ namespace FrameworkContainers.Infrastructure
 
                 if (isSandbox && implementation != default)
                 {
-                    var sandboxImplementation = types.FirstOrDefault(x => (x.Name == match + "Sandbox" || x.Name == match + "Standalone") && x.IsClass);
+                    var sandboxImplementation = types.FirstOrDefault(x => x.Name == match + "Sandbox" && x.IsClass);
                     if (sandboxImplementation != default)
                     {
                         implementation = sandboxImplementation;
