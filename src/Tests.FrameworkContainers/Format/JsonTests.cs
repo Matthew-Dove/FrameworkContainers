@@ -5,6 +5,7 @@ using FrameworkContainers.Models.JsonConverters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Tests.FrameworkContainers.Format
@@ -274,8 +275,13 @@ namespace Tests.FrameworkContainers.Format
             var reference = Json.ToModel<VanillaReference>(Json.FromModel(new VanillaReference { Array = target }));
             var valueeeee = Json.ToModel<VanillaValueeeee>(Json.FromModel(new VanillaValueeeee { Array = target }));
 
-            Assert.AreEqual(string.Join(",", target.Select(x => x.ToString())), string.Join(",", reference.Array.Select(x => x.ToString())));
-            Assert.AreEqual(string.Join(",", target.Select(x => x.ToString())), string.Join(",", valueeeee.Array.Select(x => x.ToString())));
+            Assert.AreEqual(float.Parse(target[0].ToString()), float.Parse(reference.Array[0].ToString()));
+            Assert.AreEqual(float.Parse(target[1].ToString()), float.Parse(reference.Array[1].ToString()));
+            Assert.AreEqual(float.Parse(target[2].ToString()), float.Parse(reference.Array[2].ToString()));
+
+            Assert.AreEqual(float.Parse(target[0].ToString()), float.Parse(valueeeee.Array[0].ToString()));
+            Assert.AreEqual(float.Parse(target[1].ToString()), float.Parse(valueeeee.Array[1].ToString()));
+            Assert.AreEqual(float.Parse(target[2].ToString()), float.Parse(valueeeee.Array[2].ToString()));
         }
 
         [TestMethod]
