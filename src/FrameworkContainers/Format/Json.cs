@@ -24,8 +24,9 @@ namespace FrameworkContainers.Format
             }
             catch (Exception ex)
             {
-                throw new FormatDeserializeException(Constants.Format.DESERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, typeof(T), json);
+                JavaScriptObjectNotation.DeserializeError(ex, typeof(T), json);
             }
+            return default;
         }
 
         public static string FromModel<T>(T model) => FromModel(model, JsonOptions.Performant);
@@ -38,13 +39,24 @@ namespace FrameworkContainers.Format
             }
             catch (Exception ex)
             {
-                throw new FormatSerializeException(Constants.Format.SERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, model);
+                JavaScriptObjectNotation.SerializeError(ex, model);
             }
+            return default;
         }
     }
 
     internal static class JavaScriptObjectNotation
     {
+        public static void SerializeError(Exception ex, object model)
+        {
+            throw new FormatSerializeException(Constants.Format.SERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, model);
+        }
+
+        public static void DeserializeError(Exception ex, Type targetType, string input)
+        {
+            throw new FormatDeserializeException(Constants.Format.DESERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, targetType, input);
+        }
+
         public static T JsonToModel<T>(string json, JsonOptions options)
         {
             return JsonSerializer.Deserialize<T>(string.IsNullOrEmpty(json) ? "null" : json, options.SerializerSettings);

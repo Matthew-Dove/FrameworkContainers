@@ -17,7 +17,8 @@ namespace FrameworkContainers.Format
                 Converters = {
                     new JsonStringEnumConverter(namingPolicy),
                     new JsonStringEnumConverter()
-                }
+                },
+                MaxDepth = 32
             };
 
             if (defaults == JsonSerializerDefaults.Web)
@@ -28,7 +29,7 @@ namespace FrameworkContainers.Format
                 SerializerSettings.PropertyNameCaseInsensitive = true;
                 SerializerSettings.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
                 SerializerSettings.WriteIndented = true;
-                SerializerSettings.IgnoreNullValues = true;
+                SerializerSettings.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 SerializerSettings.DictionaryKeyPolicy = namingPolicy;
                 SerializerSettings.IgnoreReadOnlyFields = true;
                 SerializerSettings.IgnoreReadOnlyProperties = true;
