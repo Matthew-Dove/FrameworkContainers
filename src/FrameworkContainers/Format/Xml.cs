@@ -51,6 +51,7 @@ namespace FrameworkContainers.Format
 
     /* -------------------------- TODO --------------------------
 
+    > Update `Http` to use static throwing methods (and `HttpMaybe`).
     > Add encoding options for `Xml.ToModel<T>()`.
     > Split XMLOptions to read (deserialize) / write (serialize) configs.
     > Update `Response` to accept the new XML configs.
