@@ -10,13 +10,15 @@ namespace FrameworkContainers.Format
     {
         internal XmlMaybe() { }
 
-        public Maybe<T, FormatDeserializeException> ToModel<T>(string xml)
+        public Maybe<T, FormatDeserializeException> ToModel<T>(string xml) => ToModel<T>(xml, XmlReadOptions.Default);
+
+        public Maybe<T, FormatDeserializeException> ToModel<T>(string xml, XmlReadOptions options)
         {
             var maybe = new Maybe<T, FormatDeserializeException>();
 
             try
             {
-                var model = ExtensibleMarkupLanguage.XmlToModel<T>(xml);
+                var model = ExtensibleMarkupLanguage.XmlToModel<T>(xml, options);
                 maybe = maybe.With(model);
             }
             catch (Exception ex)
@@ -28,9 +30,9 @@ namespace FrameworkContainers.Format
             return maybe;
         }
 
-        public Maybe<string, FormatSerializeException> FromModel<T>(T model) => FromModel(model, XmlOptions.Default);
+        public Maybe<string, FormatSerializeException> FromModel<T>(T model) => FromModel(model, XmlWriteOptions.Default);
 
-        public Maybe<string, FormatSerializeException> FromModel<T>(T model, XmlOptions options)
+        public Maybe<string, FormatSerializeException> FromModel<T>(T model, XmlWriteOptions options)
         {
             var maybe = new Maybe<string, FormatSerializeException>();
 

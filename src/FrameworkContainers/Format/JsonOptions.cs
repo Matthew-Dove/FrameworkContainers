@@ -1,4 +1,5 @@
-﻿using System.Text.Encodings.Web;
+﻿using FrameworkContainers.Models;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -18,7 +19,7 @@ namespace FrameworkContainers.Format
                     new JsonStringEnumConverter(namingPolicy),
                     new JsonStringEnumConverter()
                 },
-                MaxDepth = 32
+                MaxDepth = Constants.Serialize.MAX_DEPTH
             };
 
             if (defaults == JsonSerializerDefaults.Web)

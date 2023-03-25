@@ -8,13 +8,15 @@ namespace FrameworkContainers.Format
     {
         internal XmlResponse() { }
 
-        public Response<T> ToModel<T>(string xml)
+        public Response<T> ToModel<T>(string xml) => ToModel<T>(xml, XmlReadOptions.Default);
+
+        public Response<T> ToModel<T>(string xml, XmlReadOptions options)
         {
             var response = new Response<T>();
 
             try
             {
-                var model = ExtensibleMarkupLanguage.XmlToModel<T>(xml);
+                var model = ExtensibleMarkupLanguage.XmlToModel<T>(xml, options);
                 response = response.With(model);
             }
             catch (Exception ex)
@@ -25,9 +27,9 @@ namespace FrameworkContainers.Format
             return response;
         }
 
-        public Response<string> FromModel<T>(T model) => FromModel(model, XmlOptions.Default);
+        public Response<string> FromModel<T>(T model) => FromModel(model, XmlWriteOptions.Default);
 
-        public Response<string> FromModel<T>(T model, XmlOptions options)
+        public Response<string> FromModel<T>(T model, XmlWriteOptions options)
         {
             var response = new Response<string>();
 

@@ -14,6 +14,6 @@ namespace FrameworkContainers.Network
             TimeoutSeconds = timeoutSeconds;
         }
 
-        internal static HttpOptions Default => new HttpOptions(30);
+        internal static HttpOptions Default => new HttpOptions(10);
     }
 }

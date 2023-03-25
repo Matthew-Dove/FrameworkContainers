@@ -285,3 +285,8 @@ public void ConfigureServices(IServiceCollection services)
 ## 2.2.0
 
 * Removed the "Standalone" option for from `DependencyInjection`, as it was not needed when we already have "Sandbox" options.
+
+## 3.0.0
+
+* Added a maximum to the recursive depth for the XML, and JSON serializers; providing protection against malicious stackoverflow exceptions.
+* Optimized the XML deserializer, to reduce string allocation when writing to a stream; adding seperate read, and write `XmlOptions`.

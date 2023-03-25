@@ -6,8 +6,9 @@
         XmlMaybe Maybe { get; }
         XmlResponse Response { get; }
         T ToModel<T>(string xml);
+        T ToModel<T>(string xml, XmlReadOptions options);
         string FromModel<T>(T model);
-        string FromModel<T>(T model, XmlOptions options);
+        string FromModel<T>(T model, XmlWriteOptions options);
     }
 
     public sealed class XmlClient : IXmlClient
@@ -16,9 +17,10 @@
         public XmlResponse Response => Xml.Response;
 
         public T ToModel<T>(string xml) => Xml.ToModel<T>(xml);
+        public T ToModel<T>(string xml, XmlReadOptions options) => Xml.ToModel<T>(xml, options);
 
         public string FromModel<T>(T model) => Xml.FromModel(model);
-        public string FromModel<T>(T model, XmlOptions options) => Xml.FromModel(model, options);
+        public string FromModel<T>(T model, XmlWriteOptions options) => Xml.FromModel(model, options);
     }
 
     /// <summary>Dependency inversion alterative to the static class (when you are only using one type).</summary>
@@ -27,8 +29,9 @@
         XmlMaybe Maybe { get; }
         XmlResponse Response { get; }
         T ToModel(string xml);
+        T ToModel(string xml, XmlReadOptions options);
         string FromModel(T model);
-        string FromModel(T model, XmlOptions options);
+        string FromModel(T model, XmlWriteOptions options);
     }
 
     public sealed class XmlClient<T> : IXmlClient<T>
@@ -37,8 +40,9 @@
         public XmlResponse Response => Xml.Response;
 
         public T ToModel(string xml) => Xml.ToModel<T>(xml);
+        public T ToModel(string xml, XmlReadOptions options) => Xml.ToModel<T>(xml, options);
 
         public string FromModel(T model) => Xml.FromModel(model);
-        public string FromModel(T model, XmlOptions options) => Xml.FromModel(model, options);
+        public string FromModel(T model, XmlWriteOptions options) => Xml.FromModel(model, options);
     }
 }

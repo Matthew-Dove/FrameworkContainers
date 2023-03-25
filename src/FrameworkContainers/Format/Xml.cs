@@ -17,11 +17,13 @@ namespace FrameworkContainers.Format
         /// <summary>Access to XML serialize, and deserialize methods that return the result in a Response container.</summary>
         public static readonly XmlResponse Response = new XmlResponse();
 
-        public static T ToModel<T>(string xml)
+        public static T ToModel<T>(string xml) => ToModel<T>(xml, XmlReadOptions.Default);
+
+        public static T ToModel<T>(string xml, XmlReadOptions options)
         {
             try
             {
-                return ExtensibleMarkupLanguage.XmlToModel<T>(xml);
+                return ExtensibleMarkupLanguage.XmlToModel<T>(xml, options);
             }
             catch (Exception ex)
             {
@@ -30,9 +32,9 @@ namespace FrameworkContainers.Format
             return default;
         }
 
-        public static string FromModel<T>(T model) => FromModel(model, XmlOptions.Default);
+        public static string FromModel<T>(T model) => FromModel(model, XmlWriteOptions.Default);
 
-        public static string FromModel<T>(T model, XmlOptions options)
+        public static string FromModel<T>(T model, XmlWriteOptions options)
         {
             try
             {
@@ -45,23 +47,6 @@ namespace FrameworkContainers.Format
             return default;
         }
     }
-
-
-
-
-    /* -------------------------- TODO --------------------------
-
-    > Update `Http` to use static throwing methods (and `HttpMaybe`).
-    > Add encoding options for `Xml.ToModel<T>()`.
-    > Split XMLOptions to read (deserialize) / write (serialize) configs.
-    > Update `Response` to accept the new XML configs.
-    > Update `Maybe` to accept the new XML configs.
-    > Update `Client` to accept the new XML configs.
-
-    ** -------------------------- TODO -------------------------- */
-
-
-
 
     internal static class ExtensibleMarkupLanguage
     {
@@ -79,7 +64,7 @@ namespace FrameworkContainers.Format
         /// <typeparam name="T">The type of object we are operating on.</typeparam>
         /// <param name="value">The object we are operating on.</param>
         /// <returns>The XML string representation of the object.</returns>
-        public static string ModelToXml<T>(T value, XmlOptions options)
+        public static string ModelToXml<T>(T value, XmlWriteOptions options)
         {
             var namespaces = options.RemoveDefaultXmlNamespaces ? new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty }) : null;
             var settings = new XmlWriterSettings
@@ -102,10 +87,10 @@ namespace FrameworkContainers.Format
         /// <typeparam name="T">The Type of the object we are operating on.</typeparam>
         /// <param name="xml">The XML string to deserialize from.</param>
         /// <returns>An object instance.</returns>
-        public static T XmlToModel<T>(string xml)
+        public static T XmlToModel<T>(string xml, XmlReadOptions options)
         {
             using (var stream = new StringStream(xml))
-            using (var reader = XmlDictionaryReader.CreateTextReader(stream, Encoding.Unicode, new XmlDictionaryReaderQuotas { MaxDepth = 32 }, OnClose))
+            using (var reader = XmlDictionaryReader.CreateTextReader(stream, options.Encoding, new XmlDictionaryReaderQuotas { MaxDepth = Constants.Serialize.MAX_DEPTH }, OnClose))
             {
                 var serializer = new XmlSerializer(typeof(T));
                 return (T)serializer.Deserialize(reader);
