@@ -8,6 +8,8 @@ namespace FrameworkContainers.Format
     /// <summary>Json serializer options.</summary>
     public sealed class JsonOptions
     {
+        internal static readonly JsonOptions Default = Performant;
+
         internal JsonSerializerOptions SerializerSettings { get; }
 
         private JsonOptions(JsonSerializerDefaults defaults, JsonNamingPolicy namingPolicy = null)

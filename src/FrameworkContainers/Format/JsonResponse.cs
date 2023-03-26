@@ -10,7 +10,7 @@ namespace FrameworkContainers.Format
 
         private JsonResponse() { }
 
-        public Response<T> ToModel<T>(string json) => ToModel<T>(json, JsonOptions.Performant);
+        public Response<T> ToModel<T>(string json) => ToModel<T>(json, JsonOptions.Default);
 
         public Response<T> ToModel<T>(string json, JsonOptions options)
         {
@@ -29,7 +29,7 @@ namespace FrameworkContainers.Format
             return response;
         }
 
-        public Response<string> FromModel<T>(T model) => FromModel(model, JsonOptions.Performant);
+        public Response<string> FromModel<T>(T model) => FromModel(model, JsonOptions.Default);
 
         public Response<string> FromModel<T>(T model, JsonOptions options)
         {

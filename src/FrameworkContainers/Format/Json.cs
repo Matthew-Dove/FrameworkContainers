@@ -14,7 +14,7 @@ namespace FrameworkContainers.Format
         /// <summary>Access to JSON serialize, and deserialize methods that return the result in a Response container.</summary>
         public static readonly JsonResponse Response = JsonResponse.Instance;
 
-        public static T ToModel<T>(string json) => ToModel<T>(json, JsonOptions.Performant);
+        public static T ToModel<T>(string json) => ToModel<T>(json, JsonOptions.Default);
 
         public static T ToModel<T>(string json, JsonOptions options)
         {
@@ -29,7 +29,7 @@ namespace FrameworkContainers.Format
             return default;
         }
 
-        public static string FromModel<T>(T model) => FromModel(model, JsonOptions.Performant);
+        public static string FromModel<T>(T model) => FromModel(model, JsonOptions.Default);
 
         public static string FromModel<T>(T model, JsonOptions options)
         {

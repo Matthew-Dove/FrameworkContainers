@@ -20,11 +20,11 @@ namespace FrameworkContainers.Format
         /// <param name="removeDefaultXmlNamespaces">Whether or not to remove the default XML namespaces from the output.</param>
         /// <param name="omitXmlDeclaration">Whether or not to omit the XML declaration from the output.</param>
         /// <param name="encoding">The character encoding to use.</param>
-        public XmlWriteOptions(bool removeDefaultXmlNamespaces, bool omitXmlDeclaration, Encoding encoding)
+        public XmlWriteOptions(bool removeDefaultXmlNamespaces = true, bool omitXmlDeclaration = true, Encoding encoding = null)
         {
             RemoveDefaultXmlNamespaces = removeDefaultXmlNamespaces;
             OmitXmlDeclaration = omitXmlDeclaration;
-            Encoding = encoding;
+            Encoding = encoding ?? Encoding.Unicode;
         }
     }
 
@@ -38,9 +38,9 @@ namespace FrameworkContainers.Format
 
         /// <summary>Deserialize options for the XmlSerializer.</summary>
         /// <param name="encoding">The character encoding to use.</param>
-        public XmlReadOptions(Encoding encoding)
+        public XmlReadOptions(Encoding encoding = null)
         {
-            Encoding = encoding;
+            Encoding = encoding ?? Encoding.Unicode;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ContainerExpressions.Containers;
 using FrameworkContainers.Format;
 using FrameworkContainers.Models;
+using FrameworkContainers.Models.Exceptions;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -13,20 +14,23 @@ namespace FrameworkContainers.Network
 
         private HttpMaybe() { }
 
-        private static Maybe<T> Parse<T>(string json) { return Json.Maybe.ToModel<T>(json).Match(Maybe.Create<T>, Maybe.Create<T>); }
+        private static Func<string, Maybe<T>> Parse<T>(JsonOptions options) { return json => Json.Maybe.ToModel<T>(json, options).Match(Maybe.Create<T>, Maybe.Create<T>); }
+
+        private static Func<Task<Either<string, HttpException>>, Maybe<T>> ParseAsync<T>(JsonOptions options) { return x => x.Result.Match(Parse<T>(options), Maybe.Create<T>); }
+
 
         private static Func<string, Maybe<T>> Send<T>(string httpMethod, string url, HttpOptions options, Header[] headers)
         {
             return body => HypertextTransferProtocol
                 .Send(body, url, Constants.Http.JSON_CONTENT, options, Http.AddJsonAccept(headers), httpMethod)
-                .Match(Parse<T>, Maybe.Create<T>);
+                .Match(Parse<T>(options), Maybe.Create<T>);
         }
 
         private static Func<string, Task<Maybe<T>>> SendAsync<T>(HttpMethod httpMethod, string url, HttpOptions options, Header[] headers)
         {
             return body => HypertextTransferProtocol
                 .SendAsync(body, url, Constants.Http.JSON_CONTENT, options, Http.AddJsonAccept(headers), httpMethod)
-                .ContinueWith(static x => x.Result.Match(Parse<T>, Maybe.Create<T>));
+                .ContinueWith(ParseAsync<T>(options));
         }
 
         public Maybe<string> Post(string body, string url, string contentType, params Header[] headers)
@@ -46,7 +50,7 @@ namespace FrameworkContainers.Network
 
         public Maybe<TResponse> PostJson<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers)
         {
-            return Json.Maybe.FromModel(model).Match(
+            return Json.Maybe.FromModel(model, options).Match(
                 Send<TResponse>(Constants.Http.POST, url, options, headers),
                 Maybe.Create<TResponse>
             );
@@ -69,7 +73,7 @@ namespace FrameworkContainers.Network
 
         public Maybe<TResponse> PutJson<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers)
         {
-            return Json.Maybe.FromModel(model).Match(
+            return Json.Maybe.FromModel(model, options).Match(
                 Send<TResponse>(Constants.Http.PUT, url, options, headers),
                 Maybe.Create<TResponse>
             );
@@ -94,7 +98,7 @@ namespace FrameworkContainers.Network
         {
             return HypertextTransferProtocol
                 .Send(string.Empty, url, string.Empty, options, Http.AddJsonAccept(headers), Constants.Http.GET)
-                .Match(Parse<TResponse>, Maybe.Create<TResponse>);
+                .Match(Parse<TResponse>(options), Maybe.Create<TResponse>);
         }
 
         public Maybe<string> Delete(string url, params Header[] headers)
@@ -116,7 +120,7 @@ namespace FrameworkContainers.Network
         {
             return HypertextTransferProtocol
                 .Send(string.Empty, url, string.Empty, options, Http.AddJsonAccept(headers), Constants.Http.DELETE)
-                .Match(Parse<TResponse>, Maybe.Create<TResponse>);
+                .Match(Parse<TResponse>(options), Maybe.Create<TResponse>);
         }
 
         public Task<Maybe<string>> PostAsync(string body, string url, string contentType, params Header[] headers)
@@ -136,7 +140,7 @@ namespace FrameworkContainers.Network
 
         public Task<Maybe<TResponse>> PostJsonAsync<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers)
         {
-            return Json.Maybe.FromModel(model).MatchAsync(
+            return Json.Maybe.FromModel(model, options).MatchAsync(
                 SendAsync<TResponse>(HttpMethod.Post, url, options, headers),
                 Maybe.Create<TResponse>
             );
@@ -159,7 +163,7 @@ namespace FrameworkContainers.Network
 
         public Task<Maybe<TResponse>> PutJsonAsync<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers)
         {
-            return Json.Maybe.FromModel(model).MatchAsync(
+            return Json.Maybe.FromModel(model, options).MatchAsync(
                 SendAsync<TResponse>(HttpMethod.Put, url, options, headers),
                 Maybe.Create<TResponse>
             );
@@ -182,7 +186,7 @@ namespace FrameworkContainers.Network
 
         public Task<Maybe<TResponse>> GetJsonAsync<TResponse>(string url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, Http.AddJsonAccept(headers), HttpMethod.Get).ContinueWith(static x => x.Result.Match(Parse<TResponse>, Maybe.Create<TResponse>));
+            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, Http.AddJsonAccept(headers), HttpMethod.Get).ContinueWith(ParseAsync<TResponse>(options));
         }
 
         public Task<Maybe<string>> DeleteAsync(string url, params Header[] headers)
@@ -202,7 +206,7 @@ namespace FrameworkContainers.Network
 
         public Task<Maybe<TResponse>> DeleteJsonAsync<TResponse>(string url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, Http.AddJsonAccept(headers), HttpMethod.Delete).ContinueWith(static x => x.Result.Match(Parse<TResponse>, Maybe.Create<TResponse>));
+            return HypertextTransferProtocol.SendAsync(string.Empty, url, string.Empty, options, Http.AddJsonAccept(headers), HttpMethod.Delete).ContinueWith(ParseAsync<TResponse>(options));
         }
     }
 }

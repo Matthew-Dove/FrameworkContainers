@@ -23,6 +23,8 @@
             public const string PUT = "PUT";
             public const string PATCH = "PATCH";
             public const string DELETE = "DELETE";
+
+            public const int TIMEOUT_SECONDS = 15;
         }
     }
 }

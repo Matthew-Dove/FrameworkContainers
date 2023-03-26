@@ -12,7 +12,7 @@ namespace FrameworkContainers.Format
 
         private JsonMaybe() { }
 
-        public Maybe<T> ToModel<T>(string json) => ToModel<T>(json, JsonOptions.Performant);
+        public Maybe<T> ToModel<T>(string json) => ToModel<T>(json, JsonOptions.Default);
 
         public Maybe<T> ToModel<T>(string json, JsonOptions options)
         {
@@ -31,7 +31,7 @@ namespace FrameworkContainers.Format
             return maybe;
         }
 
-        public Maybe<string> FromModel<T>(T model) => FromModel(model, JsonOptions.Performant);
+        public Maybe<string> FromModel<T>(T model) => FromModel(model, JsonOptions.Default);
 
         public Maybe<string> FromModel<T>(T model, JsonOptions options)
         {
