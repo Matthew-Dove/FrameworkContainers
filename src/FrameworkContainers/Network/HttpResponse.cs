@@ -10,6 +10,10 @@ namespace FrameworkContainers.Network
 {
     public sealed class HttpResponse
     {
+        internal static readonly HttpResponse Instance = new HttpResponse();
+
+        private HttpResponse() { }
+
         private static Response<T> Error<T>(HttpException ex) { ex.LogValue(ex.ToString()); return new Response<T>(); }
 
         private static Func<string, Response<T>> Send<T>(string httpMethod, string url, HttpOptions options, Header[] headers)
@@ -25,8 +29,6 @@ namespace FrameworkContainers.Network
                 .SendAsync(body, url, Constants.Http.JSON_CONTENT, options, Http.AddJsonAccept(headers), httpMethod)
                 .ContinueWith(static x => x.Result.Match(Json.Response.ToModel<T>, Error<T>));
         }
-
-        internal HttpResponse() { }
 
         public Response<string> Post(string body, string url, string contentType, params Header[] headers)
         {

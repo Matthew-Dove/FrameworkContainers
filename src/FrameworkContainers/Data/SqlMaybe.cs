@@ -14,16 +14,16 @@ namespace FrameworkContainers.Data
 
         public Maybe<T> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
-            return ExecuteReader(reader, usp, Sql.ConnectionString, parameters);
+            return ExecuteReader(reader, usp, SqlOptions.Default, parameters);
         }
 
-        public Maybe<T> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public Maybe<T> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
             var maybe = new Maybe<T>();
 
             try
             {
-                var result = StructuredQueryLanguage.ExecuteReader(reader, usp, connectionString, parameters);
+                var result = StructuredQueryLanguage.ExecuteReader(reader, usp, options.ConnectionString, parameters);
                 maybe = maybe.With(result);
             }
             catch (Exception ex)
@@ -36,16 +36,16 @@ namespace FrameworkContainers.Data
 
         public Maybe<int> ExecuteNonQuery(string usp, params SqlParameter[] parameters)
         {
-            return ExecuteNonQuery(usp, Sql.ConnectionString, parameters);
+            return ExecuteNonQuery(usp, SqlOptions.Default, parameters);
         }
 
-        public Maybe<int> ExecuteNonQuery(string usp, string connectionString, params SqlParameter[] parameters)
+        public Maybe<int> ExecuteNonQuery(string usp, SqlOptions options, params SqlParameter[] parameters)
         {
             var maybe = new Maybe<int>();
 
             try
             {
-                var result = StructuredQueryLanguage.ExecuteNonQuery(usp, connectionString, parameters);
+                var result = StructuredQueryLanguage.ExecuteNonQuery(usp, options.ConnectionString, parameters);
                 maybe = maybe.With(result);
             }
             catch (Exception ex)
@@ -58,16 +58,16 @@ namespace FrameworkContainers.Data
 
         public Maybe<bool> BulkInsert(string tableName, DataTable dataTable)
         {
-            return BulkInsert(tableName, dataTable, Sql.ConnectionString);
+            return BulkInsert(tableName, dataTable, SqlOptions.Default);
         }
 
-        public Maybe<bool> BulkInsert(string tableName, DataTable dataTable, string connectionString)
+        public Maybe<bool> BulkInsert(string tableName, DataTable dataTable, SqlOptions options)
         {
             var maybe = new Maybe<bool>();
 
             try
             {
-                StructuredQueryLanguage.BulkInsert(tableName, dataTable, connectionString);
+                StructuredQueryLanguage.BulkInsert(tableName, dataTable, options.ConnectionString);
                 maybe = maybe.With(true);
             }
             catch (Exception ex)
@@ -80,16 +80,16 @@ namespace FrameworkContainers.Data
 
         public Task<Maybe<T>> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
-            return ExecuteReaderAsync(reader, usp, Sql.ConnectionString, parameters);
+            return ExecuteReaderAsync(reader, usp, SqlOptions.Default, parameters);
         }
 
-        public async Task<Maybe<T>> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public async Task<Maybe<T>> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
             var maybe = new Maybe<T>();
 
             try
             {
-                var result = await StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, connectionString, parameters);
+                var result = await StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, options.ConnectionString, parameters);
                 maybe = maybe.With(result);
             }
             catch (Exception ex)
@@ -102,16 +102,16 @@ namespace FrameworkContainers.Data
 
         public Task<Maybe<int>> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters)
         {
-            return ExecuteNonQueryAsync(usp, Sql.ConnectionString, parameters);
+            return ExecuteNonQueryAsync(usp, SqlOptions.Default, parameters);
         }
 
-        public async Task<Maybe<int>> ExecuteNonQueryAsync(string usp, string connectionString, params SqlParameter[] parameters)
+        public async Task<Maybe<int>> ExecuteNonQueryAsync(string usp, SqlOptions options, params SqlParameter[] parameters)
         {
             var maybe = new Maybe<int>();
 
             try
             {
-                var result = await StructuredQueryLanguage.ExecuteNonQueryAsync(usp, connectionString, parameters);
+                var result = await StructuredQueryLanguage.ExecuteNonQueryAsync(usp, options.ConnectionString, parameters);
                 maybe = maybe.With(result);
             }
             catch (Exception ex)
@@ -124,16 +124,16 @@ namespace FrameworkContainers.Data
 
         public Task<Maybe<bool>> BulkInsertAsync(string tableName, DataTable dataTable)
         {
-            return BulkInsertAsync(tableName, dataTable, Sql.ConnectionString);
+            return BulkInsertAsync(tableName, dataTable, SqlOptions.Default);
         }
 
-        public async Task<Maybe<bool>> BulkInsertAsync(string tableName, DataTable dataTable, string connectionString)
+        public async Task<Maybe<bool>> BulkInsertAsync(string tableName, DataTable dataTable, SqlOptions options)
         {
             var maybe = new Maybe<bool>();
 
             try
             {
-                await StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, connectionString);
+                await StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, options.ConnectionString);
                 maybe = maybe.With(true);
             }
             catch (Exception ex)
@@ -156,9 +156,9 @@ namespace FrameworkContainers.Data
             return SqlMaybe.Instance.ExecuteReader(reader, usp, parameters);
         }
 
-        public Maybe<T> ExecuteReader(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public Maybe<T> ExecuteReader(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return SqlMaybe.Instance.ExecuteReader<T>(reader, usp, connectionString, parameters);
+            return SqlMaybe.Instance.ExecuteReader<T>(reader, usp, options, parameters);
         }
 
         public Maybe<int> ExecuteNonQuery(string usp, params SqlParameter[] parameters)
@@ -166,9 +166,9 @@ namespace FrameworkContainers.Data
             return SqlMaybe.Instance.ExecuteNonQuery(usp, parameters);
         }
 
-        public Maybe<int> ExecuteNonQuery(string usp, string connectionString, params SqlParameter[] parameters)
+        public Maybe<int> ExecuteNonQuery(string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return SqlMaybe.Instance.ExecuteNonQuery(usp, connectionString, parameters);
+            return SqlMaybe.Instance.ExecuteNonQuery(usp, options, parameters);
         }
 
         public Maybe<bool> BulkInsert(string tableName, DataTable dataTable)
@@ -176,9 +176,9 @@ namespace FrameworkContainers.Data
             return SqlMaybe.Instance.BulkInsert(tableName, dataTable);
         }
 
-        public Maybe<bool> BulkInsert(string tableName, DataTable dataTable, string connectionString)
+        public Maybe<bool> BulkInsert(string tableName, DataTable dataTable, SqlOptions options)
         {
-            return SqlMaybe.Instance.BulkInsert(tableName, dataTable, connectionString);
+            return SqlMaybe.Instance.BulkInsert(tableName, dataTable, options);
         }
 
         public Task<Maybe<T>> ExecuteReaderAsync(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
@@ -186,9 +186,9 @@ namespace FrameworkContainers.Data
             return SqlMaybe.Instance.ExecuteReaderAsync(reader, usp, parameters);
         }
 
-        public Task<Maybe<T>> ExecuteReaderAsync(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public Task<Maybe<T>> ExecuteReaderAsync(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return SqlMaybe.Instance.ExecuteReaderAsync(reader, usp, connectionString, parameters);
+            return SqlMaybe.Instance.ExecuteReaderAsync(reader, usp, options, parameters);
         }
 
         public Task<Maybe<int>> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters)
@@ -196,9 +196,9 @@ namespace FrameworkContainers.Data
             return SqlMaybe.Instance.ExecuteNonQueryAsync(usp, parameters);
         }
 
-        public Task<Maybe<int>> ExecuteNonQueryAsync(string usp, string connectionString, params SqlParameter[] parameters)
+        public Task<Maybe<int>> ExecuteNonQueryAsync(string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return SqlMaybe.Instance.ExecuteNonQueryAsync(usp, connectionString, parameters);
+            return SqlMaybe.Instance.ExecuteNonQueryAsync(usp, options, parameters);
         }
 
         public Task<Maybe<bool>> BulkInsertAsync(string tableName, DataTable dataTable)
@@ -206,9 +206,9 @@ namespace FrameworkContainers.Data
             return SqlMaybe.Instance.BulkInsertAsync(tableName, dataTable);
         }
 
-        public Task<Maybe<bool>> BulkInsertAsync(string tableName, DataTable dataTable, string connectionString)
+        public Task<Maybe<bool>> BulkInsertAsync(string tableName, DataTable dataTable, SqlOptions options)
         {
-            return SqlMaybe.Instance.BulkInsertAsync(tableName, dataTable, connectionString);
+            return SqlMaybe.Instance.BulkInsertAsync(tableName, dataTable, options);
         }
     }
 }

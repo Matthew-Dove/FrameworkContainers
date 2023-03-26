@@ -16,62 +16,62 @@ namespace FrameworkContainers.Data
 
         public static T ExecuteReader<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
-            return ExecuteReader(reader, usp, ConnectionString, parameters);
+            return ExecuteReader(reader, usp, SqlOptions.Default, parameters);
         }
 
-        public static T ExecuteReader<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public static T ExecuteReader<T>(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return StructuredQueryLanguage.ExecuteReader(reader, usp, connectionString, parameters);
+            return StructuredQueryLanguage.ExecuteReader(reader, usp, options.ConnectionString, parameters);
         }
 
         public static int ExecuteNonQuery(string usp, params SqlParameter[] parameters)
         {
-            return ExecuteNonQuery(usp, ConnectionString, parameters);
+            return ExecuteNonQuery(usp, SqlOptions.Default, parameters);
         }
 
-        public static int ExecuteNonQuery(string usp, string connectionString, params SqlParameter[] parameters)
+        public static int ExecuteNonQuery(string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return StructuredQueryLanguage.ExecuteNonQuery(usp, connectionString, parameters);
+            return StructuredQueryLanguage.ExecuteNonQuery(usp, options.ConnectionString, parameters);
         }
 
         public static void BulkInsert(string tableName, DataTable dataTable)
         {
-            BulkInsert(tableName, dataTable, ConnectionString);
+            BulkInsert(tableName, dataTable, SqlOptions.Default);
         }
 
-        public static void BulkInsert(string tableName, DataTable dataTable, string connectionString)
+        public static void BulkInsert(string tableName, DataTable dataTable, SqlOptions options)
         {
-            StructuredQueryLanguage.BulkInsert(tableName, dataTable, connectionString);
+            StructuredQueryLanguage.BulkInsert(tableName, dataTable, options.ConnectionString);
         }
 
         public static Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
-            return ExecuteReaderAsync(reader, usp, ConnectionString, parameters);
+            return ExecuteReaderAsync(reader, usp, SqlOptions.Default, parameters);
         }
 
-        public static Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public static Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, connectionString, parameters);
+            return StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, options.ConnectionString, parameters);
         }
 
         public static Task<int> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters)
         {
-            return ExecuteNonQueryAsync(usp, ConnectionString, parameters);
+            return ExecuteNonQueryAsync(usp, SqlOptions.Default, parameters);
         }
 
-        public static Task<int> ExecuteNonQueryAsync(string usp, string connectionString, params SqlParameter[] parameters)
+        public static Task<int> ExecuteNonQueryAsync(string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return StructuredQueryLanguage.ExecuteNonQueryAsync(usp, connectionString, parameters);
+            return StructuredQueryLanguage.ExecuteNonQueryAsync(usp, options.ConnectionString, parameters);
         }
 
         public static Task BulkInsertAsync(string tableName, DataTable dataTable)
         {
-            return BulkInsertAsync(tableName, dataTable, ConnectionString);
+            return BulkInsertAsync(tableName, dataTable, SqlOptions.Default);
         }
 
-        public static Task BulkInsertAsync(string tableName, DataTable dataTable, string connectionString)
+        public static Task BulkInsertAsync(string tableName, DataTable dataTable, SqlOptions options)
         {
-            return StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, connectionString);
+            return StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, options.ConnectionString);
         }
     }
 
@@ -79,7 +79,7 @@ namespace FrameworkContainers.Data
     {
         public static T ExecuteReader<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(connectionString ?? Sql.ConnectionString))
             {
                 connection.Open();
                 using (var command = new SqlCommand(usp, connection))
@@ -96,7 +96,7 @@ namespace FrameworkContainers.Data
 
         public static async Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(connectionString ?? Sql.ConnectionString))
             {
                 await connection.OpenAsync();
                 using (var command = new SqlCommand(usp, connection))
@@ -113,7 +113,7 @@ namespace FrameworkContainers.Data
 
         public static int ExecuteNonQuery(string usp, string connectionString, params SqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(connectionString ?? Sql.ConnectionString))
             {
                 connection.Open();
                 using (var command = new SqlCommand(usp, connection))
@@ -127,7 +127,7 @@ namespace FrameworkContainers.Data
 
         public static async Task<int> ExecuteNonQueryAsync(string usp, string connectionString, params SqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(connectionString ?? Sql.ConnectionString))
             {
                 await connection.OpenAsync();
                 using (var command = new SqlCommand(usp, connection))
@@ -141,7 +141,7 @@ namespace FrameworkContainers.Data
 
         public static void BulkInsert(string tableName, DataTable dataTable, string connectionString)
         {
-            var bulkCopy = new SqlBulkCopy(connectionString) { DestinationTableName = tableName };
+            var bulkCopy = new SqlBulkCopy(connectionString ?? Sql.ConnectionString) { DestinationTableName = tableName };
             try
             {
                 for (int i = 0; i < dataTable.Columns.Count; i++)
@@ -156,7 +156,7 @@ namespace FrameworkContainers.Data
 
         public static async Task BulkInsertAsync(string tableName, DataTable dataTable, string connectionString)
         {
-            var bulkCopy = new SqlBulkCopy(connectionString) { DestinationTableName = tableName };
+            var bulkCopy = new SqlBulkCopy(connectionString ?? Sql.ConnectionString) { DestinationTableName = tableName };
             try
             {
                 for (int i = 0; i < dataTable.Columns.Count; i++)

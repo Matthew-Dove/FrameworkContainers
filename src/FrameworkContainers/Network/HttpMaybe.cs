@@ -9,6 +9,10 @@ namespace FrameworkContainers.Network
 {
     public sealed class HttpMaybe
     {
+        internal static readonly HttpMaybe Instance = new HttpMaybe();
+
+        private HttpMaybe() { }
+
         private static Maybe<T> Parse<T>(string json) { return Json.Maybe.ToModel<T>(json).Match(Maybe.Create<T>, Maybe.Create<T>); }
 
         private static Func<string, Maybe<T>> Send<T>(string httpMethod, string url, HttpOptions options, Header[] headers)
@@ -24,8 +28,6 @@ namespace FrameworkContainers.Network
                 .SendAsync(body, url, Constants.Http.JSON_CONTENT, options, Http.AddJsonAccept(headers), httpMethod)
                 .ContinueWith(static x => x.Result.Match(Parse<T>, Maybe.Create<T>));
         }
-
-        internal HttpMaybe() { }
 
         public Maybe<string> Post(string body, string url, string contentType, params Header[] headers)
         {

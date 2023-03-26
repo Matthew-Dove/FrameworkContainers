@@ -16,9 +16,9 @@ namespace FrameworkContainers.Network
 {
     public static class Http
     {
-        public static readonly HttpResponse Response = new HttpResponse();
+        public static readonly HttpResponse Response = HttpResponse.Instance;
 
-        public static readonly HttpMaybe Maybe = new HttpMaybe();
+        public static readonly HttpMaybe Maybe = HttpMaybe.Instance;
 
         public static string Post(string body, string url, string contentType, params Header[] headers)
         {
