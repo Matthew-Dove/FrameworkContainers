@@ -8,13 +8,15 @@ namespace FrameworkContainers.Format
     /// <summary>Access to XML serialize, and deserialize methods that return the result in a Maybe container.</summary>
     public sealed class XmlMaybe
     {
-        internal XmlMaybe() { }
+        internal static readonly XmlMaybe Instance = new XmlMaybe();
 
-        public Maybe<T, FormatDeserializeException> ToModel<T>(string xml) => ToModel<T>(xml, XmlReadOptions.Default);
+        private XmlMaybe() { }
 
-        public Maybe<T, FormatDeserializeException> ToModel<T>(string xml, XmlReadOptions options)
+        public Maybe<T> ToModel<T>(string xml) => ToModel<T>(xml, XmlReadOptions.Default);
+
+        public Maybe<T> ToModel<T>(string xml, XmlReadOptions options)
         {
-            var maybe = new Maybe<T, FormatDeserializeException>();
+            var maybe = new Maybe<T>();
 
             try
             {
@@ -23,18 +25,17 @@ namespace FrameworkContainers.Format
             }
             catch (Exception ex)
             {
-                ex.LogValue($"Error deserializing format to type {typeof(T).FullName}: {ex}");
                 maybe = maybe.With(new FormatDeserializeException(Constants.Format.DESERIALIZE_ERROR_MESSAGE, ex, FormatRange.Xml, typeof(T), xml));
             }
 
             return maybe;
         }
 
-        public Maybe<string, FormatSerializeException> FromModel<T>(T model) => FromModel(model, XmlWriteOptions.Default);
+        public Maybe<string> FromModel<T>(T model) => FromModel(model, XmlWriteOptions.Default);
 
-        public Maybe<string, FormatSerializeException> FromModel<T>(T model, XmlWriteOptions options)
+        public Maybe<string> FromModel<T>(T model, XmlWriteOptions options)
         {
-            var maybe = new Maybe<string, FormatSerializeException>();
+            var maybe = new Maybe<string>();
 
             try
             {
@@ -43,11 +44,26 @@ namespace FrameworkContainers.Format
             }
             catch (Exception ex)
             {
-                ex.LogValue($"Error serializing format to type {typeof(T).FullName}: {ex}");
                 maybe = maybe.With(new FormatSerializeException(Constants.Format.SERIALIZE_ERROR_MESSAGE, ex, FormatRange.Xml, model));
             }
 
             return maybe;
         }
+    }
+
+    /// <summary>Access to XML serialize, and deserialize methods that return the result in a Maybe container (for a single type).</summary>
+    public sealed class XmlMaybe<T>
+    {
+        internal static readonly XmlMaybe<T> Instance = new XmlMaybe<T>();
+
+        private XmlMaybe() { }
+
+        public Maybe<T> ToModel(string xml) => XmlMaybe.Instance.ToModel<T>(xml);
+
+        public Maybe<T> ToModel(string xml, XmlReadOptions options) => XmlMaybe.Instance.ToModel<T>(xml, options);
+
+        public Maybe<string> FromModel(T model) => XmlMaybe.Instance.FromModel<T>(model);
+
+        public Maybe<string> FromModel(T model, XmlWriteOptions options) => XmlMaybe.Instance.FromModel<T>(model, options);
     }
 }

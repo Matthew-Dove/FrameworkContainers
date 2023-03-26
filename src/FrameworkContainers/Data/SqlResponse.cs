@@ -90,13 +90,6 @@ namespace FrameworkContainers.Data
                 var result = await StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, connectionString, parameters);
                 response = response.With(result);
             }
-            catch (AggregateException ae)
-            {
-                foreach (var e in ae.Flatten().InnerExceptions)
-                {
-                    e.LogValue($"Aggregate error calling {usp} for type {typeof(T).FullName}: {e}");
-                }
-            }
             catch (Exception ex)
             {
                 ex.LogValue($"Error calling {usp} for type {typeof(T).FullName}: {ex}");
@@ -119,13 +112,6 @@ namespace FrameworkContainers.Data
                 var result = await StructuredQueryLanguage.ExecuteNonQueryAsync(usp, connectionString, parameters);
                 response = response.With(result);
             }
-            catch (AggregateException ae)
-            {
-                foreach (var e in ae.Flatten().InnerExceptions)
-                {
-                    e.LogValue($"Aggregate error calling {usp}: {e}");
-                }
-            }
             catch (Exception ex)
             {
                 ex.LogValue($"Error calling {usp}: {ex}");
@@ -147,13 +133,6 @@ namespace FrameworkContainers.Data
             {
                 await StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, connectionString);
                 response = response.AsValid();
-            }
-            catch (AggregateException ae)
-            {
-                foreach (var e in ae.Flatten().InnerExceptions)
-                {
-                    e.LogValue($"Aggregate error calling {tableName}: {e}");
-                }
             }
             catch (Exception ex)
             {

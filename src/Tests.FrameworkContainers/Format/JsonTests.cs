@@ -1017,7 +1017,7 @@ namespace Tests.FrameworkContainers.Format
             var json = "{\"Int\": \"420.69\"}";
 
             var model = Json.Maybe.ToModel<Model>(json);
-            var input = model.Match(_ => string.Empty, x => x.Input);
+            var input = model.Match(_ => string.Empty, x => ((FormatDeserializeException)x).Input);
 
             Assert.AreEqual(json, input);
         }

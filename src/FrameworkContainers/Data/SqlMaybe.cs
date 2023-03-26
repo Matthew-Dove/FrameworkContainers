@@ -2,7 +2,6 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FrameworkContainers.Data
@@ -11,14 +10,14 @@ namespace FrameworkContainers.Data
     {
         internal SqlMaybe() { }
 
-        public Maybe<T, Exception[]> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
+        public Maybe<T> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
             return ExecuteReader(reader, usp, Sql.ConnectionString, parameters);
         }
 
-        public Maybe<T, Exception[]> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public Maybe<T> ExecuteReader<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
         {
-            var maybe = new Maybe<T, Exception[]>();
+            var maybe = new Maybe<T>();
 
             try
             {
@@ -27,20 +26,20 @@ namespace FrameworkContainers.Data
             }
             catch (Exception ex)
             {
-                maybe.With(new Exception[] { ex });
+                maybe = maybe.With(ex);
             }
 
             return maybe;
         }
 
-        public Maybe<int, Exception[]> ExecuteNonQuery(string usp, params SqlParameter[] parameters)
+        public Maybe<int> ExecuteNonQuery(string usp, params SqlParameter[] parameters)
         {
             return ExecuteNonQuery(usp, Sql.ConnectionString, parameters);
         }
 
-        public Maybe<int, Exception[]> ExecuteNonQuery(string usp, string connectionString, params SqlParameter[] parameters)
+        public Maybe<int> ExecuteNonQuery(string usp, string connectionString, params SqlParameter[] parameters)
         {
-            var maybe = new Maybe<int, Exception[]>();
+            var maybe = new Maybe<int>();
 
             try
             {
@@ -49,20 +48,20 @@ namespace FrameworkContainers.Data
             }
             catch (Exception ex)
             {
-                maybe.With(new Exception[] { ex });
+                maybe = maybe.With(ex);
             }
 
             return maybe;
         }
 
-        public Maybe<bool, Exception[]> BulkInsert(string tableName, DataTable dataTable)
+        public Maybe<bool> BulkInsert(string tableName, DataTable dataTable)
         {
             return BulkInsert(tableName, dataTable, Sql.ConnectionString);
         }
 
-        public Maybe<bool, Exception[]> BulkInsert(string tableName, DataTable dataTable, string connectionString)
+        public Maybe<bool> BulkInsert(string tableName, DataTable dataTable, string connectionString)
         {
-            var maybe = new Maybe<bool, Exception[]>();
+            var maybe = new Maybe<bool>();
 
             try
             {
@@ -71,85 +70,73 @@ namespace FrameworkContainers.Data
             }
             catch (Exception ex)
             {
-                maybe.With(new Exception[] { ex });
+                maybe = maybe.With(ex);
             }
 
             return maybe;
         }
 
-        public Task<Maybe<T, Exception[]>> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
+        public Task<Maybe<T>> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
             return ExecuteReaderAsync(reader, usp, Sql.ConnectionString, parameters);
         }
 
-        public async Task<Maybe<T, Exception[]>> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public async Task<Maybe<T>> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
         {
-            var maybe = new Maybe<T, Exception[]>();
+            var maybe = new Maybe<T>();
 
             try
             {
                 var result = await StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, connectionString, parameters);
                 maybe = maybe.With(result);
             }
-            catch (AggregateException ae)
-            {
-                maybe = maybe.With(ae.Flatten().InnerExceptions.ToArray());
-            }
             catch (Exception ex)
             {
-                maybe.With(new Exception[] { ex });
+                maybe = maybe.With(ex);
             }
 
             return maybe;
         }
 
-        public Task<Maybe<int, Exception[]>> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters)
+        public Task<Maybe<int>> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters)
         {
             return ExecuteNonQueryAsync(usp, Sql.ConnectionString, parameters);
         }
 
-        public async Task<Maybe<int, Exception[]>> ExecuteNonQueryAsync(string usp, string connectionString, params SqlParameter[] parameters)
+        public async Task<Maybe<int>> ExecuteNonQueryAsync(string usp, string connectionString, params SqlParameter[] parameters)
         {
-            var maybe = new Maybe<int, Exception[]>();
+            var maybe = new Maybe<int>();
 
             try
             {
                 var result = await StructuredQueryLanguage.ExecuteNonQueryAsync(usp, connectionString, parameters);
                 maybe = maybe.With(result);
             }
-            catch (AggregateException ae)
-            {
-                maybe = maybe.With(ae.Flatten().InnerExceptions.ToArray());
-            }
             catch (Exception ex)
             {
-                maybe.With(new Exception[] { ex });
+                maybe = maybe.With(ex);
             }
 
             return maybe;
         }
 
-        public Task<Maybe<bool, Exception[]>> BulkInsertAsync(string tableName, DataTable dataTable)
+        public Task<Maybe<bool>> BulkInsertAsync(string tableName, DataTable dataTable)
         {
             return BulkInsertAsync(tableName, dataTable, Sql.ConnectionString);
         }
 
-        public async Task<Maybe<bool, Exception[]>> BulkInsertAsync(string tableName, DataTable dataTable, string connectionString)
+        public async Task<Maybe<bool>> BulkInsertAsync(string tableName, DataTable dataTable, string connectionString)
         {
-            var maybe = new Maybe<bool, Exception[]>();
+            var maybe = new Maybe<bool>();
 
             try
             {
                 await StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, connectionString);
                 maybe = maybe.With(true);
             }
-            catch (AggregateException ae)
-            {
-                maybe = maybe.With(ae.Flatten().InnerExceptions.ToArray());
-            }
             catch (Exception ex)
             {
-                maybe.With(new Exception[] { ex });
+                maybe.With(ex);
             }
 
             return maybe;

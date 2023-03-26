@@ -11,10 +11,10 @@ namespace FrameworkContainers.Format
     public static class Xml
     {
         /// <summary>Access to XML serialize, and deserialize methods that return the result in a Maybe container.</summary>
-        public static readonly XmlMaybe Maybe = new XmlMaybe();
+        public static readonly XmlMaybe Maybe = XmlMaybe.Instance;
 
         /// <summary>Access to XML serialize, and deserialize methods that return the result in a Response container.</summary>
-        public static readonly XmlResponse Response = new XmlResponse();
+        public static readonly XmlResponse Response = XmlResponse.Instance;
 
         public static T ToModel<T>(string xml) => ToModel<T>(xml, XmlReadOptions.Default);
 

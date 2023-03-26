@@ -10,11 +10,11 @@ namespace FrameworkContainers.Format
     {
         internal JsonMaybe() { }
 
-        public Maybe<T, FormatDeserializeException> ToModel<T>(string json) => ToModel<T>(json, JsonOptions.Performant);
+        public Maybe<T> ToModel<T>(string json) => ToModel<T>(json, JsonOptions.Performant);
 
-        public Maybe<T, FormatDeserializeException> ToModel<T>(string json, JsonOptions options)
+        public Maybe<T> ToModel<T>(string json, JsonOptions options)
         {
-            var maybe = new Maybe<T, FormatDeserializeException>();
+            var maybe = new Maybe<T>();
 
             try
             {
@@ -30,11 +30,11 @@ namespace FrameworkContainers.Format
             return maybe;
         }
 
-        public Maybe<string, FormatSerializeException> FromModel<T>(T model) => FromModel(model, JsonOptions.Performant);
+        public Maybe<string> FromModel<T>(T model) => FromModel(model, JsonOptions.Performant);
 
-        public Maybe<string, FormatSerializeException> FromModel<T>(T model, JsonOptions options)
+        public Maybe<string> FromModel<T>(T model, JsonOptions options)
         {
-            var maybe = new Maybe<string, FormatSerializeException>();
+            var maybe = new Maybe<string>();
 
             try
             {
