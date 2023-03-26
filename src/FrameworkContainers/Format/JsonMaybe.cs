@@ -58,11 +58,11 @@ namespace FrameworkContainers.Format
 
         private JsonMaybe() { }
 
-        public Maybe<T> ToModel(string json) => JsonMaybe.Instance.ToModel<T>(json, JsonOptions.Performant);
+        public Maybe<T> ToModel(string json) => JsonMaybe.Instance.ToModel<T>(json);
 
         public Maybe<T> ToModel(string json, JsonOptions options) => JsonMaybe.Instance.ToModel<T>(json, options);
 
-        public Maybe<string> FromModel(T model) => JsonMaybe.Instance.FromModel<T>(model, JsonOptions.Performant);
+        public Maybe<string> FromModel(T model) => JsonMaybe.Instance.FromModel<T>(model);
 
         public Maybe<string> FromModel(T model, JsonOptions options) => JsonMaybe.Instance.FromModel<T>(model, options);
     }

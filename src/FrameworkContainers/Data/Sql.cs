@@ -10,9 +10,9 @@ namespace FrameworkContainers.Data
         /// <summary>The connection string to use when not specified.</summary>
         public static string ConnectionString = null;
 
-        public static readonly SqlResponse Response = new SqlResponse();
+        public static readonly SqlResponse Response = SqlResponse.Instance;
 
-        public static readonly SqlMaybe Maybe = new SqlMaybe();
+        public static readonly SqlMaybe Maybe = SqlMaybe.Instance;
 
         public static T ExecuteReader<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
@@ -142,25 +142,31 @@ namespace FrameworkContainers.Data
         public static void BulkInsert(string tableName, DataTable dataTable, string connectionString)
         {
             var bulkCopy = new SqlBulkCopy(connectionString) { DestinationTableName = tableName };
-            for (int i = 0; i < dataTable.Columns.Count; i++)
+            try
             {
-                string columnName = dataTable.Columns[i].ColumnName;
-                bulkCopy.ColumnMappings.Add(columnName, columnName);
+                for (int i = 0; i < dataTable.Columns.Count; i++)
+                {
+                    string columnName = dataTable.Columns[i].ColumnName;
+                    bulkCopy.ColumnMappings.Add(columnName, columnName);
+                }
+                bulkCopy.WriteToServer(dataTable);
             }
-            bulkCopy.WriteToServer(dataTable);
-            bulkCopy.Close();
+            finally { bulkCopy?.Close(); }
         }
 
         public static async Task BulkInsertAsync(string tableName, DataTable dataTable, string connectionString)
         {
             var bulkCopy = new SqlBulkCopy(connectionString) { DestinationTableName = tableName };
-            for (int i = 0; i < dataTable.Columns.Count; i++)
+            try
             {
-                string columnName = dataTable.Columns[i].ColumnName;
-                bulkCopy.ColumnMappings.Add(columnName, columnName);
+                for (int i = 0; i < dataTable.Columns.Count; i++)
+                {
+                    string columnName = dataTable.Columns[i].ColumnName;
+                    bulkCopy.ColumnMappings.Add(columnName, columnName);
+                }
+                await bulkCopy.WriteToServerAsync(dataTable);
             }
-            await bulkCopy.WriteToServerAsync(dataTable);
-            bulkCopy.Close();
+            finally { bulkCopy?.Close(); }
         }
     }
 

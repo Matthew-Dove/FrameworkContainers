@@ -23,7 +23,7 @@
         public string FromModel<T>(T model, JsonOptions options) => Json.FromModel(model, options);
     }
 
-    /// <summary>Dependency inversion alterative to the static class (when you are only using one type).</summary>
+    /// <summary>Dependency inversion alterative to the static class (for a single type).</summary>
     public interface IJsonClient<T>
     {
         JsonMaybe<T> Maybe { get; }
