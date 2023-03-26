@@ -6,7 +6,9 @@ namespace FrameworkContainers.Format
     /// <summary>Access to JSON serialize, and deserialize methods that return the result in a Response container.</summary>
     public sealed class JsonResponse
     {
-        internal JsonResponse() { }
+        internal static readonly JsonResponse Instance = new JsonResponse();
+
+        private JsonResponse() { }
 
         public Response<T> ToModel<T>(string json) => ToModel<T>(json, JsonOptions.Performant);
 
@@ -45,5 +47,21 @@ namespace FrameworkContainers.Format
 
             return response;
         }
+    }
+
+    /// <summary>Access to JSON serialize, and deserialize methods that return the result in a Response container (for a single type).</summary>
+    public sealed class JsonResponse<T>
+    {
+        internal static readonly JsonResponse<T> Instance = new JsonResponse<T>();
+
+        private JsonResponse() { }
+
+        public Response<T> ToModel(string json) => JsonResponse.Instance.ToModel<T>(json, JsonOptions.Performant);
+
+        public Response<T> ToModel(string json, JsonOptions options) => JsonResponse.Instance.ToModel<T>(json, options);
+
+        public Response<string> FromModel(T model) => JsonResponse.Instance.FromModel<T>(model, JsonOptions.Performant);
+
+        public Response<string> FromModel(T model, JsonOptions options) => JsonResponse.Instance.FromModel<T>(model, options);
     }
 }

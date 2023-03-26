@@ -9,10 +9,10 @@ namespace FrameworkContainers.Format
     public static class Json
     {
         /// <summary>Access to JSON serialize, and deserialize methods that return the result in a Maybe container.</summary>
-        public static readonly JsonMaybe Maybe = new JsonMaybe();
+        public static readonly JsonMaybe Maybe = JsonMaybe.Instance;
 
         /// <summary>Access to JSON serialize, and deserialize methods that return the result in a Response container.</summary>
-        public static readonly JsonResponse Response = new JsonResponse();
+        public static readonly JsonResponse Response = JsonResponse.Instance;
 
         public static T ToModel<T>(string json) => ToModel<T>(json, JsonOptions.Performant);
 

@@ -26,8 +26,8 @@
     /// <summary>Dependency inversion alterative to the static class (when you are only using one type).</summary>
     public interface IJsonClient<T>
     {
-        JsonMaybe Maybe { get; }
-        JsonResponse Response { get; }
+        JsonMaybe<T> Maybe { get; }
+        JsonResponse<T> Response { get; }
         T ToModel(string json);
         T ToModel(string json, JsonOptions options);
         string FromModel(T model);
@@ -36,8 +36,8 @@
 
     public sealed class JsonClient<T> : IJsonClient<T>
     {
-        public JsonMaybe Maybe => Json.Maybe;
-        public JsonResponse Response => Json.Response;
+        public JsonMaybe<T> Maybe => JsonMaybe<T>.Instance;
+        public JsonResponse<T> Response => JsonResponse<T>.Instance;
 
         public T ToModel(string json) => Json.ToModel<T>(json);
         public T ToModel(string json, JsonOptions options) => Json.ToModel<T>(json, options);
