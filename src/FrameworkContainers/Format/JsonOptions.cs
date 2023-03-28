@@ -8,7 +8,7 @@ namespace FrameworkContainers.Format
     /// <summary>Json serializer options.</summary>
     public sealed class JsonOptions
     {
-        internal static readonly JsonOptions Default = Performant;
+        internal static JsonOptions Default { get { return Performant; } }
 
         internal JsonSerializerOptions SerializerSettings { get; }
 
@@ -21,7 +21,8 @@ namespace FrameworkContainers.Format
                     new JsonStringEnumConverter(namingPolicy),
                     new JsonStringEnumConverter()
                 },
-                MaxDepth = Constants.Serialize.MAX_DEPTH
+                MaxDepth = Constants.Serialize.MAX_DEPTH,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
 
             if (defaults == JsonSerializerDefaults.Web)
@@ -32,10 +33,7 @@ namespace FrameworkContainers.Format
                 SerializerSettings.PropertyNameCaseInsensitive = true;
                 SerializerSettings.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
                 SerializerSettings.WriteIndented = true;
-                SerializerSettings.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 SerializerSettings.DictionaryKeyPolicy = namingPolicy;
-                SerializerSettings.IgnoreReadOnlyFields = true;
-                SerializerSettings.IgnoreReadOnlyProperties = true;
                 SerializerSettings.IncludeFields = true;
             }
         }

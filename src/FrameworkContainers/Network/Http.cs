@@ -59,10 +59,9 @@ namespace FrameworkContainers.Network
             return PutJson<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
         }
 
-
         public static TResponse PutJson<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(Json.FromModel(model, options), url, Constants.Http.JSON_CONTENT, options, AddJsonAccept(headers), Constants.Http.PUT).Match(Parse<TResponse>(options.Json), static ex => throw ex);
+            return HypertextTransferProtocol.Send(Json.FromModel(model, options), url, Constants.Http.JSON_CONTENT, options, AddJsonAccept(headers), Constants.Http.PUT).Match(Parse<TResponse>(options), static ex => throw ex);
         }
 
         public static string Get(string url, params Header[] headers)

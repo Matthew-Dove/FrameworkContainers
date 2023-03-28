@@ -18,7 +18,6 @@ namespace FrameworkContainers.Network
 
         private static Func<Task<Either<string, HttpException>>, Maybe<T>> ParseAsync<T>(JsonOptions options) { return x => x.Result.Match(Parse<T>(options), Maybe.Create<T>); }
 
-
         private static Func<string, Maybe<T>> Send<T>(string httpMethod, string url, HttpOptions options, Header[] headers)
         {
             return body => HypertextTransferProtocol
