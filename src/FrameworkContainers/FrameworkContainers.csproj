@@ -13,10 +13,10 @@
   </ItemGroup>
 
 	<PropertyGroup>
-		<PackageOutputPath>./nupkg</PackageOutputPath>
+		<PackageOutputPath>..//../nupkg</PackageOutputPath>
 		<id>FrameworkContainers</id>
 		<Authors>Matthew Dove</Authors>
-		<Version>2.2.0</Version>
+		<Version>3.0.0</Version>
 		<Copyright>Matthew Dove. All rights reserved.</Copyright>
 		<PackageLicenseExpression></PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Matthew-Dove/FrameworkContainers</RepositoryUrl>
@@ -27,11 +27,18 @@
 The general idea is to replace common services, with simple types instead, reducing overheads when creating new projects.
 Common services include http, sql, and serialization.
 		</Description>
-		<PackageReleaseNotes>Added types for XML, JSON, HTTP, and SQL.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added JSON options to the HTTP options.</PackageReleaseNotes>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 		<PackageIcon>dove.png</PackageIcon>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageTags>http;json;xml;sql</PackageTags>
+		<PackageId>FrameworkContainers</PackageId>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
