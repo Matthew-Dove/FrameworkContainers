@@ -3,6 +3,17 @@ Useful parts of Frameworks wrapped into single types.
 
 [PM> Install-Package FrameworkContainers](https://www.nuget.org/packages/FrameworkContainers/)  
 
+## TL;DR
+
+Replace what would normally be a whole service, with a single type.  
+Instead of creating some `HttpService` file everytime you start a new project, use the `Http` type instead.  
+Types are created with sensible defaults, sync, async, and error handled versions are also provided.  
+Works with dependency injection frameworks, types are low allocation; preferring to be `static` under the hood.  
+
+```cs
+var response = await Http.PostJsonAsync<TRequest, TResponse>(request, url, headers);
+```
+
 ## Intro
 
 This library contains snippets of code I find myself adding over, and over again to new projects.  
@@ -40,7 +51,7 @@ The `async` APIs are built on top of `System.Net.Http.HttpClient`.
   * Set the content type, and content length.
   * Write in UTF8.
   * Read error responses, adding them to the generated `HttpException`.
-  * Renew DNS every minute (*for the domain(s) you are calling*).
+  * Renew DNS (*for the domain(s) you are calling*).
   * Disable insecure ciphers, only leaving up to date ones active.
 
 ### [Examples]
@@ -57,7 +68,7 @@ Response<string> body = Http.Response.Get("/api/weather");
 
 Get http body `Maybe<T, Exception>`:
 ```cs
-Maybe<string, HttpException> body = Http.Response.Get("/api/weather");
+Maybe<string> body = Http.Maybe.Get("/api/weather");
 ```
 
 Get http body `IHttpClient`:
@@ -113,7 +124,7 @@ Response<User> user = Json.Response.ToModel<User>(json);
 
 Using `Maybe<T, Exception>`:
 ```cs
-Maybe<User, FormatDeserializeException> user = Json.Maybe.ToModel<User>(json);
+Maybe<User> user = Json.Maybe.ToModel<User>(json);
 ```
 
 Using `IJsonClient`:
@@ -156,7 +167,7 @@ Response<User> user = Xml.Response.ToModel<User>(json);
 
 Using `Maybe<T, Exception>`:
 ```cs
-Maybe<User, FormatDeserializeException> user = Xml.Maybe.ToModel<User>(json);
+Maybe<User> user = Xml.Maybe.ToModel<User>(json);
 ```
 
 Using `IXmlClient`:
@@ -232,7 +243,7 @@ Response<int> rows = Sql.Response.ExecuteNonQuery("usp_insert_user", new SqlPara
 
 Using `Maybe<T, Exception>`:
 ```cs
-Maybe<int, Exception> rows = Sql.Maybe.ExecuteNonQuery("usp_insert_user", new SqlParameter("@name", "John Smith"));
+Maybe<int> rows = Sql.Maybe.ExecuteNonQuery("usp_insert_user", new SqlParameter("@name", "John Smith"));
 ```
 
 Using `ISqlClient`:
@@ -290,3 +301,5 @@ public void ConfigureServices(IServiceCollection services)
 
 * Added a maximum to the recursive depth for the XML, and JSON serializers; providing protection against malicious stackoverflow exceptions.
 * Optimized the XML deserializer, to reduce string allocation when writing to a stream; adding seperate read, and write `XmlOptions`.
+* Added JSON options to the HTTP options model.
+* Generally aligned the interfaces between the clients.
