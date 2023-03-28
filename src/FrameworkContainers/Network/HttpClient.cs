@@ -27,6 +27,11 @@ namespace FrameworkContainers.Network
         TResponse DeleteJson<TResponse>(string url, params Header[] headers);
         TResponse DeleteJson<TResponse>(string url, HttpOptions options, params Header[] headers);
 
+        string Patch(string body, string url, string contentType, params Header[] headers);
+        string Patch(string body, string url, string contentType, HttpOptions options, params Header[] headers);
+        TResponse PatchJson<TRequest, TResponse>(TRequest model, string url, params Header[] headers);
+        TResponse PatchJson<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers);
+
         Task<string> PostAsync(string body, string url, string contentType, params Header[] headers);
         Task<string> PostAsync(string body, string url, string contentType, HttpOptions options, params Header[] headers);
         Task<TResponse> PostJsonAsync<TRequest, TResponse>(TRequest model, string url, params Header[] headers);
@@ -46,6 +51,11 @@ namespace FrameworkContainers.Network
         Task<string> DeleteAsync(string url, HttpOptions options, params Header[] headers);
         Task<TResponse> DeleteJsonAsync<TResponse>(string url, params Header[] headers);
         Task<TResponse> DeleteJsonAsync<TResponse>(string url, HttpOptions options, params Header[] headers);
+
+        Task<string> PatchAsync(string body, string url, string contentType, params Header[] headers);
+        Task<string> PatchAsync(string body, string url, string contentType, HttpOptions options, params Header[] headers);
+        Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, string url, params Header[] headers);
+        Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers);
     }
 
     public sealed class HttpClient : IHttpClient
@@ -73,6 +83,11 @@ namespace FrameworkContainers.Network
         public TResponse DeleteJson<TResponse>(string url, params Header[] headers) => Http.DeleteJson<TResponse>(url, headers);
         public TResponse DeleteJson<TResponse>(string url, HttpOptions options, params Header[] headers) => Http.DeleteJson<TResponse>(url, options, headers);
 
+        public string Patch(string body, string url, string contentType, params Header[] headers) => Http.Patch(url, body, contentType, headers);
+        public string Patch(string body, string url, string contentType, HttpOptions options, params Header[] headers) => Http.Patch(url, body, contentType, options, headers);
+        public TResponse PatchJson<TRequest, TResponse>(TRequest model, string url, params Header[] headers) => Http.PatchJson<TRequest, TResponse>(model, url, headers);
+        public TResponse PatchJson<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers) => Http.PatchJson<TRequest, TResponse>(model, url, options, headers);
+
         public Task<string> PostAsync(string body, string url, string contentType, params Header[] headers) => Http.PostAsync(body, url, contentType, headers);
         public Task<string> PostAsync(string body, string url, string contentType, HttpOptions options, params Header[] headers) => Http.PostAsync(body, url, contentType, options, headers);
         public Task<TResponse> PostJsonAsync<TRequest, TResponse>(TRequest model, string url, params Header[] headers) => Http.PostJsonAsync<TRequest, TResponse>(model, url, headers);
@@ -92,5 +107,10 @@ namespace FrameworkContainers.Network
         public Task<string> DeleteAsync(string url, HttpOptions options, params Header[] headers) => Http.DeleteAsync(url, options, headers);
         public Task<TResponse> DeleteJsonAsync<TResponse>(string url, params Header[] headers) => Http.DeleteJsonAsync<TResponse>(url, headers);
         public Task<TResponse> DeleteJsonAsync<TResponse>(string url, HttpOptions options, params Header[] headers) => Http.DeleteJsonAsync<TResponse>(url, options, headers);
+
+        public Task<string> PatchAsync(string body, string url, string contentType, params Header[] headers) => Http.PatchAsync(body, url, contentType, headers);
+        public Task<string> PatchAsync(string body, string url, string contentType, HttpOptions options, params Header[] headers) => Http.PatchAsync(body, url, contentType, options, headers);
+        public Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, string url, params Header[] headers) => Http.PatchJsonAsync<TRequest, TResponse>(model, url, headers);
+        public Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers) => Http.PatchJsonAsync<TRequest, TResponse>(model, url, options, headers);
     }
 }

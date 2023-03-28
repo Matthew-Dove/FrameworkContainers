@@ -31,7 +31,6 @@ namespace FrameworkContainers.Format
                 SerializerSettings.AllowTrailingCommas = true;
                 SerializerSettings.ReadCommentHandling = JsonCommentHandling.Skip;
                 SerializerSettings.PropertyNameCaseInsensitive = true;
-                SerializerSettings.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
                 SerializerSettings.WriteIndented = true;
                 SerializerSettings.DictionaryKeyPolicy = namingPolicy;
                 SerializerSettings.IncludeFields = true;
