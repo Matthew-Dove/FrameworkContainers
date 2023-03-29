@@ -34,6 +34,16 @@ namespace FrameworkContainers.Network
             return HypertextTransferProtocol.Send(body, url, contentType, options, headers, Constants.Http.POST).Match(static x => x, static ex => throw ex);
         }
 
+        public static HttpStatus PostJson<TRequest>(TRequest model, string url, params Header[] headers)
+        {
+            return PostJson<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static HttpStatus PostJson<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(Json.FromModel(model, options), url, Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), AddJsonHeaders(headers), Constants.Http.POST).Match(static x => new HttpStatus(x), static ex => throw ex);
+        }
+
         public static TResponse PostJson<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
         {
             return PostJson<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
@@ -52,6 +62,16 @@ namespace FrameworkContainers.Network
         public static string Put(string body, string url, string contentType, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.Send(body, url, contentType, options, headers, Constants.Http.PUT).Match(static x => x, static ex => throw ex);
+        }
+
+        public static HttpStatus PutJson<TRequest>(TRequest model, string url, params Header[] headers)
+        {
+            return PutJson<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static HttpStatus PutJson<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(Json.FromModel(model, options), url, Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), AddJsonHeaders(headers), Constants.Http.PUT).Match(static x => new HttpStatus(x), static ex => throw ex);
         }
 
         public static TResponse PutJson<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
@@ -114,6 +134,16 @@ namespace FrameworkContainers.Network
             return HypertextTransferProtocol.Send(body, url, contentType, options, headers, Constants.Http.PATCH).Match(static x => x, static ex => throw ex);
         }
 
+        public static HttpStatus PatchJson<TRequest>(TRequest model, string url, params Header[] headers)
+        {
+            return PatchJson<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static HttpStatus PatchJson<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(Json.FromModel(model, options), url, Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), AddJsonHeaders(headers), Constants.Http.PATCH).Match(static x => new HttpStatus(x), static ex => throw ex);
+        }
+
         public static TResponse PatchJson<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
         {
             return PatchJson<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
@@ -134,6 +164,16 @@ namespace FrameworkContainers.Network
             return HypertextTransferProtocol.SendAsync(body, url, contentType, options, headers, HttpMethod.Post).ContinueWith(static x => x.Result.Match(static y => y, static ex => throw ex));
         }
 
+        public static Task<HttpStatus> PostJsonAsync<TRequest>(TRequest model, string url, params Header[] headers)
+        {
+            return PostJsonAsync<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static Task<HttpStatus> PostJsonAsync<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(Json.FromModel(model, options), url, Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), AddJsonHeaders(headers), HttpMethod.Post).ContinueWith(static t => t.Result.Match(static x => new HttpStatus(x), static ex => throw ex));
+        }
+
         public static Task<TResponse> PostJsonAsync<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
         {
             return PostJsonAsync<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
@@ -152,6 +192,16 @@ namespace FrameworkContainers.Network
         public static Task<string> PutAsync(string body, string url, string contentType, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.SendAsync(body, url, contentType, options, headers, HttpMethod.Put).ContinueWith(static x => x.Result.Match(static y => y, static ex => throw ex));
+        }
+
+        public static Task<HttpStatus> PutJsonAsync<TRequest>(TRequest model, string url, params Header[] headers)
+        {
+            return PutJsonAsync<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static Task<HttpStatus> PutJsonAsync<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(Json.FromModel(model, options), url, Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), AddJsonHeaders(headers), HttpMethod.Put).ContinueWith(static t => t.Result.Match(static x => new HttpStatus(x), static ex => throw ex));
         }
 
         public static Task<TResponse> PutJsonAsync<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
@@ -214,6 +264,16 @@ namespace FrameworkContainers.Network
             return HypertextTransferProtocol.SendAsync(body, url, contentType, options, headers, HypertextTransferProtocol.Patch).ContinueWith(static x => x.Result.Match(static y => y, static ex => throw ex));
         }
 
+        public static Task<HttpStatus> PatchJsonAsync<TRequest>(TRequest model, string url, params Header[] headers)
+        {
+            return PatchJsonAsync<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static Task<HttpStatus> PatchJsonAsync<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(Json.FromModel(model, options), url, Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), AddJsonHeaders(headers), HypertextTransferProtocol.Patch).ContinueWith(static t => t.Result.Match(static x => new HttpStatus(x), static ex => throw ex));
+        }
+
         public static Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, string url, params Header[] headers)
         {
             return PatchJsonAsync<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
@@ -233,6 +293,9 @@ namespace FrameworkContainers.Network
             return headers;
         }
     }
+
+    /// <summary>A description of the http status code sent from the server.</summary>
+    public sealed class HttpStatus : Alias<string> { internal HttpStatus(string value) : base(string.IsNullOrEmpty(value) ? Constants.Http.DEFAULT_HTTP_DESCRIPTION : value) { } }
 
     internal static class HypertextTransferProtocol
     {
@@ -287,11 +350,12 @@ namespace FrameworkContainers.Network
                         requestStream.Write(data, 0, data.Length);
                     }
                 }
-                using (var webResponse = request.GetResponse())
+                using (var webResponse = (HttpWebResponse)request.GetResponse())
                 using (var responseStream = webResponse.GetResponseStream())
                 using (var sr = new StreamReader(responseStream))
                 {
                     response = sr.ReadToEnd();
+                    if (options) response = webResponse.StatusDescription;
                 }
             }
             catch (WebException we) when (we.Response is HttpWebResponse httpResponse)
@@ -303,10 +367,11 @@ namespace FrameworkContainers.Network
                 using (var sr = new StreamReader(httpResponse.GetResponseStream())) { responseContent = sr.ReadToEnd(); }
                 httpResponse.Dispose();
                 response = new HttpException($"Error calling {httpMethod}: [{url}].", statusCode, responseContent, we, responseheaders);
+                if (options) response = httpResponse.StatusDescription;
             }
             catch (Exception ex)
             {
-                response = new HttpException($"Error calling {httpMethod}: [{url}].", 504, string.Empty, ex, new Header[0]);
+                response = new HttpException($"Error calling {httpMethod}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
             }
 
             return response;
@@ -333,6 +398,7 @@ namespace FrameworkContainers.Network
                         {
                             var raw = await httpResponse.Message.Content.ReadAsStringAsync().ContinueWith(x => new SocketTimeoutResult(x));
                             response = raw.IsComplete ? raw.Body : string.Empty;
+                            if (options) response = httpResponse.Message.ReasonPhrase;
                         }
                         else
                         {
@@ -344,13 +410,14 @@ namespace FrameworkContainers.Network
                                 rawHeaders = httpResponse.Message.Headers.Select(x => new Header(x.Key, x.Value.First())).ToArray();
                             }
                             response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, rawBody, null, rawHeaders);
+                            if (options) response = httpResponse.Message.ReasonPhrase;
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", 504, string.Empty, ex, new Header[0]);
+                response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
             }
 
             return response;

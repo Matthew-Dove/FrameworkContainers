@@ -4,7 +4,7 @@ namespace FrameworkContainers.Models.Exceptions
 {
     public enum FormatRange { Json, Xml }
 
-    public class FormatDeserializeException : Exception
+    public sealed class FormatDeserializeException : Exception
     {
         public FormatRange Format { get; }
         public Type TargetType { get; }
@@ -18,7 +18,7 @@ namespace FrameworkContainers.Models.Exceptions
         }
     }
 
-    public class FormatSerializeException : Exception
+    public sealed class FormatSerializeException : Exception
     {
         public FormatRange Format { get; }
         public object Model { get; }

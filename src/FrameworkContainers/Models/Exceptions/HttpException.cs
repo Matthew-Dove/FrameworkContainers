@@ -3,7 +3,7 @@ using System;
 
 namespace FrameworkContainers.Models.Exceptions
 {
-    public class HttpException : Exception
+    public sealed class HttpException : Exception
     {
         public int StatusCode { get; }
         public string Body { get; }
