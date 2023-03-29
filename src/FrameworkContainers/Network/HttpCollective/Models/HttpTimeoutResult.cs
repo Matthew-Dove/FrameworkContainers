@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace FrameworkContainers.Network.Models
+namespace FrameworkContainers.Network.HttpCollective.Models
 {
     internal readonly struct HttpTimeoutResult : IDisposable
     {

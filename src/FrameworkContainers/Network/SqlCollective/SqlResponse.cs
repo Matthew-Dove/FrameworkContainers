@@ -1,10 +1,11 @@
 ﻿using ContainerExpressions.Containers;
+using FrameworkContainers.Network.SqlCollective.Models;
 using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
-namespace FrameworkContainers.Data
+namespace FrameworkContainers.Network.SqlCollective
 {
     public sealed class SqlResponse
     {
@@ -153,12 +154,12 @@ namespace FrameworkContainers.Data
 
         public Response<T> ExecuteReader(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
-            return SqlResponse.Instance.ExecuteReader<T>(reader, usp, parameters);
+            return SqlResponse.Instance.ExecuteReader(reader, usp, parameters);
         }
 
         public Response<T> ExecuteReader(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return SqlResponse.Instance.ExecuteReader<T>(reader, usp, options, parameters);
+            return SqlResponse.Instance.ExecuteReader(reader, usp, options, parameters);
         }
 
         public Response<int> ExecuteNonQuery(string usp, params SqlParameter[] parameters)
@@ -183,12 +184,12 @@ namespace FrameworkContainers.Data
 
         public Task<Response<T>> ExecuteReaderAsync(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
-            return SqlResponse.Instance.ExecuteReaderAsync<T>(reader, usp, parameters);
+            return SqlResponse.Instance.ExecuteReaderAsync(reader, usp, parameters);
         }
 
         public Task<Response<T>> ExecuteReaderAsync(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return SqlResponse.Instance.ExecuteReaderAsync<T>(reader, usp, options, parameters);
+            return SqlResponse.Instance.ExecuteReaderAsync(reader, usp, options, parameters);
         }
 
         public Task<Response<int>> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters)

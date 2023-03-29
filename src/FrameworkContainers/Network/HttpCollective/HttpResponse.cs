@@ -3,12 +3,12 @@ using FrameworkContainers.Format.JsonCollective;
 using FrameworkContainers.Format.JsonCollective.Models;
 using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
-using FrameworkContainers.Network.Models;
+using FrameworkContainers.Network.HttpCollective.Models;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace FrameworkContainers.Network
+namespace FrameworkContainers.Network.HttpCollective
 {
     public sealed class HttpResponse
     {

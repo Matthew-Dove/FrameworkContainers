@@ -1,4 +1,4 @@
-﻿namespace FrameworkContainers.Data
+﻿namespace FrameworkContainers.Network.SqlCollective.Models
 {
     public readonly struct SqlOptions
     {

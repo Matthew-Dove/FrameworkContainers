@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FrameworkContainers.Models.JsonConverters
+namespace FrameworkContainers.Format.JsonCollective.Models.Converters
 {
     /// <summary>
     /// <para>Allows parsing of Guids when the json source is null or empty.</para>

@@ -1,4 +1,4 @@
-﻿using FrameworkContainers.Network.Models;
+﻿using FrameworkContainers.Network.HttpCollective.Models;
 using System;
 
 namespace FrameworkContainers.Models.Exceptions

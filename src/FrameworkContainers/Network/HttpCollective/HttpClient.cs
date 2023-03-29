@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using FrameworkContainers.Network.Models;
+using FrameworkContainers.Network.HttpCollective.Models;
 
-namespace FrameworkContainers.Network
+namespace FrameworkContainers.Network.HttpCollective
 {
     public interface IHttpClient
     {

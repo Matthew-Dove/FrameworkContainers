@@ -1,10 +1,11 @@
 ﻿using ContainerExpressions.Containers;
+using FrameworkContainers.Network.SqlCollective.Models;
 using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
-namespace FrameworkContainers.Data
+namespace FrameworkContainers.Network.SqlCollective
 {
     public sealed class SqlMaybe
     {
@@ -158,7 +159,7 @@ namespace FrameworkContainers.Data
 
         public Maybe<T> ExecuteReader(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return SqlMaybe.Instance.ExecuteReader<T>(reader, usp, options, parameters);
+            return SqlMaybe.Instance.ExecuteReader(reader, usp, options, parameters);
         }
 
         public Maybe<int> ExecuteNonQuery(string usp, params SqlParameter[] parameters)

@@ -2,7 +2,7 @@
 using FrameworkContainers.Models;
 using System;
 
-namespace FrameworkContainers.Network
+namespace FrameworkContainers.Network.HttpCollective.Models
 {
     public readonly struct HttpOptions
     {

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace FrameworkContainers.Network.Models
+namespace FrameworkContainers.Network.HttpCollective.Models
 {
     internal readonly struct SocketTimeoutResult
     {

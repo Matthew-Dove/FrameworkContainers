@@ -2,8 +2,9 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using FrameworkContainers.Network.SqlCollective.Models;
 
-namespace FrameworkContainers.Data
+namespace FrameworkContainers.Network.SqlCollective
 {
     /// <summary>Dependency inversion alterative to the static class.</summary>
     public interface ISqlClient

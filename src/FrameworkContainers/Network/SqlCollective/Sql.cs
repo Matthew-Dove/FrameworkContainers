@@ -2,8 +2,9 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using FrameworkContainers.Network.SqlCollective.Models;
 
-namespace FrameworkContainers.Data
+namespace FrameworkContainers.Network.SqlCollective
 {
     public static class Sql
     {
