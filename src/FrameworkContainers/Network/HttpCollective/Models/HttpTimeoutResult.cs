@@ -28,7 +28,7 @@ namespace FrameworkContainers.Network.HttpCollective.Models
         public async Task<string> TryGetBody()
         {
             if (Message?.Content == null) return string.Empty;
-            try { return await Message.Content.ReadAsStringAsync() ?? string.Empty; }
+            try { return await Message.Content.ReadAsStringAsync().ConfigureAwait(false) ?? string.Empty; }
             catch (Exception) { return string.Empty; }
         }
 

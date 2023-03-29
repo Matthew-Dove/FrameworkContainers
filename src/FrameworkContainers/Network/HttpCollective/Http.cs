@@ -296,9 +296,6 @@ namespace FrameworkContainers.Network.HttpCollective
         }
     }
 
-    /// <summary>A description of the http status code sent from the server.</summary>
-    public sealed class HttpStatus : Alias<string> { internal HttpStatus(string value) : base(string.IsNullOrEmpty(value) ? Constants.Http.DEFAULT_HTTP_DESCRIPTION : value) { } }
-
     internal static class HypertextTransferProtocol
     {
         internal static readonly HttpMethod Patch = new HttpMethod(Constants.Http.PATCH); // Patch is missing from .net standard 2.0 (is there in 2.1).
@@ -365,11 +362,12 @@ namespace FrameworkContainers.Network.HttpCollective
                 var responseheaders = new Header[httpResponse.Headers.Count];
                 for (int i = 0; i < httpResponse.Headers.Count; i++) responseheaders[i] = new Header(httpResponse.Headers.Keys[i], httpResponse.Headers[i]);
                 var statusCode = (int)httpResponse.StatusCode;
+                var statusDescription = httpResponse.StatusDescription;
                 var responseContent = string.Empty;
                 using (var sr = new StreamReader(httpResponse.GetResponseStream())) { responseContent = sr.ReadToEnd(); }
                 httpResponse.Dispose();
                 response = new HttpException($"Error calling {httpMethod}: [{url}].", statusCode, responseContent, we, responseheaders);
-                if (options) response = httpResponse.StatusDescription;
+                if (options) response = statusDescription;
             }
             catch (Exception ex)
             {
@@ -394,18 +392,18 @@ namespace FrameworkContainers.Network.HttpCollective
                     {
                         httpRequest.Content = new StringContent(body, Encoding.UTF8, contentType);
                     }
-                    using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token).ContinueWith(x => new HttpTimeoutResult(x)))
+                    using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token).ContinueWith(x => new HttpTimeoutResult(x)).ConfigureAwait(false))
                     {
                         if (httpResponse.IsComplete && httpResponse.Message.IsSuccessStatusCode && httpResponse.Message.Content is object)
                         {
-                            var raw = await httpResponse.Message.Content.ReadAsStringAsync().ContinueWith(x => new SocketTimeoutResult(x));
+                            var raw = await httpResponse.Message.Content.ReadAsStringAsync().ContinueWith(x => new SocketTimeoutResult(x)).ConfigureAwait(false);
                             response = raw.IsComplete ? raw.Body : string.Empty;
                             if (options) response = httpResponse.Message.ReasonPhrase;
                         }
                         else
                         {
                             var rawStatusCode = ((int?)httpResponse.Message?.StatusCode).GetValueOrDefault(504);
-                            var rawBody = await httpResponse.TryGetBody();
+                            var rawBody = await httpResponse.TryGetBody().ConfigureAwait(false);
                             var rawHeaders = new Header[0];
                             if ((httpResponse.Message?.Headers?.Any()).GetValueOrDefault(false))
                             {
