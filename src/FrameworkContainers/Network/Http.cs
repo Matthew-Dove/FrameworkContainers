@@ -1,7 +1,9 @@
 ﻿using ContainerExpressions.Containers;
-using FrameworkContainers.Format;
+using FrameworkContainers.Format.JsonCollective;
+using FrameworkContainers.Format.JsonCollective.Models;
 using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
+using FrameworkContainers.Network.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;

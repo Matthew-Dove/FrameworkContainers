@@ -1,11 +1,10 @@
 ﻿using ContainerExpressions.Containers;
-using FrameworkContainers.Format;
+using FrameworkContainers.Format.JsonCollective;
+using FrameworkContainers.Format.JsonCollective.Models;
 using FrameworkContainers.Models.Exceptions;
 using FrameworkContainers.Models.JsonConverters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Linq;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Tests.FrameworkContainers.Format

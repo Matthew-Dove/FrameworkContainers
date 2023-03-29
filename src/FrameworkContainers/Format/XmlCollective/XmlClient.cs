@@ -1,4 +1,6 @@
-﻿namespace FrameworkContainers.Format
+﻿using FrameworkContainers.Format.XmlCollective.Models;
+
+namespace FrameworkContainers.Format.XmlCollective
 {
     /// <summary>Dependency inversion alterative to the static class.</summary>
     public interface IXmlClient

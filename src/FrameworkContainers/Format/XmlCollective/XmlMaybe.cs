@@ -1,9 +1,10 @@
 ﻿using ContainerExpressions.Containers;
+using FrameworkContainers.Format.XmlCollective.Models;
 using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
 using System;
 
-namespace FrameworkContainers.Format
+namespace FrameworkContainers.Format.XmlCollective
 {
     /// <summary>Access to XML serialize, and deserialize methods that return the result in a Maybe container.</summary>
     public sealed class XmlMaybe

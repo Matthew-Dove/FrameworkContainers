@@ -1,4 +1,6 @@
-﻿namespace FrameworkContainers.Format
+﻿using FrameworkContainers.Format.JsonCollective.Models;
+
+namespace FrameworkContainers.Format.JsonCollective
 {
     /// <summary>Dependency inversion alterative to the static class.</summary>
     public interface IJsonClient
@@ -19,7 +21,7 @@
         public T ToModel<T>(string json) => Json.ToModel<T>(json);
         public T ToModel<T>(string json, JsonOptions options) => Json.ToModel<T>(json, options);
 
-        public string FromModel<T>(T model) =>  Json.FromModel(model);
+        public string FromModel<T>(T model) => Json.FromModel(model);
         public string FromModel<T>(T model, JsonOptions options) => Json.FromModel(model, options);
     }
 

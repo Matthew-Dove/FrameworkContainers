@@ -1,7 +1,8 @@
 ﻿using ContainerExpressions.Containers;
+using FrameworkContainers.Format.JsonCollective.Models;
 using System;
 
-namespace FrameworkContainers.Format
+namespace FrameworkContainers.Format.JsonCollective
 {
     /// <summary>Access to JSON serialize, and deserialize methods that return the result in a Response container.</summary>
     public sealed class JsonResponse

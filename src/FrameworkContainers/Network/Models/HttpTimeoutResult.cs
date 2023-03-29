@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace FrameworkContainers.Network
+namespace FrameworkContainers.Network.Models
 {
     internal readonly struct HttpTimeoutResult : IDisposable
     {
@@ -27,7 +27,7 @@ namespace FrameworkContainers.Network
 
         public async Task<string> TryGetBody()
         {
-            if (Message?.Content == null) return String.Empty;
+            if (Message?.Content == null) return string.Empty;
             try { return await Message.Content.ReadAsStringAsync() ?? string.Empty; }
             catch (Exception) { return string.Empty; }
         }

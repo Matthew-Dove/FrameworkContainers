@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FrameworkContainers.Network
+namespace FrameworkContainers.Network.Models
 {
     public readonly struct Header
     {

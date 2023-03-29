@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace FrameworkContainers.Format
+namespace FrameworkContainers.Format.XmlCollective.Models
 {
     /// <summary>Serialize options for the XmlSerializer.</summary>
     public readonly struct XmlWriteOptions

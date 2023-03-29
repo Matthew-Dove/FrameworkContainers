@@ -1,7 +1,8 @@
 ﻿using ContainerExpressions.Containers;
+using FrameworkContainers.Format.XmlCollective.Models;
 using System;
 
-namespace FrameworkContainers.Format
+namespace FrameworkContainers.Format.XmlCollective
 {
     /// <summary>Access to XML serialize, and deserialize methods that return the result in a Response container.</summary>
     public sealed class XmlResponse

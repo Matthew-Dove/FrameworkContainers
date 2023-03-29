@@ -1,9 +1,8 @@
 ﻿using FrameworkContainers.Models;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FrameworkContainers.Format
+namespace FrameworkContainers.Format.JsonCollective.Models
 {
     /// <summary>Json serializer options.</summary>
     public sealed class JsonOptions

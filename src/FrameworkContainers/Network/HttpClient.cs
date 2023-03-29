@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using FrameworkContainers.Network.Models;
 
 namespace FrameworkContainers.Network
 {

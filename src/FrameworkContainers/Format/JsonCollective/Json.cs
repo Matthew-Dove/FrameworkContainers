@@ -1,9 +1,10 @@
-﻿using FrameworkContainers.Models;
+﻿using FrameworkContainers.Format.JsonCollective.Models;
+using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
 using System;
 using System.Text.Json;
 
-namespace FrameworkContainers.Format
+namespace FrameworkContainers.Format.JsonCollective
 {
     /// <summary>Serialize, and deserialize between string, and model.</summary>
     public static class Json

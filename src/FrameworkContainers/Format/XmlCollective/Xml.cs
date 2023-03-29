@@ -1,11 +1,12 @@
-﻿using FrameworkContainers.Models;
+﻿using FrameworkContainers.Format.XmlCollective.Models;
+using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
 using FrameworkContainers.Models.Streams;
 using System;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace FrameworkContainers.Format
+namespace FrameworkContainers.Format.XmlCollective
 {
     /// <summary>Serialize, and deserialize between string, and model.</summary>
     public static class Xml

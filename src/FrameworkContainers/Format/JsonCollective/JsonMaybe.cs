@@ -1,9 +1,10 @@
 ﻿using ContainerExpressions.Containers;
+using FrameworkContainers.Format.JsonCollective.Models;
 using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
 using System;
 
-namespace FrameworkContainers.Format
+namespace FrameworkContainers.Format.JsonCollective
 {
     /// <summary>Access to JSON serialize, and deserialize methods that return the result in a Maybe container.</summary>
     public sealed class JsonMaybe
