@@ -1,5 +1,6 @@
 ﻿using ContainerExpressions.Containers;
 using FrameworkContainers.Models;
+using System;
 
 namespace FrameworkContainers.Network.HttpCollective.Models
 {
@@ -38,5 +39,10 @@ namespace FrameworkContainers.Network.HttpCollective.Models
     /// </summary>
     public sealed class HttpStatus : Alias<string> {
         internal HttpStatus(string value) : base(string.IsNullOrEmpty(value) ? Constants.Http.DEFAULT_HTTP_DESCRIPTION : value) { }
+    }
+
+    /// <summary>Use this url alias when you'd like to retrieve the http status code, instead of the server's response body.</summary>
+    public sealed class HttpStatusUrl : Alias<Uri> {
+        public HttpStatusUrl(string value) : base(new Uri(value)) { }
     }
 }

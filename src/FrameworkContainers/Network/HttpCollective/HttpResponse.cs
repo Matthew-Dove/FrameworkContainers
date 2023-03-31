@@ -310,4 +310,106 @@ namespace FrameworkContainers.Network.HttpCollective
             return Json.Response.FromModel(model, options).BindAsync(SendAsync<TResponse>(HypertextTransferProtocol.Patch, url, options, headers));
         }
     }
+
+    public sealed class HttpResponse<T>
+    {
+        internal static readonly HttpResponse<T> Instance = new HttpResponse<T>();
+
+        private HttpResponse() { }
+
+        public Response<HttpStatus> PostJson(T model, string url, params Header[] headers) => HttpResponse.Instance.PostJson<T>(model, url, headers);
+
+        public Response<HttpStatus> PostJson(T model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PostJson<T>(model, url, options, headers);
+
+        public Response<T> PostJson<TRequest>(TRequest model, string url, params Header[] headers) => HttpResponse.Instance.PostJson<TRequest, T>(model, url, headers);
+
+        public Response<T> PostJson<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PostJson<TRequest, T>(model, url, options, headers);
+
+        public Response<HttpStatus> PutJson(T model, string url, params Header[] headers) => HttpResponse.Instance.PutJson<T>(model, url, headers);
+
+        public Response<HttpStatus> PutJson(T model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PutJson<T>(model, url, options, headers);
+
+        public Response<T> PutJson<TRequest>(TRequest model, string url, params Header[] headers) => HttpResponse.Instance.PutJson<TRequest, T>(model, url, headers);
+
+        public Response<T> PutJson<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PutJson<TRequest, T>(model, url, options, headers);
+
+        public Response<T> GetJson(string url, params Header[] headers) => HttpResponse.Instance.GetJson<T>(url, headers);
+
+        public Response<T> GetJson(string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.GetJson<T>(url, headers);
+
+        public Response<T> DeleteJson(string url, params Header[] headers) => HttpResponse.Instance.DeleteJson<T>(url, headers);
+
+        public Response<T> DeleteJson(string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.DeleteJson<T>(url, options, headers);
+
+        public Response<HttpStatus> PatchJson(T model, string url, params Header[] headers) => HttpResponse.Instance.PatchJson<T>(model, url, headers);
+
+        public Response<HttpStatus> PatchJson(T model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PatchJson<T>(model, url, options, headers);
+
+        public Response<T> PatchJson<TRequest>(TRequest model, string url, params Header[] headers) => HttpResponse.Instance.PatchJson<TRequest, T>(model, url, headers);
+
+        public Response<T> PatchJson<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PatchJson<TRequest, T>(model, url, options, headers);
+
+        public Task<Response<HttpStatus>> PostJsonAsync(T model, string url, params Header[] headers) => HttpResponse.Instance.PostJsonAsync<T>(model, url, headers);
+
+        public Task<Response<HttpStatus>> PostJsonAsync(T model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PostJsonAsync<T>(model, url, options, headers);
+
+        public Task<Response<T>> PostJsonAsync<TRequest>(TRequest model, string url, params Header[] headers) => HttpResponse.Instance.PostJsonAsync<TRequest, T>(model, url, headers);
+
+        public Task<Response<T>> PostJsonAsync<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PostJsonAsync<TRequest, T>(model, url, options, headers);
+
+        public Task<Response<HttpStatus>> PutJsonAsync(T model, string url, params Header[] headers) => HttpResponse.Instance.PutJsonAsync<T>(model, url, headers);
+
+        public Task<Response<HttpStatus>> PutJsonAsync(T model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PutJsonAsync<T>(model, url, options, headers);
+
+        public Task<Response<TResponse>> PutJsonAsync<TResponse>(T model, string url, params Header[] headers) => HttpResponse.Instance.PutJsonAsync<T, TResponse>(model, url, headers);
+
+        public Task<Response<T>> PutJsonAsync<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PutJsonAsync<TRequest, T>(model, url, options, headers);
+
+        public Task<Response<T>> GetJsonAsync(string url, params Header[] headers) => HttpResponse.Instance.GetJsonAsync<T>(url, headers);
+
+        public Task<Response<T>> GetJsonAsync(string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.GetJsonAsync<T>(url, options, headers);
+
+        public Task<Response<T>> DeleteJsonAsync(string url, params Header[] headers) => HttpResponse.Instance.DeleteJsonAsync<T>(url, headers);
+
+        public Task<Response<T>> DeleteJsonAsync(string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.DeleteJsonAsync<T>(url, options, headers);
+
+        public Task<Response<HttpStatus>> PatchJsonAsync(T model, string url, params Header[] headers) => HttpResponse.Instance.PatchJsonAsync<T>(model, url, headers);
+
+        public Task<Response<HttpStatus>> PatchJsonAsync(T model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PatchJsonAsync<T>(model, url, options, headers);
+
+        public Task<Response<T>> PatchJsonAsync<TRequest>(TRequest model, string url, params Header[] headers) => HttpResponse.Instance.PatchJsonAsync<TRequest, T>(model, url, headers);
+
+        public Task<Response<T>> PatchJsonAsync<TRequest>(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PatchJsonAsync<TRequest, T>(model, url, options, headers);
+    }
+
+    public sealed class HttpResponse<TRequest, TResponse>
+    {
+        internal static readonly HttpResponse<TRequest, TResponse> Instance = new HttpResponse<TRequest, TResponse>();
+
+        private HttpResponse() { }
+
+        public Response<TResponse> PostJson(TRequest model, string url, params Header[] headers) => HttpResponse.Instance.PostJson<TRequest, TResponse>(model, url, headers);
+
+        public Response<TResponse> PostJson(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PostJson<TRequest, TResponse>(model, url, options, headers);
+
+        public Response<TResponse> PutJson(TRequest model, string url, params Header[] headers) => HttpResponse.Instance.PutJson<TRequest, TResponse>(model, url, headers);
+
+        public Response<TResponse> PutJson(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PutJson<TRequest, TResponse>(model, url, options, headers);
+
+        public Response<TResponse> PatchJson(TRequest model, string url, params Header[] headers) => HttpResponse.Instance.PatchJson<TRequest, TResponse>(model, url, headers);
+
+        public Response<TResponse> PatchJson(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PatchJson<TRequest, TResponse>(model, url, options, headers);
+
+        public Task<Response<TResponse>> PostJsonAsync(TRequest model, string url, params Header[] headers) => HttpResponse.Instance.PostJsonAsync<TRequest, TResponse>(model, url, headers);
+
+        public Task<Response<TResponse>> PostJsonAsync(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PostJsonAsync<TRequest, TResponse>(model, url, options, headers);
+
+        public Task<Response<TResponse>> PutJsonAsync(TRequest model, string url, params Header[] headers) => HttpResponse.Instance.PutJsonAsync<TRequest, TResponse>(model, url, headers);
+
+        public Task<Response<TResponse>> PutJsonAsync(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PutJsonAsync<TRequest, TResponse>(model, url, options, headers);
+
+        public Task<Response<TResponse>> PatchJsonAsync(TRequest model, string url, params Header[] headers) => HttpResponse.Instance.PatchJsonAsync<TRequest, TResponse>(model, url, headers);
+
+        public Task<Response<TResponse>> PatchJsonAsync(TRequest model, string url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PatchJsonAsync<TRequest, TResponse>(model, url, options, headers);
+    }
 }

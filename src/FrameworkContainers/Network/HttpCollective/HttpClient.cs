@@ -3,6 +3,7 @@ using FrameworkContainers.Network.HttpCollective.Models;
 
 namespace FrameworkContainers.Network.HttpCollective
 {
+    /// <summary>Dependency inversion alterative to the static class.</summary>
     public interface IHttpClient
     {
         HttpMaybe Maybe { get; }
@@ -138,4 +139,11 @@ namespace FrameworkContainers.Network.HttpCollective
         public Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, string url, params Header[] headers) => Http.PatchJsonAsync<TRequest, TResponse>(model, url, headers);
         public Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, string url, HttpOptions options, params Header[] headers) => Http.PatchJsonAsync<TRequest, TResponse>(model, url, options, headers);
     }
+
+    /// <summary>Dependency inversion alterative to the static class (for a single type).</summary>
+    
+
+    /// <summary>Dependency inversion alterative to the static class (for a two types).</summary>
+
+
 }

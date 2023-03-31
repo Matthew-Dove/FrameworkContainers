@@ -5,13 +5,7 @@ using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
 using FrameworkContainers.Network.HttpCollective.Models;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace FrameworkContainers.Network.HttpCollective
@@ -293,134 +287,6 @@ namespace FrameworkContainers.Network.HttpCollective
             Array.Resize(ref headers, headers.Length + 1);
             headers[headers.Length - 1] = new Header("Accept", Constants.Http.JSON_CONTENT);
             return headers;
-        }
-    }
-
-    internal static class HypertextTransferProtocol
-    {
-        internal static readonly HttpMethod Patch = new HttpMethod(Constants.Http.PATCH); // Patch is missing from .net standard 2.0 (is there in 2.1).
-
-        private static readonly int DNS_RENEW_MILLISECONDS = (int)TimeSpan.FromSeconds(300).TotalMilliseconds;
-        private readonly static System.Net.Http.HttpClient _client = new System.Net.Http.HttpClient();
-        private readonly static HashSet<Uri> _uris = new HashSet<Uri>();
-        private readonly static object _lock = new object();
-
-        static HypertextTransferProtocol()
-        {
-            ServicePointManager.DefaultConnectionLimit = int.MaxValue;
-            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
-            ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Ssl3;
-            ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Tls;
-            ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Tls11;
-        }
-
-        private static void AddDnsRenew(Uri uri)
-        {
-            if (!_uris.Contains(uri))
-            {
-                lock (_lock)
-                {
-                    if (!_uris.Contains(uri))
-                    {
-                        ServicePointManager.FindServicePoint(uri).ConnectionLeaseTimeout = DNS_RENEW_MILLISECONDS;
-                        _uris.Add(uri);
-                    }
-                }
-            }
-        }
-
-        public static Either<string, HttpException> Send(string body, string url, string contentType, HttpOptions options, Header[] headers, string httpMethod)
-        {
-            var response = new Either<string, HttpException>();
-
-            try
-            {
-                var request = WebRequest.Create(url);
-                request.Method = httpMethod;
-                request.Timeout = options * 1000;
-                foreach (var header in headers) request.Headers.Add(header.Key, header.Value);
-                if (!string.IsNullOrEmpty(body) && (Constants.Http.POST.Equals(httpMethod) || Constants.Http.PUT.Equals(httpMethod) || Constants.Http.PATCH.Equals(httpMethod)))
-                {
-                    var data = Encoding.UTF8.GetBytes(body);
-                    request.ContentType = contentType;
-                    request.ContentLength = data.Length;
-                    using (var requestStream = request.GetRequestStream())
-                    {
-                        requestStream.Write(data, 0, data.Length);
-                    }
-                }
-                using (var webResponse = (HttpWebResponse)request.GetResponse())
-                using (var responseStream = webResponse.GetResponseStream())
-                using (var sr = new StreamReader(responseStream))
-                {
-                    response = sr.ReadToEnd();
-                    if (options) response = webResponse.StatusDescription;
-                }
-            }
-            catch (WebException we) when (we.Response is HttpWebResponse httpResponse)
-            {
-                var responseheaders = new Header[httpResponse.Headers.Count];
-                for (int i = 0; i < httpResponse.Headers.Count; i++) responseheaders[i] = new Header(httpResponse.Headers.Keys[i], httpResponse.Headers[i]);
-                var statusCode = (int)httpResponse.StatusCode;
-                var statusDescription = httpResponse.StatusDescription;
-                var responseContent = string.Empty;
-                using (var sr = new StreamReader(httpResponse.GetResponseStream())) { responseContent = sr.ReadToEnd(); }
-                httpResponse.Dispose();
-                response = new HttpException($"Error calling {httpMethod}: [{url}].", statusCode, responseContent, we, responseheaders);
-                if (options) response = statusDescription;
-            }
-            catch (Exception ex)
-            {
-                response = new HttpException($"Error calling {httpMethod}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
-            }
-
-            return response;
-        }
-
-        public static async Task<Either<string, HttpException>> SendAsync(string body, string url, string contentType, HttpOptions options, Header[] headers, HttpMethod httpMethod)
-        {
-            var response = new Either<string, HttpException>();
-
-            try
-            {
-                using (var cts = new CancellationTokenSource(options * 1000))
-                using (var httpRequest = new HttpRequestMessage(httpMethod, url))
-                {
-                    AddDnsRenew(httpRequest.RequestUri);
-                    foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
-                    if (!string.IsNullOrEmpty(body) && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put || httpMethod == Patch))
-                    {
-                        httpRequest.Content = new StringContent(body, Encoding.UTF8, contentType);
-                    }
-                    using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token).ContinueWith(x => new HttpTimeoutResult(x)).ConfigureAwait(false))
-                    {
-                        if (httpResponse.IsComplete && httpResponse.Message.IsSuccessStatusCode && httpResponse.Message.Content is object)
-                        {
-                            var raw = await httpResponse.Message.Content.ReadAsStringAsync().ContinueWith(x => new SocketTimeoutResult(x)).ConfigureAwait(false);
-                            response = raw.IsComplete ? raw.Body : string.Empty;
-                            if (options) response = httpResponse.Message.ReasonPhrase;
-                        }
-                        else
-                        {
-                            var rawStatusCode = ((int?)httpResponse.Message?.StatusCode).GetValueOrDefault(504);
-                            var rawBody = await httpResponse.TryGetBody().ConfigureAwait(false);
-                            var rawHeaders = new Header[0];
-                            if ((httpResponse.Message?.Headers?.Any()).GetValueOrDefault(false))
-                            {
-                                rawHeaders = httpResponse.Message.Headers.Select(x => new Header(x.Key, x.Value.First())).ToArray();
-                            }
-                            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, rawBody, null, rawHeaders);
-                            if (options) response = httpResponse.Message.ReasonPhrase;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
-            }
-
-            return response;
         }
     }
 }

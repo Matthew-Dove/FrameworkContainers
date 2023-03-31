@@ -162,26 +162,6 @@ namespace FrameworkContainers.Network.SqlCollective
             return SqlResponse.Instance.ExecuteReader(reader, usp, options, parameters);
         }
 
-        public Response<int> ExecuteNonQuery(string usp, params SqlParameter[] parameters)
-        {
-            return SqlResponse.Instance.ExecuteNonQuery(usp, parameters);
-        }
-
-        public Response<int> ExecuteNonQuery(string usp, SqlOptions options, params SqlParameter[] parameters)
-        {
-            return SqlResponse.Instance.ExecuteNonQuery(usp, options, parameters);
-        }
-
-        public Response BulkInsert(string tableName, DataTable dataTable)
-        {
-            return SqlResponse.Instance.BulkInsert(tableName, dataTable);
-        }
-
-        public Response BulkInsert(string tableName, DataTable dataTable, SqlOptions options)
-        {
-            return SqlResponse.Instance.BulkInsert(tableName, dataTable, options);
-        }
-
         public Task<Response<T>> ExecuteReaderAsync(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
             return SqlResponse.Instance.ExecuteReaderAsync(reader, usp, parameters);
@@ -190,26 +170,6 @@ namespace FrameworkContainers.Network.SqlCollective
         public Task<Response<T>> ExecuteReaderAsync(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
             return SqlResponse.Instance.ExecuteReaderAsync(reader, usp, options, parameters);
-        }
-
-        public Task<Response<int>> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters)
-        {
-            return SqlResponse.Instance.ExecuteNonQueryAsync(usp, parameters);
-        }
-
-        public Task<Response<int>> ExecuteNonQueryAsync(string usp, SqlOptions options, params SqlParameter[] parameters)
-        {
-            return SqlResponse.Instance.ExecuteNonQueryAsync(usp, options, parameters);
-        }
-
-        public Task<Response> BulkInsertAsync(string tableName, DataTable dataTable)
-        {
-            return SqlResponse.Instance.BulkInsertAsync(tableName, dataTable);
-        }
-
-        public Task<Response> BulkInsertAsync(string tableName, DataTable dataTable, SqlOptions options)
-        {
-            return SqlResponse.Instance.BulkInsertAsync(tableName, dataTable, options);
         }
     }
 }

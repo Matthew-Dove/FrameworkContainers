@@ -2,7 +2,6 @@
 using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
 using System;
-using System.Text.Json;
 
 namespace FrameworkContainers.Format.JsonCollective
 {
@@ -25,7 +24,7 @@ namespace FrameworkContainers.Format.JsonCollective
             }
             catch (Exception ex)
             {
-                JavaScriptObjectNotation.DeserializeError(ex, typeof(T), json);
+                DeserializeError(ex, typeof(T), json);
             }
             return default;
         }
@@ -40,32 +39,19 @@ namespace FrameworkContainers.Format.JsonCollective
             }
             catch (Exception ex)
             {
-                JavaScriptObjectNotation.SerializeError(ex, model);
+                SerializeError(ex, model);
             }
             return default;
         }
-    }
 
-    internal static class JavaScriptObjectNotation
-    {
-        public static void SerializeError(Exception ex, object model)
+        private static void SerializeError(Exception ex, object model)
         {
             throw new FormatSerializeException(Constants.Format.SERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, model);
         }
 
-        public static void DeserializeError(Exception ex, Type targetType, string input)
+        private static void DeserializeError(Exception ex, Type targetType, string input)
         {
             throw new FormatDeserializeException(Constants.Format.DESERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, targetType, input);
-        }
-
-        public static T JsonToModel<T>(string json, JsonOptions options)
-        {
-            return JsonSerializer.Deserialize<T>(string.IsNullOrEmpty(json) ? "null" : json, options.SerializerSettings);
-        }
-
-        public static string ModelToJson<T>(T model, JsonOptions options)
-        {
-            return JsonSerializer.Serialize<T>(model, options.SerializerSettings);
         }
     }
 }

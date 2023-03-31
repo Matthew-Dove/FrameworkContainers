@@ -162,26 +162,6 @@ namespace FrameworkContainers.Network.SqlCollective
             return SqlMaybe.Instance.ExecuteReader(reader, usp, options, parameters);
         }
 
-        public Maybe<int> ExecuteNonQuery(string usp, params SqlParameter[] parameters)
-        {
-            return SqlMaybe.Instance.ExecuteNonQuery(usp, parameters);
-        }
-
-        public Maybe<int> ExecuteNonQuery(string usp, SqlOptions options, params SqlParameter[] parameters)
-        {
-            return SqlMaybe.Instance.ExecuteNonQuery(usp, options, parameters);
-        }
-
-        public Maybe<bool> BulkInsert(string tableName, DataTable dataTable)
-        {
-            return SqlMaybe.Instance.BulkInsert(tableName, dataTable);
-        }
-
-        public Maybe<bool> BulkInsert(string tableName, DataTable dataTable, SqlOptions options)
-        {
-            return SqlMaybe.Instance.BulkInsert(tableName, dataTable, options);
-        }
-
         public Task<Maybe<T>> ExecuteReaderAsync(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {
             return SqlMaybe.Instance.ExecuteReaderAsync(reader, usp, parameters);
@@ -190,26 +170,6 @@ namespace FrameworkContainers.Network.SqlCollective
         public Task<Maybe<T>> ExecuteReaderAsync(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
             return SqlMaybe.Instance.ExecuteReaderAsync(reader, usp, options, parameters);
-        }
-
-        public Task<Maybe<int>> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters)
-        {
-            return SqlMaybe.Instance.ExecuteNonQueryAsync(usp, parameters);
-        }
-
-        public Task<Maybe<int>> ExecuteNonQueryAsync(string usp, SqlOptions options, params SqlParameter[] parameters)
-        {
-            return SqlMaybe.Instance.ExecuteNonQueryAsync(usp, options, parameters);
-        }
-
-        public Task<Maybe<bool>> BulkInsertAsync(string tableName, DataTable dataTable)
-        {
-            return SqlMaybe.Instance.BulkInsertAsync(tableName, dataTable);
-        }
-
-        public Task<Maybe<bool>> BulkInsertAsync(string tableName, DataTable dataTable, SqlOptions options)
-        {
-            return SqlMaybe.Instance.BulkInsertAsync(tableName, dataTable, options);
         }
     }
 }
