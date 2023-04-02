@@ -27,7 +27,7 @@
             public const int TIMEOUT_SECONDS = 15;
 
             public const int DEFAULT_HTTP_CODE = 504;
-            public const string DEFAULT_HTTP_DESCRIPTION = "GatewayTimeout";
+            public const string DEFAULT_HTTP_DESCRIPTION = "Gateway Timeout";
         }
     }
 }

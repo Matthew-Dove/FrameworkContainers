@@ -11,12 +11,15 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using System.Linq;
+using System.Net.Http.Json;
+using System.Net.Http.Headers;
 
 namespace FrameworkContainers.Network.HttpCollective
 {
     internal static class HypertextTransferProtocol
     {
         internal static readonly HttpMethod Patch = new HttpMethod(Constants.Http.PATCH); // Patch is missing from .net standard 2.0 (is there in 2.1).
+        private static readonly MediaTypeHeaderValue _jsonContent = new MediaTypeHeaderValue(Constants.Http.JSON_CONTENT) { CharSet = Encoding.UTF8.WebName };
 
         private static readonly int DNS_RENEW_MILLISECONDS = (int)TimeSpan.FromSeconds(300).TotalMilliseconds;
         private readonly static System.Net.Http.HttpClient _client = new System.Net.Http.HttpClient();
@@ -47,7 +50,7 @@ namespace FrameworkContainers.Network.HttpCollective
             }
         }
 
-        public static Either<string, HttpException> Send(string body, string url, string contentType, HttpOptions options, Header[] headers, string httpMethod)
+        public static Either<string, HttpException> Send(string body, Uri url, string contentType, HttpOptions options, Header[] headers, string httpMethod)
         {
             var response = new Either<string, HttpException>();
 
@@ -95,7 +98,7 @@ namespace FrameworkContainers.Network.HttpCollective
             return response;
         }
 
-        public static async Task<Either<string, HttpException>> SendAsync(string body, string url, string contentType, HttpOptions options, Header[] headers, HttpMethod httpMethod)
+        public static async Task<Either<string, HttpException>> SendAsync(string body, Uri url, string contentType, HttpOptions options, Header[] headers, HttpMethod httpMethod)
         {
             var response = new Either<string, HttpException>();
 
@@ -104,31 +107,171 @@ namespace FrameworkContainers.Network.HttpCollective
                 using (var cts = new CancellationTokenSource(options * 1000))
                 using (var httpRequest = new HttpRequestMessage(httpMethod, url))
                 {
-                    AddDnsRenew(httpRequest.RequestUri);
+                    AddDnsRenew(url);
                     foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
                     if (!string.IsNullOrEmpty(body) && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put || httpMethod == Patch))
                     {
                         httpRequest.Content = new StringContent(body, Encoding.UTF8, contentType);
                     }
-                    using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token).ContinueWith(x => new HttpTimeoutResult(x)).ConfigureAwait(false))
+                    using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token).ContinueWith(HttpResult.Create).ConfigureAwait(false))
                     {
-                        if (httpResponse.IsComplete && httpResponse.Message.IsSuccessStatusCode && httpResponse.Message.Content is object)
+                        if (httpResponse.IsValid && httpResponse.Value.IsSuccessStatusCode && httpResponse.Value.Content is object)
                         {
-                            var raw = await httpResponse.Message.Content.ReadAsStringAsync().ContinueWith(x => new SocketTimeoutResult(x)).ConfigureAwait(false);
-                            response = raw.IsComplete ? raw.Body : string.Empty;
-                            if (options) response = httpResponse.Message.ReasonPhrase;
+                            var raw = await httpResponse.Value.Content.ReadAsStringAsync().ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
+                            response = raw.GetValueOr(default);
+                            if (!raw)
+                            {
+                                var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
+                                var rawHeaders = new Header[0];
+                                if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
+                                {
+                                    rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                                }
+                                response = new HttpException($"Error calling {httpMethod.Method}: [{url}]. Is canceled: {raw.Task.IsCanceled}.", rawStatusCode, string.Empty, raw, rawHeaders);
+                            }
+                            if (options) response = httpResponse.Value.ReasonPhrase;
                         }
                         else
                         {
-                            var rawStatusCode = ((int?)httpResponse.Message?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
+                            var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
                             var rawBody = await httpResponse.TryGetBody().ConfigureAwait(false);
                             var rawHeaders = new Header[0];
-                            if ((httpResponse.Message?.Headers?.Any()).GetValueOrDefault(false))
+                            if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                             {
-                                rawHeaders = httpResponse.Message.Headers.Select(x => new Header(x.Key, x.Value.First())).ToArray();
+                                rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
                             }
-                            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, rawBody, null, rawHeaders);
-                            if (options) response = httpResponse.Message.ReasonPhrase;
+                            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, rawBody, httpResponse, rawHeaders);
+                            if (options) response = httpResponse.Value?.ReasonPhrase ?? Constants.Http.DEFAULT_HTTP_DESCRIPTION;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
+            }
+
+            return response;
+        }
+
+        // Send JSON => Receive HttpStatus -- post | put | patch.
+        public static async Task<Either<HttpStatus, HttpException>> SendJsonStatusAsync<TRequest>(TRequest request, Uri url, HttpOptions options, Header[] headers, HttpMethod httpMethod)
+        {
+            var response = new Either<HttpStatus, HttpException>();
+
+            try
+            {
+                using (var cts = new CancellationTokenSource(options * 1000))
+                using (var httpRequest = new HttpRequestMessage(httpMethod, url))
+                {
+                    AddDnsRenew(url);
+                    foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
+                    httpRequest.Content = JsonContent.Create<TRequest>(request, _jsonContent, options);
+                    using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token).ContinueWith(HttpResult.Create).ConfigureAwait(false))
+                    {
+                        response = new HttpStatus(httpResponse.Value?.ReasonPhrase ?? Constants.Http.DEFAULT_HTTP_DESCRIPTION);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
+            }
+
+            return response;
+        }
+
+        // Send JSON => Receive JSON -- post | put | patch.
+        public static async Task<Either<TResponse, HttpException>> SendJsonAsync<TRequest, TResponse>(TRequest request, Uri url, HttpOptions options, Header[] headers, HttpMethod httpMethod)
+        {
+            var response = new Either<TResponse, HttpException>();
+
+            try
+            {
+                using (var cts = new CancellationTokenSource(options * 1000))
+                using (var httpRequest = new HttpRequestMessage(httpMethod, url))
+                {
+                    AddDnsRenew(url);
+                    foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
+                    httpRequest.Content = JsonContent.Create<TRequest>(request, _jsonContent, options);
+                    using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token).ContinueWith(HttpResult.Create).ConfigureAwait(false))
+                    {
+                        if (httpResponse.IsValid && httpResponse.Value.IsSuccessStatusCode && httpResponse.Value.Content is object)
+                        {
+                            var raw = await httpResponse.Value.Content.ReadFromJsonAsync<TResponse>(options, cts.Token).ContinueWith(HttpResult<TResponse>.Create).ConfigureAwait(false);
+                            response = raw.GetValueOr(default);
+                            if (!raw)
+                            {
+                                var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
+                                var rawHeaders = new Header[0];
+                                if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
+                                {
+                                    rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                                }
+                                response = new HttpException($"Error calling {httpMethod.Method}: [{url}]. Is canceled: {raw.Task.IsCanceled}.", rawStatusCode, string.Empty, raw, rawHeaders);
+                            }
+                        }
+                        else
+                        {
+                            var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
+                            var rawBody = await httpResponse.TryGetBody().ConfigureAwait(false);
+                            var rawHeaders = new Header[0];
+                            if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
+                            {
+                                rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                            }
+                            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, rawBody, httpResponse, rawHeaders);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
+            }
+
+            return response;
+        }
+
+        // () => Receive JSON -- get.
+        public static async Task<Either<TResponse, HttpException>> SendJsonAsync<TResponse>(Uri url, HttpOptions options, Header[] headers, HttpMethod httpMethod)
+        {
+            var response = new Either<TResponse, HttpException>();
+
+            try
+            {
+                using (var cts = new CancellationTokenSource(options * 1000))
+                using (var httpRequest = new HttpRequestMessage(httpMethod, url))
+                {
+                    AddDnsRenew(url);
+                    foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
+                    using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token).ContinueWith(HttpResult.Create).ConfigureAwait(false))
+                    {
+                        if (httpResponse.IsValid && httpResponse.Value.IsSuccessStatusCode && httpResponse.Value.Content is object)
+                        {
+                            var raw = await httpResponse.Value.Content.ReadFromJsonAsync<TResponse>(options, cts.Token).ContinueWith(HttpResult<TResponse>.Create).ConfigureAwait(false);
+                            response = raw.GetValueOr(default);
+                            if (!raw)
+                            {
+                                var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
+                                var rawHeaders = new Header[0];
+                                if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
+                                {
+                                    rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                                }
+                                response = new HttpException($"Error calling {httpMethod.Method}: [{url}]. Is canceled: {raw.Task.IsCanceled}.", rawStatusCode, string.Empty, raw, rawHeaders);
+                            }
+                        }
+                        else
+                        {
+                            var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
+                            var rawBody = await httpResponse.TryGetBody().ConfigureAwait(false);
+                            var rawHeaders = new Header[0];
+                            if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
+                            {
+                                rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                            }
+                            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, rawBody, httpResponse, rawHeaders);
                         }
                     }
                 }

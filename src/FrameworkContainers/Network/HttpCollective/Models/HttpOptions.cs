@@ -1,6 +1,7 @@
 ﻿using FrameworkContainers.Format.JsonCollective.Models;
 using FrameworkContainers.Models;
 using System;
+using System.Text.Json;
 
 namespace FrameworkContainers.Network.HttpCollective.Models
 {
@@ -33,6 +34,8 @@ namespace FrameworkContainers.Network.HttpCollective.Models
             RetrieveHttpStatus = retrieveHttpStatus;
         }
 
+        
+        public static implicit operator JsonSerializerOptions(HttpOptions options) => options.Json.SerializerSettings;
         public static implicit operator JsonOptions(HttpOptions options) => options.Json;
         public static implicit operator int(HttpOptions options) => options.TimeoutSeconds;
         public static implicit operator bool(HttpOptions options) => options.RetrieveHttpStatus;
