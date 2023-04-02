@@ -16,6 +16,8 @@ namespace FrameworkContainers.Network.HttpCollective
 
         private HttpMaybe() { }
 
+        private static Maybe<HttpStatus> IdentityMaybeStatus<E>(Task<Either<string, E>> t) where E : Exception => t.Result.Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.Create<HttpStatus>);
+
         private static Maybe<T> IdentityMaybe<T, E>(Task<Either<T, E>> t) where E : Exception => t.Result.Match(Maybe.Create<T>, Maybe.Create<T>);
 
         private static Func<string, Maybe<T>> Parse<T>(JsonOptions options) { return json => Json.Maybe.ToModel<T>(json, options).Match(Maybe.Create<T>, Maybe.Create<T>); }
@@ -180,26 +182,14 @@ namespace FrameworkContainers.Network.HttpCollective
                 .Match(Parse<TResponse>(options), Maybe.Create<TResponse>);
         }
 
-        public Maybe<string> Delete(Either<string, Uri> url, params Header[] headers)
+        public Maybe<HttpStatus> DeleteStatus(Either<string, Uri> url, params Header[] headers)
         {
-            return Delete(url, HttpOptions.Default, headers);
+            return DeleteStatus(url, HttpOptions.Default, headers);
         }
 
-        public Maybe<string> Delete(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        public Maybe<HttpStatus> DeleteStatus(Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.DELETE).Match(Maybe.Create<string>, Maybe.Create<string>);
-        }
-
-        public Maybe<TResponse> DeleteJson<TResponse>(Either<string, Uri> url, params Header[] headers)
-        {
-            return DeleteJson<TResponse>(url, HttpOptions.Default, headers);
-        }
-
-        public Maybe<TResponse> DeleteJson<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return HypertextTransferProtocol
-                .Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.DELETE)
-                .Match(Parse<TResponse>(options), Maybe.Create<TResponse>);
+            return HypertextTransferProtocol.Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, new HttpOptions(options, retrieveHttpStatus: true), headers, Constants.Http.DELETE).Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.Create<HttpStatus>);
         }
 
         public Task<Maybe<string>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -330,24 +320,14 @@ namespace FrameworkContainers.Network.HttpCollective
             return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get).ContinueWith(ParseAsync<TResponse>(options));
         }
 
-        public Task<Maybe<string>> DeleteAsync(Either<string, Uri> url, params Header[] headers)
+        public Task<Maybe<HttpStatus>> DeleteStatusAsync(Either<string, Uri> url, params Header[] headers)
         {
-            return DeleteAsync(url, HttpOptions.Default, headers);
+            return DeleteStatusAsync(url, HttpOptions.Default, headers);
         }
 
-        public Task<Maybe<string>> DeleteAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        public Task<Maybe<HttpStatus>> DeleteStatusAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Delete).ContinueWith(IdentityMaybe);
-        }
-
-        public Task<Maybe<TResponse>> DeleteJsonAsync<TResponse>(Either<string, Uri> url, params Header[] headers)
-        {
-            return DeleteJsonAsync<TResponse>(url, HttpOptions.Default, headers);
-        }
-
-        public Task<Maybe<TResponse>> DeleteJsonAsync<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Delete).ContinueWith(ParseAsync<TResponse>(options));
+            return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Delete).ContinueWith(IdentityMaybeStatus);
         }
     }
 }

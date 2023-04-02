@@ -37,10 +37,8 @@ namespace FrameworkContainers.Network.HttpCollective
         TResponse GetJson<TResponse>(Either<string, Uri> url, params Header[] headers);
         TResponse GetJson<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
-        string Delete(Either<string, Uri> url, params Header[] headers);
-        string Delete(Either<string, Uri> url, HttpOptions options, params Header[] headers);
-        TResponse DeleteJson<TResponse>(Either<string, Uri> url, params Header[] headers);
-        TResponse DeleteJson<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+        HttpStatus DeleteStatus(Either<string, Uri> url, params Header[] headers);
+        HttpStatus DeleteStatus(Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
         Task<string> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
         Task<string> PostAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
@@ -68,10 +66,8 @@ namespace FrameworkContainers.Network.HttpCollective
         Task<TResponse> GetJsonAsync<TResponse>(Either<string, Uri> url, params Header[] headers);
         Task<TResponse> GetJsonAsync<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
-        Task<string> DeleteAsync(Either<string, Uri> url, params Header[] headers);
-        Task<string> DeleteAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers);
-        Task<TResponse> DeleteJsonAsync<TResponse>(Either<string, Uri> url, params Header[] headers);
-        Task<TResponse> DeleteJsonAsync<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+        Task<HttpStatus> DeleteStatusAsync(Either<string, Uri> url, params Header[] headers);
+        Task<HttpStatus> DeleteStatusAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers);
     }
 
     public sealed class HttpClient : IHttpClient
@@ -105,10 +101,8 @@ namespace FrameworkContainers.Network.HttpCollective
         public TResponse GetJson<TResponse>(Either<string, Uri> url, params Header[] headers) => Http.GetJson<TResponse>(url, headers);
         public TResponse GetJson<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.GetJson<TResponse>(url, options, headers);
 
-        public string Delete(Either<string, Uri> url, params Header[] headers) => Http.Delete(url, headers);
-        public string Delete(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.Delete(url, options, headers);
-        public TResponse DeleteJson<TResponse>(Either<string, Uri> url, params Header[] headers) => Http.DeleteJson<TResponse>(url, headers);
-        public TResponse DeleteJson<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.DeleteJson<TResponse>(url, options, headers);
+        public HttpStatus DeleteStatus(Either<string, Uri> url, params Header[] headers) => Http.DeleteStatus(url, headers);
+        public HttpStatus DeleteStatus(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.DeleteStatus(url, options, headers);
 
         public Task<string> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.PostAsync(body, url, contentType, headers);
         public Task<string> PostAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.PostAsync(body, url, contentType, options, headers);
@@ -136,10 +130,8 @@ namespace FrameworkContainers.Network.HttpCollective
         public Task<TResponse> GetJsonAsync<TResponse>(Either<string, Uri> url, params Header[] headers) => Http.GetJsonAsync<TResponse>(url, headers);
         public Task<TResponse> GetJsonAsync<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.GetJsonAsync<TResponse>(url, options, headers);
 
-        public Task<string> DeleteAsync(Either<string, Uri> url, params Header[] headers) => Http.DeleteAsync(url, headers);
-        public Task<string> DeleteAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.DeleteAsync(url, options, headers);
-        public Task<TResponse> DeleteJsonAsync<TResponse>(Either<string, Uri> url, params Header[] headers) => Http.DeleteJsonAsync<TResponse>(url, headers);
-        public Task<TResponse> DeleteJsonAsync<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.DeleteJsonAsync<TResponse>(url, options, headers);
+        public Task<HttpStatus> DeleteStatusAsync(Either<string, Uri> url, params Header[] headers) => Http.DeleteStatusAsync(url, headers);
+        public Task<HttpStatus> DeleteStatusAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.DeleteStatusAsync(url, options, headers);
     }
 
     /// <summary>Dependency inversion alterative to the static class (for a single type).</summary>

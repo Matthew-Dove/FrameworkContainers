@@ -38,5 +38,6 @@ namespace FrameworkContainers.Network.HttpCollective.Models
     /// </summary>
     public sealed class HttpStatus : Alias<string> {
         internal HttpStatus(string value) : base(string.IsNullOrEmpty(value) ? Constants.Http.DEFAULT_HTTP_DESCRIPTION : value) { }
+        internal static HttpStatus Create(string value) => new HttpStatus(value);
     }
 }

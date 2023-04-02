@@ -16,6 +16,8 @@ namespace FrameworkContainers.Network.HttpCollective
 
         private HttpResponse() { }
 
+        private static Response<HttpStatus> IdentityResponseStatus<E>(Task<Either<string, E>> t) where E : Exception => t.Result.Match(static x => Response.Create(HttpStatus.Create(x)), Error<HttpStatus>);
+
         private static Response<T> IdentityResponse<T, E>(Task<Either<T, E>> t) where E : Exception => t.Result.Match(Response.Create<T>, Error<T>);
 
         private static Func<string, Response<T>> Parse<T>(JsonOptions options) { return json => Json.Response.ToModel<T>(json, options); }
@@ -162,24 +164,14 @@ namespace FrameworkContainers.Network.HttpCollective
             return HypertextTransferProtocol.Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.GET).Match(Parse<TResponse>(options), Error<TResponse>);
         }
 
-        public Response<string> Delete(Either<string, Uri> url, params Header[] headers)
+        public Response<HttpStatus> DeleteStatus(Either<string, Uri> url, params Header[] headers)
         {
-            return Delete(url, HttpOptions.Default, headers);
+            return DeleteStatus(url, HttpOptions.Default, headers);
         }
 
-        public Response<string> Delete(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        public Response<HttpStatus> DeleteStatus(Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.DELETE).Match(Response.Create, Error<string>);
-        }
-
-        public Response<TResponse> DeleteJson<TResponse>(Either<string, Uri> url, params Header[] headers)
-        {
-            return DeleteJson<TResponse>(url, HttpOptions.Default, headers);
-        }
-
-        public Response<TResponse> DeleteJson<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return HypertextTransferProtocol.Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.DELETE).Match(Parse<TResponse>(options), Error<TResponse>);
+            return HypertextTransferProtocol.Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, new HttpOptions(options, retrieveHttpStatus: true), headers, Constants.Http.DELETE).Match(static x => Response.Create(HttpStatus.Create(x)), Error<HttpStatus>);
         }
 
         public Task<Response<string>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -292,24 +284,14 @@ namespace FrameworkContainers.Network.HttpCollective
             return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get).ContinueWith(ParseAsync<TResponse>(options));
         }
 
-        public Task<Response<string>> DeleteAsync(Either<string, Uri> url, params Header[] headers)
+        public Task<Response<HttpStatus>> DeleteStatusAsync(Either<string, Uri> url, params Header[] headers)
         {
-            return DeleteAsync(url, HttpOptions.Default, headers);
+            return DeleteStatusAsync(url, HttpOptions.Default, headers);
         }
 
-        public Task<Response<string>> DeleteAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        public Task<Response<HttpStatus>> DeleteStatusAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Delete).ContinueWith(IdentityResponse);
-        }
-
-        public Task<Response<TResponse>> DeleteJsonAsync<TResponse>(Either<string, Uri> url, params Header[] headers)
-        {
-            return DeleteJsonAsync<TResponse>(url, HttpOptions.Default, headers);
-        }
-
-        public Task<Response<TResponse>> DeleteJsonAsync<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Delete).ContinueWith(ParseAsync<TResponse>(options));
+            return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Delete).ContinueWith(IdentityResponseStatus);
         }
     }
 
@@ -347,10 +329,6 @@ namespace FrameworkContainers.Network.HttpCollective
 
         public Response<T> GetJson(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.GetJson<T>(url, headers);
 
-        public Response<T> DeleteJson(Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.DeleteJson<T>(url, headers);
-
-        public Response<T> DeleteJson(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.DeleteJson<T>(url, options, headers);
-
         public Task<Response<HttpStatus>> PostJsonAsync(T model, Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.PostJsonAsync<T>(model, url, headers);
 
         public Task<Response<HttpStatus>> PostJsonAsync(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PostJsonAsync<T>(model, url, options, headers);
@@ -378,10 +356,6 @@ namespace FrameworkContainers.Network.HttpCollective
         public Task<Response<T>> GetJsonAsync(Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.GetJsonAsync<T>(url, headers);
 
         public Task<Response<T>> GetJsonAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.GetJsonAsync<T>(url, options, headers);
-
-        public Task<Response<T>> DeleteJsonAsync(Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.DeleteJsonAsync<T>(url, headers);
-
-        public Task<Response<T>> DeleteJsonAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.DeleteJsonAsync<T>(url, options, headers);
     }
 
     public sealed class HttpResponse<TRequest, TResponse>
