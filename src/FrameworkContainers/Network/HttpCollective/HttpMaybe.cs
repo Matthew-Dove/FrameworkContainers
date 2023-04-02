@@ -122,6 +122,42 @@ namespace FrameworkContainers.Network.HttpCollective
             );
         }
 
+        public Maybe<string> Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+        {
+            return Patch(body, url, contentType, HttpOptions.Default, headers);
+        }
+
+        public Maybe<string> Patch(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PATCH).Match(Maybe.Create<string>, Maybe.Create<string>);
+        }
+
+        public Maybe<HttpStatus> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PatchJson<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public Maybe<HttpStatus> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        {
+            return Json.Maybe.FromModel(model, options).Match(
+                Send(Constants.Http.PATCH, url, options, headers),
+                Maybe.Create<HttpStatus>
+            );
+        }
+
+        public Maybe<TResponse> PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PatchJson<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
+        }
+
+        public Maybe<TResponse> PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        {
+            return Json.Maybe.FromModel(model, options).Match(
+                Send<TResponse>(Constants.Http.PATCH, url, options, headers),
+                Maybe.Create<TResponse>
+            );
+        }
+
         public Maybe<string> Get(Either<string, Uri> url, params Header[] headers)
         {
             return Get(url, HttpOptions.Default, headers);
@@ -164,42 +200,6 @@ namespace FrameworkContainers.Network.HttpCollective
             return HypertextTransferProtocol
                 .Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.DELETE)
                 .Match(Parse<TResponse>(options), Maybe.Create<TResponse>);
-        }
-
-        public Maybe<string> Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers)
-        {
-            return Patch(body, url, contentType, HttpOptions.Default, headers);
-        }
-
-        public Maybe<string> Patch(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
-        {
-            return HypertextTransferProtocol.Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PATCH).Match(Maybe.Create<string>, Maybe.Create<string>);
-        }
-
-        public Maybe<HttpStatus> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
-        {
-            return PatchJson<TRequest>(model, url, HttpOptions.Default, headers);
-        }
-
-        public Maybe<HttpStatus> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return Json.Maybe.FromModel(model, options).Match(
-                Send(Constants.Http.PATCH, url, options, headers),
-                Maybe.Create<HttpStatus>
-            );
-        }
-
-        public Maybe<TResponse> PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
-        {
-            return PatchJson<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
-        }
-
-        public Maybe<TResponse> PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return Json.Maybe.FromModel(model, options).Match(
-                Send<TResponse>(Constants.Http.PATCH, url, options, headers),
-                Maybe.Create<TResponse>
-            );
         }
 
         public Task<Maybe<string>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -274,6 +274,42 @@ namespace FrameworkContainers.Network.HttpCollective
             );
         }
 
+        public Task<Maybe<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+        {
+            return PatchAsync(body, url, contentType, HttpOptions.Default, headers);
+        }
+
+        public Task<Maybe<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch).ContinueWith(IdentityMaybe);
+        }
+
+        public Task<Maybe<HttpStatus>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PatchJsonAsync<TRequest, HttpStatus>(model, url, HttpOptions.Default, headers);
+        }
+
+        public Task<Maybe<HttpStatus>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        {
+            return Json.Maybe.FromModel(model, options).MatchAsync(
+                SendAsync(HypertextTransferProtocol.Patch, url, options, headers),
+                Maybe.Create<HttpStatus>
+            );
+        }
+
+        public Task<Maybe<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PatchJsonAsync<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
+        }
+
+        public Task<Maybe<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        {
+            return Json.Maybe.FromModel(model, options).MatchAsync(
+                SendAsync<TResponse>(HypertextTransferProtocol.Patch, url, options, headers),
+                Maybe.Create<TResponse>
+            );
+        }
+
         public Task<Maybe<string>> GetAsync(Either<string, Uri> url, params Header[] headers)
         {
             return GetAsync(url, HttpOptions.Default, headers);
@@ -312,42 +348,6 @@ namespace FrameworkContainers.Network.HttpCollective
         public Task<Maybe<TResponse>> DeleteJsonAsync<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Delete).ContinueWith(ParseAsync<TResponse>(options));
-        }
-
-        public Task<Maybe<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
-        {
-            return PatchAsync(body, url, contentType, HttpOptions.Default, headers);
-        }
-
-        public Task<Maybe<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
-        {
-            return HypertextTransferProtocol.SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch).ContinueWith(IdentityMaybe);
-        }
-
-        public Task<Maybe<HttpStatus>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
-        {
-            return PatchJsonAsync<TRequest, HttpStatus>(model, url, HttpOptions.Default, headers);
-        }
-
-        public Task<Maybe<HttpStatus>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return Json.Maybe.FromModel(model, options).MatchAsync(
-                SendAsync(HypertextTransferProtocol.Patch, url, options, headers),
-                Maybe.Create<HttpStatus>
-            );
-        }
-
-        public Task<Maybe<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
-        {
-            return PatchJsonAsync<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
-        }
-
-        public Task<Maybe<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return Json.Maybe.FromModel(model, options).MatchAsync(
-                SendAsync<TResponse>(HypertextTransferProtocol.Patch, url, options, headers),
-                Maybe.Create<TResponse>
-            );
         }
     }
 }

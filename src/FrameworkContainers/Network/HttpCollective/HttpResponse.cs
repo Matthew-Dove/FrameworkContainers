@@ -112,6 +112,36 @@ namespace FrameworkContainers.Network.HttpCollective
             return Json.Response.FromModel(model, options).Bind(Send<TResponse>(Constants.Http.PUT, url, options, headers));
         }
 
+        public Response<string> Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+        {
+            return Patch(body, url, contentType, HttpOptions.Default, headers);
+        }
+
+        public Response<string> Patch(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PATCH).Match(Response.Create, Error<string>);
+        }
+
+        public Response<HttpStatus> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PatchJson<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public Response<HttpStatus> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        {
+            return Json.Response.FromModel(model, options).Bind(Send(Constants.Http.PATCH, url, options, headers));
+        }
+
+        public Response<TResponse> PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PatchJson<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
+        }
+
+        public Response<TResponse> PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        {
+            return Json.Response.FromModel(model, options).Bind(Send<TResponse>(Constants.Http.PATCH, url, options, headers));
+        }
+
         public Response<string> Get(Either<string, Uri> url, params Header[] headers)
         {
             return Get(url, HttpOptions.Default, headers);
@@ -150,36 +180,6 @@ namespace FrameworkContainers.Network.HttpCollective
         public Response<TResponse> DeleteJson<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.DELETE).Match(Parse<TResponse>(options), Error<TResponse>);
-        }
-
-        public Response<string> Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers)
-        {
-            return Patch(body, url, contentType, HttpOptions.Default, headers);
-        }
-
-        public Response<string> Patch(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
-        {
-            return HypertextTransferProtocol.Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PATCH).Match(Response.Create, Error<string>);
-        }
-
-        public Response<HttpStatus> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
-        {
-            return PatchJson<TRequest>(model, url, HttpOptions.Default, headers);
-        }
-
-        public Response<HttpStatus> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return Json.Response.FromModel(model, options).Bind(Send(Constants.Http.PATCH, url, options, headers));
-        }
-
-        public Response<TResponse> PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
-        {
-            return PatchJson<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
-        }
-
-        public Response<TResponse> PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return Json.Response.FromModel(model, options).Bind(Send<TResponse>(Constants.Http.PATCH, url, options, headers));
         }
 
         public Task<Response<string>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -242,6 +242,36 @@ namespace FrameworkContainers.Network.HttpCollective
             return Json.Response.FromModel(model, options).BindAsync(SendAsync<TResponse>(HttpMethod.Put, url, options, headers));
         }
 
+        public Task<Response<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+        {
+            return PatchAsync(body, url, contentType, HttpOptions.Default, headers);
+        }
+
+        public Task<Response<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch).ContinueWith(IdentityResponse);
+        }
+
+        public Task<Response<HttpStatus>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PutJsonAsync<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public Task<Response<HttpStatus>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        {
+            return Json.Response.FromModel(model, options).BindAsync(SendAsync(HypertextTransferProtocol.Patch, url, options, headers));
+        }
+
+        public Task<Response<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PutJsonAsync<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
+        }
+
+        public Task<Response<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        {
+            return Json.Response.FromModel(model, options).BindAsync(SendAsync<TResponse>(HypertextTransferProtocol.Patch, url, options, headers));
+        }
+
         public Task<Response<string>> GetAsync(Either<string, Uri> url, params Header[] headers)
         {
             return GetAsync(url, HttpOptions.Default, headers);
@@ -281,36 +311,6 @@ namespace FrameworkContainers.Network.HttpCollective
         {
             return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Delete).ContinueWith(ParseAsync<TResponse>(options));
         }
-
-        public Task<Response<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
-        {
-            return PatchAsync(body, url, contentType, HttpOptions.Default, headers);
-        }
-
-        public Task<Response<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
-        {
-            return HypertextTransferProtocol.SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch).ContinueWith(IdentityResponse);
-        }
-
-        public Task<Response<HttpStatus>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
-        {
-            return PutJsonAsync<TRequest>(model, url, HttpOptions.Default, headers);
-        }
-
-        public Task<Response<HttpStatus>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return Json.Response.FromModel(model, options).BindAsync(SendAsync(HypertextTransferProtocol.Patch, url, options, headers));
-        }
-
-        public Task<Response<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
-        {
-            return PutJsonAsync<TRequest, TResponse>(model, url, HttpOptions.Default, headers);
-        }
-
-        public Task<Response<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
-        {
-            return Json.Response.FromModel(model, options).BindAsync(SendAsync<TResponse>(HypertextTransferProtocol.Patch, url, options, headers));
-        }
     }
 
     public sealed class HttpResponse<T>
@@ -335,14 +335,6 @@ namespace FrameworkContainers.Network.HttpCollective
 
         public Response<T> PutJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PutJson<TRequest, T>(model, url, options, headers);
 
-        public Response<T> GetJson(Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.GetJson<T>(url, headers);
-
-        public Response<T> GetJson(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.GetJson<T>(url, headers);
-
-        public Response<T> DeleteJson(Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.DeleteJson<T>(url, headers);
-
-        public Response<T> DeleteJson(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.DeleteJson<T>(url, options, headers);
-
         public Response<HttpStatus> PatchJson(T model, Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.PatchJson<T>(model, url, headers);
 
         public Response<HttpStatus> PatchJson(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PatchJson<T>(model, url, options, headers);
@@ -350,6 +342,14 @@ namespace FrameworkContainers.Network.HttpCollective
         public Response<T> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.PatchJson<TRequest, T>(model, url, headers);
 
         public Response<T> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PatchJson<TRequest, T>(model, url, options, headers);
+
+        public Response<T> GetJson(Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.GetJson<T>(url, headers);
+
+        public Response<T> GetJson(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.GetJson<T>(url, headers);
+
+        public Response<T> DeleteJson(Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.DeleteJson<T>(url, headers);
+
+        public Response<T> DeleteJson(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.DeleteJson<T>(url, options, headers);
 
         public Task<Response<HttpStatus>> PostJsonAsync(T model, Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.PostJsonAsync<T>(model, url, headers);
 
@@ -367,14 +367,6 @@ namespace FrameworkContainers.Network.HttpCollective
 
         public Task<Response<T>> PutJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PutJsonAsync<TRequest, T>(model, url, options, headers);
 
-        public Task<Response<T>> GetJsonAsync(Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.GetJsonAsync<T>(url, headers);
-
-        public Task<Response<T>> GetJsonAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.GetJsonAsync<T>(url, options, headers);
-
-        public Task<Response<T>> DeleteJsonAsync(Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.DeleteJsonAsync<T>(url, headers);
-
-        public Task<Response<T>> DeleteJsonAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.DeleteJsonAsync<T>(url, options, headers);
-
         public Task<Response<HttpStatus>> PatchJsonAsync(T model, Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.PatchJsonAsync<T>(model, url, headers);
 
         public Task<Response<HttpStatus>> PatchJsonAsync(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PatchJsonAsync<T>(model, url, options, headers);
@@ -382,6 +374,14 @@ namespace FrameworkContainers.Network.HttpCollective
         public Task<Response<T>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.PatchJsonAsync<TRequest, T>(model, url, headers);
 
         public Task<Response<T>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.PatchJsonAsync<TRequest, T>(model, url, options, headers);
+
+        public Task<Response<T>> GetJsonAsync(Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.GetJsonAsync<T>(url, headers);
+
+        public Task<Response<T>> GetJsonAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.GetJsonAsync<T>(url, options, headers);
+
+        public Task<Response<T>> DeleteJsonAsync(Either<string, Uri> url, params Header[] headers) => HttpResponse.Instance.DeleteJsonAsync<T>(url, headers);
+
+        public Task<Response<T>> DeleteJsonAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpResponse.Instance.DeleteJsonAsync<T>(url, options, headers);
     }
 
     public sealed class HttpResponse<TRequest, TResponse>
