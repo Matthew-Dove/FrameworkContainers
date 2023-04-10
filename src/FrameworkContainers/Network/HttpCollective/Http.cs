@@ -34,12 +34,22 @@ namespace FrameworkContainers.Network.HttpCollective
             return HypertextTransferProtocol.Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.POST).Match(Identity, Identity<string>);
         }
 
-        public static HttpStatus PostJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        public static HttpStatus PostStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
         {
-            return PostJson<TRequest>(model, url, HttpOptions.Default, headers);
+            return PostStatus(body, url, contentType, HttpOptions.Default, headers);
         }
 
-        public static HttpStatus PostJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        public static HttpStatus PostStatus(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, Constants.Http.POST).Match(HttpStatus.Create, Identity<HttpStatus>);
+        }
+
+        public static HttpStatus PostJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PostJsonStatus<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static HttpStatus PostJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.Send(Json.FromModel(model, options), url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), headers, Constants.Http.POST).Match(HttpStatus.Create, Identity<HttpStatus>);
         }
@@ -64,12 +74,22 @@ namespace FrameworkContainers.Network.HttpCollective
             return HypertextTransferProtocol.Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PUT).Match(Identity, Identity<string>);
         }
 
-        public static HttpStatus PutJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        public static HttpStatus PutStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
         {
-            return PutJson<TRequest>(model, url, HttpOptions.Default, headers);
+            return PutStatus(body, url, contentType, HttpOptions.Default, headers);
         }
 
-        public static HttpStatus PutJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        public static HttpStatus PutStatus(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PUT).Match(HttpStatus.Create, Identity<HttpStatus>);
+        }
+
+        public static HttpStatus PutJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PutJsonStatus<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static HttpStatus PutJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.Send(Json.FromModel(model, options), url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), headers, Constants.Http.PUT).Match(HttpStatus.Create, Identity<HttpStatus>);
         }
@@ -94,12 +114,22 @@ namespace FrameworkContainers.Network.HttpCollective
             return HypertextTransferProtocol.Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PATCH).Match(Identity, Identity<string>);
         }
 
-        public static HttpStatus PatchJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        public static HttpStatus PatchStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
         {
-            return PatchJson<TRequest>(model, url, HttpOptions.Default, headers);
+            return PatchStatus(body, url, contentType, HttpOptions.Default, headers);
         }
 
-        public static HttpStatus PatchJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        public static HttpStatus PatchStatus(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PATCH).Match(HttpStatus.Create, Identity<HttpStatus>);
+        }
+
+        public static HttpStatus PatchJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PatchJsonStatus<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static HttpStatus PatchJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.Send(Json.FromModel(model, options), url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), headers, Constants.Http.PATCH).Match(HttpStatus.Create, Identity<HttpStatus>);
         }
@@ -122,6 +152,16 @@ namespace FrameworkContainers.Network.HttpCollective
         public static string Get(Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.GET).Match(Identity, Identity<string>);
+        }
+
+        public static HttpStatus GetStatus(Either<string, Uri> url, params Header[] headers)
+        {
+            return GetStatus(url, HttpOptions.Default, headers);
+        }
+
+        public static HttpStatus GetStatus(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.GET).Match(HttpStatus.Create, Identity<HttpStatus>);
         }
 
         public static TResponse GetJson<TResponse>(Either<string, Uri> url, params Header[] headers)
@@ -154,12 +194,22 @@ namespace FrameworkContainers.Network.HttpCollective
             return HypertextTransferProtocol.SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Post).ContinueWith(IdentityValue);
         }
 
-        public static Task<HttpStatus> PostJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        public static Task<HttpStatus> PostStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
         {
-            return PostJsonAsync<TRequest>(model, url, HttpOptions.Default, headers);
+            return PostStatusAsync(body, url, contentType, HttpOptions.Default, headers);
         }
 
-        public static Task<HttpStatus> PostJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        public static Task<HttpStatus> PostStatusAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Post).ContinueWith(IdentityValueStatus);
+        }
+
+        public static Task<HttpStatus> PostJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PostJsonStatusAsync<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static Task<HttpStatus> PostJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.SendAsync(Json.FromModel(model, options), url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Post).ContinueWith(IdentityValueStatus);
         }
@@ -184,12 +234,22 @@ namespace FrameworkContainers.Network.HttpCollective
             return HypertextTransferProtocol.SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Put).ContinueWith(IdentityValue);
         }
 
-        public static Task<HttpStatus> PutJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        public static Task<HttpStatus> PutStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
         {
-            return PutJsonAsync<TRequest>(model, url, HttpOptions.Default, headers);
+            return PutStatusAsync(body, url, contentType, HttpOptions.Default, headers);
         }
 
-        public static Task<HttpStatus> PutJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        public static Task<HttpStatus> PutStatusAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Put).ContinueWith(IdentityValueStatus);
+        }
+
+        public static Task<HttpStatus> PutJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PutJsonStatusAsync<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static Task<HttpStatus> PutJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.SendAsync(Json.FromModel(model, options), url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Put).ContinueWith(IdentityValueStatus);
         }
@@ -214,12 +274,22 @@ namespace FrameworkContainers.Network.HttpCollective
             return HypertextTransferProtocol.SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch).ContinueWith(IdentityValue);
         }
 
-        public static Task<HttpStatus> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        public static Task<HttpStatus> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
         {
-            return PatchJsonAsync<TRequest>(model, url, HttpOptions.Default, headers);
+            return PatchStatusAsync(body, url, contentType, HttpOptions.Default, headers);
         }
 
-        public static Task<HttpStatus> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        public static Task<HttpStatus> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch).ContinueWith(IdentityValueStatus);
+        }
+
+        public static Task<HttpStatus> PatchJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+        {
+            return PatchJsonStatusAsync<TRequest>(model, url, HttpOptions.Default, headers);
+        }
+
+        public static Task<HttpStatus> PatchJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.SendAsync(Json.FromModel(model, options), url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), headers, HypertextTransferProtocol.Patch).ContinueWith(IdentityValueStatus);
         }
@@ -242,6 +312,16 @@ namespace FrameworkContainers.Network.HttpCollective
         public static Task<string> GetAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
             return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get).ContinueWith(IdentityValue);
+        }
+
+        public static Task<HttpStatus> GetStatusAsync(Either<string, Uri> url, params Header[] headers)
+        {
+            return GetStatusAsync(url, HttpOptions.Default, headers);
+        }
+
+        public static Task<HttpStatus> GetStatusAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+        {
+            return HypertextTransferProtocol.SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get).ContinueWith(IdentityValueStatus);
         }
 
         public static Task<TResponse> GetJsonAsync<TResponse>(Either<string, Uri> url, params Header[] headers)
