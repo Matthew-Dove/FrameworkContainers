@@ -18,6 +18,8 @@ namespace FrameworkContainers.Network.HttpCollective
 
         private static HttpStatus IdentityValueStatus<E>(Task<Either<string, E>> t) where E : Exception => t.Result.Match(HttpStatus.Create, Identity<HttpStatus>);
 
+        private static HttpStatus IdentityValueStatus<E>(Task<Either<HttpStatus, E>> t) where E : Exception => t.Result.Match(Identity, Identity<HttpStatus>);
+
         private static T IdentityValue<T, E>(Task<Either<T, E>> t) where E : Exception => t.Result.Match(Identity, Identity<T>);
 
         private static Func<string, T> Parse<T>(JsonOptions options) { return json => Json.ToModel<T>(json, options); }
@@ -211,7 +213,7 @@ namespace FrameworkContainers.Network.HttpCollective
 
         public static Task<HttpStatus> PostJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(Json.FromModel(model, options), url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Post).ContinueWith(IdentityValueStatus);
+            return HypertextTransferProtocol.SendJsonStatusAsync<TRequest>(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Post).ContinueWith(IdentityValueStatus);
         }
 
         public static Task<TResponse> PostJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -221,7 +223,7 @@ namespace FrameworkContainers.Network.HttpCollective
 
         public static Task<TResponse> PostJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(Json.FromModel(model, options), url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, options, headers, HttpMethod.Post).ContinueWith(ParseAsync<TResponse>(options));
+            return HypertextTransferProtocol.SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HttpMethod.Post).ContinueWith(IdentityValue);
         }
 
         public static Task<string> PutAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -251,7 +253,7 @@ namespace FrameworkContainers.Network.HttpCollective
 
         public static Task<HttpStatus> PutJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(Json.FromModel(model, options), url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Put).ContinueWith(IdentityValueStatus);
+            return HypertextTransferProtocol.SendJsonStatusAsync<TRequest>(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Put).ContinueWith(IdentityValueStatus);
         }
 
         public static Task<TResponse> PutJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -261,7 +263,7 @@ namespace FrameworkContainers.Network.HttpCollective
 
         public static Task<TResponse> PutJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
         {
-            return HypertextTransferProtocol.SendAsync(Json.FromModel(model, options), url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, options, headers, HttpMethod.Put).ContinueWith(ParseAsync<TResponse>(options));
+            return HypertextTransferProtocol.SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HttpMethod.Put).ContinueWith(IdentityValue);
         }
 
         public static Task<string> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
