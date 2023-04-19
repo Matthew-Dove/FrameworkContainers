@@ -9,11 +9,17 @@ namespace FrameworkContainers.Network.HttpCollective.Models
 
         public Header(string key, string value)
         {
-            if (string.IsNullOrEmpty(key)) throw new ArgumentOutOfRangeException(nameof(key));
-            if (string.IsNullOrEmpty(value)) throw new ArgumentOutOfRangeException(nameof(value));
+            Key = key.ThrowIfNullOrEmpty(nameof(key));
+            Value = value.ThrowIfNullOrEmpty(nameof(value));
+        }
+    }
 
-            Key = key;
-            Value = value;
+    file static class HeaderExtensions
+    {
+        public static string ThrowIfNullOrEmpty(this string target, string name)
+        {
+            if (string.IsNullOrEmpty(target)) throw new ArgumentOutOfRangeException(name);
+            return target;
         }
     }
 }

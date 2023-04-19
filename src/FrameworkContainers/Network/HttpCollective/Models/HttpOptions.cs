@@ -33,7 +33,6 @@ namespace FrameworkContainers.Network.HttpCollective.Models
             Json = options;
             RetrieveHttpStatus = retrieveHttpStatus;
         }
-
         
         public static implicit operator JsonSerializerOptions(HttpOptions options) => options.Json.SerializerSettings;
         public static implicit operator JsonOptions(HttpOptions options) => options.Json;
