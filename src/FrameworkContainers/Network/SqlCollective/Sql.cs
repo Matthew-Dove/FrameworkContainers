@@ -8,12 +8,11 @@ namespace FrameworkContainers.Network.SqlCollective
 {
     public static class Sql
     {
+        public static readonly SqlResponse Response = SqlResponse.Instance;
+        public static readonly SqlMaybe Maybe = SqlMaybe.Instance;
+
         /// <summary>The connection string to use when not specified.</summary>
         public static string ConnectionString = null;
-
-        public static readonly SqlResponse Response = SqlResponse.Instance;
-
-        public static readonly SqlMaybe Maybe = SqlMaybe.Instance;
 
         public static T ExecuteReader<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
         {

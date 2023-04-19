@@ -159,12 +159,12 @@ public sealed class HttpMaybe
             .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.Create<HttpStatus>);
     }
 
-    public Maybe<HttpStatus> PatchStatusJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
+    public Maybe<HttpStatus> PatchJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
     {
-        return PatchStatusJson<TRequest>(model, url, HttpOptions.Default, headers);
+        return PatchJsonStatus<TRequest>(model, url, HttpOptions.Default, headers);
     }
 
-    public Maybe<HttpStatus> PatchStatusJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
+    public Maybe<HttpStatus> PatchJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
     {
         return Json.Maybe.FromModel(model, options).Match(
             Send(Constants.Http.PATCH, url, options, headers),
@@ -424,4 +424,72 @@ public sealed class HttpMaybe
             .SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Delete)
             .ContinueWith(IdentityMaybeStatus);
     }
+}
+
+public sealed class HttpMaybe<T>
+{
+    internal static readonly HttpMaybe<T> Instance = new HttpMaybe<T>();
+
+    private HttpMaybe() { }
+
+    public Maybe<HttpStatus> PostJsonStatus(T model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PostJsonStatus<T>(model, url, headers);
+    public Maybe<HttpStatus> PostJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PostJsonStatus<T>(model, url, options, headers);
+    public Maybe<T> PostJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PostJson<TRequest, T>(model, url, headers);
+    public Maybe<T> PostJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PostJson<TRequest, T>(model, url, options, headers);
+
+    public Maybe<HttpStatus> PutJsonStatus(T model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PutJsonStatus<T>(model, url, headers);
+    public Maybe<HttpStatus> PutJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PutJsonStatus<T>(model, url, options, headers);
+    public Maybe<T> PutJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PutJson<TRequest, T>(model, url, headers);
+    public Maybe<T> PutJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PutJson<TRequest, T>(model, url, options, headers);
+
+    public Maybe<HttpStatus> PatchJsonStatus(T model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PatchJsonStatus<T>(model, url, headers);
+    public Maybe<HttpStatus> PatchJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PatchJsonStatus<T>(model, url, options, headers);
+    public Maybe<T> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PatchJson<TRequest, T>(model, url, headers);
+    public Maybe<T> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PatchJson<TRequest, T>(model, url, options, headers);
+
+    public Maybe<T> GetJson(Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.GetJson<T>(url, headers);
+    public Maybe<T> GetJson(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.GetJson<T>(url, headers);
+
+    public Task<Maybe<HttpStatus>> PostJsonStatusAsync(T model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PostJsonStatusAsync<T>(model, url, headers);
+    public Task<Maybe<HttpStatus>> PostJsonStatusAsync(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PostJsonStatusAsync<T>(model, url, options, headers);
+    public Task<Maybe<T>> PostJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PostJsonAsync<TRequest, T>(model, url, headers);
+    public Task<Maybe<T>> PostJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PostJsonAsync<TRequest, T>(model, url, options, headers);
+
+    public Task<Maybe<HttpStatus>> PutJsonStatusAsync(T model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PutJsonStatusAsync<T>(model, url, headers);
+    public Task<Maybe<HttpStatus>> PutJsonStatusAsync(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PutJsonStatusAsync<T>(model, url, options, headers);
+    public Task<Maybe<T>> PutJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PutJsonAsync<TRequest, T>(model, url, headers);
+    public Task<Maybe<T>> PutJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PutJsonAsync<TRequest, T>(model, url, options, headers);
+
+    public Task<Maybe<HttpStatus>> PatchJsonStatusAsync(T model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PatchJsonStatusAsync<T>(model, url, headers);
+    public Task<Maybe<HttpStatus>> PatchJsonStatusAsync(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PatchJsonStatusAsync<T>(model, url, options, headers);
+    public Task<Maybe<T>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PatchJsonAsync<TRequest, T>(model, url, headers);
+    public Task<Maybe<T>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PatchJsonAsync<TRequest, T>(model, url, options, headers);
+
+    public Task<Maybe<T>> GetJsonAsync(Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.GetJsonAsync<T>(url, headers);
+    public Task<Maybe<T>> GetJsonAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.GetJsonAsync<T>(url, options, headers);
+}
+
+public sealed class HttpMaybe<TRequest, TResponse>
+{
+    internal static readonly HttpMaybe<TRequest, TResponse> Instance = new HttpMaybe<TRequest, TResponse>();
+
+    private HttpMaybe() { }
+
+    public Maybe<TResponse> PostJson(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PostJson<TRequest, TResponse>(model, url, headers);
+    public Maybe<TResponse> PostJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PostJson<TRequest, TResponse>(model, url, options, headers);
+
+    public Maybe<TResponse> PutJson(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PutJson<TRequest, TResponse>(model, url, headers);
+    public Maybe<TResponse> PutJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PutJson<TRequest, TResponse>(model, url, options, headers);
+
+    public Maybe<TResponse> PatchJson(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PatchJson<TRequest, TResponse>(model, url, headers);
+    public Maybe<TResponse> PatchJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PatchJson<TRequest, TResponse>(model, url, options, headers);
+
+    public Task<Maybe<TResponse>> PostJsonAsync(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PostJsonAsync<TRequest, TResponse>(model, url, headers);
+    public Task<Maybe<TResponse>> PostJsonAsync(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PostJsonAsync<TRequest, TResponse>(model, url, options, headers);
+
+    public Task<Maybe<TResponse>> PutJsonAsync(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PutJsonAsync<TRequest, TResponse>(model, url, headers);
+    public Task<Maybe<TResponse>> PutJsonAsync(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PutJsonAsync<TRequest, TResponse>(model, url, options, headers);
+
+    public Task<Maybe<TResponse>> PatchJsonAsync(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PatchJsonAsync<TRequest, TResponse>(model, url, headers);
+    public Task<Maybe<TResponse>> PatchJsonAsync(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PatchJsonAsync<TRequest, TResponse>(model, url, options, headers);
 }
