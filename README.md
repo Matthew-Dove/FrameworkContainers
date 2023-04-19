@@ -17,25 +17,24 @@ var response = await Http.PostJsonAsync<TRequest, TResponse>(request, url, heade
 ## Intro
 
 This library contains snippets of code I find myself adding over, and over again to new projects.  
-The code is reusable, as it's not domain specific, though it is specific to the way I code (*I guess*). 
+The code is reusable, as it's not domain specific, though it is influenced by the way I code.  
 
-There is not a lot in here, as I didn't want to download the kitchen sink each time I needed a component from this library.  
-The components are not complex, any developer could easily create them in a few hours, to the same quality.  
+The components are not that complex, you could recreate them in a few hours, to similar effect.  
 That said, it's rather the point; I want those few hours back for each new project (*and I'm sick of copy-pasting!*).  
 
 ## Components
 
 Each **component** has a `static` core, from here the methods can be accessed easily inline; as a standard `type` (*i.e. no dependency injection required*).  
-If dependency injection is needed, then each **component** also have a **Client** `type`, with an accompanying `interface`.  
+If dependency injection is needed, then each **component** also has a **Client** `type`, with an accompanying `interface`.  
 
-The **components** have been designed to handle *most* use cases, with the true aim to be simple for the developer to use.  
+The **components** have been designed to handle *most* use cases, with the true aim to be simple to use.  
 If you find some component does not meet your needs, then drop it and write custom code instead of fighting the framework.  
 The components are built to be performant, and have the best defaults set; they are hard to use in a wrong way.  
 
 There are three distinct ways to use a component (*excluding the static / client options mentioned above*).  
 You can use the raw type `T`, which will throw any encountered exceptions.  
-You can use `Response<T>`, which will internally log any exceptions, and only return a value of `T` when it can.  
-You can use `Maybe<T, Exception>`, which will return either `T`, or the error type `Exception`.  
+You can use `Response<T>`, which will internally log any exceptions (*when you set a logger*), and only return a value of `T` when it can.  
+You can use `Maybe<T>`, which will return either `T`, or the error type `Exception`.  
 If you would like to know more about types: `Response`, and `Maybe`; please visit their repo [ContainerExpressions](https://github.com/Matthew-Dove/ContainerExpressions).
 
 ## Http Component
@@ -47,12 +46,14 @@ The `async` APIs are built on top of `System.Net.Http.HttpClient`.
 
 ### [Things we do for you]
 
-  * Set a default timeout of 30 seconds.
+  * Set a default timeout of 15 seconds.
   * Set the content type, and content length.
-  * Write in UTF8.
+  * Write in UTF-8.
   * Read error responses, adding them to the generated `HttpException`.
   * Renew DNS (*for the domain(s) you are calling*).
   * Disable insecure ciphers, only leaving up to date ones active.
+  * Enable fast header read.
+  * Async JSON uses `System.Net.Http.Json`, to serialize models via `System.IO.Pipelines` for best performance.
 
 ### [Examples]
 
@@ -66,7 +67,7 @@ Get http body `Response<T>`:
 Response<string> body = Http.Response.Get("/api/weather");
 ```
 
-Get http body `Maybe<T, Exception>`:
+Get http body `Maybe<T>`:
 ```cs
 Maybe<string> body = Http.Maybe.Get("/api/weather");
 ```
@@ -122,7 +123,7 @@ using `Response<T>`:
 Response<User> user = Json.Response.ToModel<User>(json);
 ```
 
-Using `Maybe<T, Exception>`:
+Using `Maybe<T>`:
 ```cs
 Maybe<User> user = Json.Maybe.ToModel<User>(json);
 ```
@@ -142,6 +143,8 @@ This component's APIs are built on top of `System.Xml.Serialization.XmlSerialize
 
   * Remove default namespaces, and omit the XML declaration.
   * Allow custom character encodings.
+  * Protection against malicious exceptions.
+  * Optimized stream for the XML deserializer, reducing string allocation.
 
 ### [Examples]
 
@@ -165,7 +168,7 @@ using `Response<T>`:
 Response<User> user = Xml.Response.ToModel<User>(json);
 ```
 
-Using `Maybe<T, Exception>`:
+Using `Maybe<T>`:
 ```cs
 Maybe<User> user = Xml.Maybe.ToModel<User>(json);
 ```
@@ -184,7 +187,7 @@ This component's APIs are built on top of `System.Data.SqlClient.SqlConnection`.
 ### [Things we do for you]
 
   * Provide both `sync`, and `async` APIs for: `ExecuteReader`, `ExecuteNonQuery`, and `BulkInsert`.
-  * Allow easy access to returned values with the `Get<T>` extension method.
+  * Allow easy access to values with the `Get<T>` extension method.
 
 ### [Examples]
 
@@ -241,7 +244,7 @@ using `Response<T>`:
 Response<int> rows = Sql.Response.ExecuteNonQuery("usp_insert_user", new SqlParameter("@name", "John Smith"));
 ```
 
-Using `Maybe<T, Exception>`:
+Using `Maybe<T>`:
 ```cs
 Maybe<int> rows = Sql.Maybe.ExecuteNonQuery("usp_insert_user", new SqlParameter("@name", "John Smith"));
 ```
