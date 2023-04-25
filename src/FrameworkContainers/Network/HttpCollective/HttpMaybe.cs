@@ -15,24 +15,24 @@ public sealed class HttpMaybe
 
     private HttpMaybe() { }
 
-    private static Maybe<HttpStatus> IdentityMaybeStatus<E>(Task<Either<string, E>> t) where E : Exception => t.Result.Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.Create<HttpStatus>);
+    private static Maybe<HttpStatus> IdentityMaybeStatus<E>(Task<Either<string, E>> t) where E : Exception => t.Result.Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.CreateError<HttpStatus>);
 
-    private static Maybe<T> IdentityMaybe<T, E>(Task<Either<T, E>> t) where E : Exception => t.Result.Match(Maybe.Create<T>, Maybe.Create<T>);
+    private static Maybe<T> IdentityMaybe<T, E>(Task<Either<T, E>> t) where E : Exception => t.Result.Match(Maybe.Create<T>, Maybe.CreateError<T>);
 
-    private static Func<string, Maybe<T>> Parse<T>(JsonOptions options) { return json => Json.Maybe.ToModel<T>(json, options).Match(Maybe.Create<T>, Maybe.Create<T>); }
+    private static Func<string, Maybe<T>> Parse<T>(JsonOptions options) { return json => Json.Maybe.ToModel<T>(json, options).Match(Maybe.Create<T>, Maybe.CreateError<T>); }
 
     private static Func<string, Maybe<HttpStatus>> Send(string httpMethod, Either<string, Uri> url, HttpOptions options, Header[] headers)
     {
         return body => HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, new HttpOptions(options, retrieveHttpStatus: true), headers, httpMethod)
-            .Match(static x => new Maybe<HttpStatus>(new HttpStatus(x)), Maybe.Create<HttpStatus>);
+            .Match(static x => new Maybe<HttpStatus>(new HttpStatus(x)), Maybe.CreateError<HttpStatus>);
     }
 
     private static Func<string, Maybe<T>> Send<T>(string httpMethod, Either<string, Uri> url, HttpOptions options, Header[] headers)
     {
         return body => HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, options, headers, httpMethod)
-            .Match(Parse<T>(options), Maybe.Create<T>);
+            .Match(Parse<T>(options), Maybe.CreateError<T>);
     }
 
     public Maybe<string> Post(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -44,7 +44,7 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.POST)
-            .Match(Maybe.Create<string>, Maybe.Create<string>);
+            .Match(Maybe.Create<string>, Maybe.CreateError<string>);
     }
 
     public Maybe<HttpStatus> PostStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -56,7 +56,7 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, Constants.Http.POST)
-            .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.Create<HttpStatus>);
+            .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.CreateError<HttpStatus>);
     }
 
     public Maybe<HttpStatus> PostJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -68,7 +68,7 @@ public sealed class HttpMaybe
     {
         return Json.Maybe.FromModel(model, options).Match(
             Send(Constants.Http.POST, url, options, headers),
-            Maybe.Create<HttpStatus>
+            Maybe.CreateError<HttpStatus>
         );
     }
 
@@ -81,7 +81,7 @@ public sealed class HttpMaybe
     {
         return Json.Maybe.FromModel(model, options).Match(
             Send<TResponse>(Constants.Http.POST, url, options, headers),
-            Maybe.Create<TResponse>
+            Maybe.CreateError<TResponse>
         );
     }
 
@@ -94,7 +94,7 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PUT)
-            .Match(Maybe.Create<string>, Maybe.Create<string>);
+            .Match(Maybe.Create<string>, Maybe.CreateError<string>);
     }
 
     public Maybe<HttpStatus> PutStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -106,7 +106,7 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, Constants.Http.PUT)
-            .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.Create<HttpStatus>);
+            .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.CreateError<HttpStatus>);
     }
 
     public Maybe<HttpStatus> PutJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -118,7 +118,7 @@ public sealed class HttpMaybe
     {
         return Json.Maybe.FromModel(model, options).Match(
             Send(Constants.Http.PUT, url, options, headers),
-            Maybe.Create<HttpStatus>
+            Maybe.CreateError<HttpStatus>
         );
     }
 
@@ -131,7 +131,7 @@ public sealed class HttpMaybe
     {
         return Json.Maybe.FromModel(model, options).Match(
             Send<TResponse>(Constants.Http.PUT, url, options, headers),
-            Maybe.Create<TResponse>
+            Maybe.CreateError<TResponse>
         );
     }
 
@@ -144,7 +144,7 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PATCH)
-            .Match(Maybe.Create<string>, Maybe.Create<string>);
+            .Match(Maybe.Create<string>, Maybe.CreateError<string>);
     }
 
     public Maybe<HttpStatus> PatchStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -156,7 +156,7 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, Constants.Http.PATCH)
-            .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.Create<HttpStatus>);
+            .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.CreateError<HttpStatus>);
     }
 
     public Maybe<HttpStatus> PatchJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -168,7 +168,7 @@ public sealed class HttpMaybe
     {
         return Json.Maybe.FromModel(model, options).Match(
             Send(Constants.Http.PATCH, url, options, headers),
-            Maybe.Create<HttpStatus>
+            Maybe.CreateError<HttpStatus>
         );
     }
 
@@ -181,7 +181,7 @@ public sealed class HttpMaybe
     {
         return Json.Maybe.FromModel(model, options).Match(
             Send<TResponse>(Constants.Http.PATCH, url, options, headers),
-            Maybe.Create<TResponse>
+            Maybe.CreateError<TResponse>
         );
     }
 
@@ -194,7 +194,7 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.GET)
-            .Match(Maybe.Create<string>, Maybe.Create<string>);
+            .Match(Maybe.Create<string>, Maybe.CreateError<string>);
     }
 
     public Maybe<HttpStatus> GetStatus(Either<string, Uri> url, params Header[] headers)
@@ -206,7 +206,7 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, new HttpOptions(options, retrieveHttpStatus: true), headers, Constants.Http.GET)
-            .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.Create<HttpStatus>);
+            .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.CreateError<HttpStatus>);
     }
 
     public Maybe<TResponse> GetJson<TResponse>(Either<string, Uri> url, params Header[] headers)
@@ -218,7 +218,7 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.GET)
-            .Match(Parse<TResponse>(options), Maybe.Create<TResponse>);
+            .Match(Parse<TResponse>(options), Maybe.CreateError<TResponse>);
     }
 
     public Maybe<HttpStatus> DeleteStatus(Either<string, Uri> url, params Header[] headers)
@@ -230,7 +230,7 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, new HttpOptions(options, retrieveHttpStatus: true), headers, Constants.Http.DELETE)
-            .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.Create<HttpStatus>);
+            .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.CreateError<HttpStatus>);
     }
 
     public Task<Maybe<string>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)

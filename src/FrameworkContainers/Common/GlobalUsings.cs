@@ -1,1 +1,1 @@
-﻿global using static FrameworkContainers.Common.FuncPool;
+﻿global using static ContainerExpressions.Containers.Lambda;
