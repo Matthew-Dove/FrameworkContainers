@@ -409,66 +409,10 @@ public static class Http
 
 public static class Http<T>
 {
-    public static readonly HttpResponse<T> Response = HttpResponse<T>.Instance;
-    public static readonly HttpMaybe<T> Maybe = HttpMaybe<T>.Instance;
-
-    public static HttpStatus PostJsonStatus(T model, Either<string, Uri> url, params Header[] headers) => Http.PostJsonStatus<T>(model, url, headers);
-    public static HttpStatus PostJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PostJsonStatus<T>(model, url, options, headers);
-    public static T PostJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PostJson<TRequest, T>(model, url, headers);
-    public static T PostJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PostJson<TRequest, T>(model, url, options, headers);
-
-    public static HttpStatus PutJsonStatus(T model, Either<string, Uri> url, params Header[] headers) => Http.PutJsonStatus<T>(model, url, headers);
-    public static HttpStatus PutJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PutJsonStatus<T>(model, url, options, headers);
-    public static T PutJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PutJson<TRequest, T>(model, url, headers);
-    public static T PutJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PutJson<TRequest, T>(model, url, options, headers);
-
-    public static HttpStatus PatchJsonStatus(T model, Either<string, Uri> url, params Header[] headers) => Http.PatchJsonStatus<T>(model, url, headers);
-    public static HttpStatus PatchJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PatchJsonStatus<T>(model, url, options, headers);
-    public static T PatchJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PatchJson<TRequest, T>(model, url, headers);
-    public static T PatchJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PatchJson<TRequest, T>(model, url, options, headers);
-
-    public static T GetJson(Either<string, Uri> url, params Header[] headers) => Http.GetJson<T>(url, headers);
-    public static T GetJson(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.GetJson<T>(url, options, headers);
-
-    public static Task<HttpStatus> PostJsonStatusAsync(T model, Either<string, Uri> url, params Header[] headers) => Http.PostJsonStatusAsync<T>(model, url, headers);
-    public static Task<HttpStatus> PostJsonStatusAsync(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PostJsonStatusAsync<T>(model, url, options, headers);
-    public static Task<T> PostJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PostJsonAsync<TRequest, T>(model, url, headers);
-    public static Task<T> PostJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PostJsonAsync<TRequest, T>(model, url, options, headers);
-
-    public static Task<HttpStatus> PutJsonStatusAsync(T model, Either<string, Uri> url, params Header[] headers) => Http.PutJsonStatusAsync<T>(model, url, headers);
-    public static Task<HttpStatus> PutJsonStatusAsync(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PutJsonStatusAsync<T>(model, url, options, headers);
-    public static Task<T> PutJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PutJsonAsync<TRequest, T>(model, url, headers);
-    public static Task<T> PutJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PutJsonAsync<TRequest, T>(model, url, options, headers);
-
-    public static Task<HttpStatus> PatchJsonStatusAsync(T model, Either<string, Uri> url, params Header[] headers) => Http.PatchJsonStatusAsync<T>(model, url, headers);
-    public static Task<HttpStatus> PatchJsonStatusAsync(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PatchJsonStatusAsync<T>(model, url, options, headers);
-    public static Task<T> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PatchJsonAsync<TRequest, T>(model, url, headers);
-    public static Task<T> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PatchJsonAsync<TRequest, T>(model, url, options, headers);
-
-    public static Task<T> GetJsonAsync(Either<string, Uri> url, params Header[] headers) => Http.GetJsonAsync<T>(url, headers);
-    public static Task<T> GetJsonAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.GetJsonAsync<T>(url, options, headers);
+    public static readonly HttpClient<T> Client = new HttpClient<T>();
 }
 
 public static class Http<TRequest, TResponse>
 {
-    public static readonly HttpResponse<TRequest, TResponse> Response = HttpResponse<TRequest, TResponse>.Instance;
-    public static readonly HttpMaybe<TRequest, TResponse> Maybe = HttpMaybe<TRequest, TResponse>.Instance;
-
-    public static TResponse PostJson(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PostJson<TRequest, TResponse>(model, url, headers);
-    public static TResponse PostJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PostJson<TRequest, TResponse>(model, url, options, headers);
-
-    public static TResponse PutJson(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PutJson<TRequest, TResponse>(model, url, headers);
-    public static TResponse PutJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PutJson<TRequest, TResponse>(model, url, options, headers);
-
-    public static TResponse PatchJson(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PatchJson<TRequest, TResponse>(model, url, headers);
-    public static TResponse PatchJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PatchJson<TRequest, TResponse>(model, url, options, headers);
-
-    public static Task<TResponse> PostJsonAsync(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PostJsonAsync<TRequest, TResponse>(model, url, headers);
-    public static Task<TResponse> PostJsonAsync(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PostJsonAsync<TRequest, TResponse>(model, url, options, headers);
-
-    public static Task<TResponse> PutJsonAsync(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PutJsonAsync<TRequest, TResponse>(model, url, headers);
-    public static Task<TResponse> PutJsonAsync(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PutJsonAsync<TRequest, TResponse>(model, url, options, headers);
-
-    public static Task<TResponse> PatchJsonAsync(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PatchJsonAsync<TRequest, TResponse>(model, url, headers);
-    public static Task<TResponse> PatchJsonAsync(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PatchJsonAsync<TRequest, TResponse>(model, url, options, headers);
+    public static readonly HttpClient<TRequest, TResponse> Client = new HttpClient<TRequest, TResponse>();
 }
