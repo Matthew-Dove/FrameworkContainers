@@ -330,7 +330,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Enum_StringName()
         {
-            var json = $"{{\"Enum\": \"One\"}}";
+            var json = $"{{\"enum\": \"One\"}}";
 
             var reference = Json.ToModel<VanillaReference>(json);
             var valueeeee = Json.ToModel<VanillaValueeeee>(json);
@@ -342,7 +342,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Enum_StringNumber()
         {
-            var json = $"{{\"Enum\": \"1\"}}";
+            var json = $"{{\"enum\": \"1\"}}";
 
             var reference = Json.ToModel<VanillaReference>(json);
             var valueeeee = Json.ToModel<VanillaValueeeee>(json);
@@ -354,7 +354,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Enum_Int()
         {
-            var json = $"{{\"Enum\": 1}}";
+            var json = $"{{\"enum\": 1}}";
 
             var reference = Json.ToModel<VanillaReference>(json);
             var valueeeee = Json.ToModel<VanillaValueeeee>(json);
@@ -366,7 +366,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Enum_NullString()
         {
-            var json = $"{{\"Enum\": null}}";
+            var json = $"{{\"enum\": null}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -376,7 +376,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Enum_EmptyString()
         {
-            var json = $"{{\"Enum\": \"\"}}";
+            var json = $"{{\"enum\": \"\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -387,7 +387,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Enum_Value()
         {
             var target = Enum.One;
-            var json = $"{{\"Enum\": \"{target}\"}}";
+            var json = $"{{\"enum\": \"{target}\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -397,7 +397,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Int_StringValue()
         {
-            var json = $"{{\"Int\": \"1\"}}";
+            var json = $"{{\"int\": \"1\"}}";
 
             var reference = Json.ToModel<VanillaReference>(json, JsonOptions.Permissive);
             var valueeeee = Json.ToModel<VanillaValueeeee>(json, JsonOptions.Permissive);
@@ -409,7 +409,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Int_EmptyString()
         {
-            var json = $"{{\"Int\": \"\"}}";
+            var json = $"{{\"int\": \"\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -419,7 +419,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Int_NullString()
         {
-            var json = $"{{\"Int\": null}}";
+            var json = $"{{\"int\": null}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -430,7 +430,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Int_Value()
         {
             var target = 1;
-            var json = $"{{\"Int\": {target}}}";
+            var json = $"{{\"int\": {target}}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -477,7 +477,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Guid_String()
         {
             var target = Guid.NewGuid();
-            var json = $"{{\"Guid\": \"{target}\"}}";
+            var json = $"{{\"guid\": \"{target}\"}}";
 
             var reference = Json.ToModel<VanillaReference>(json);
             var valueeeee = Json.ToModel<VanillaValueeeee>(json);
@@ -489,7 +489,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Guid_EmptyString()
         {
-            var json = $"{{\"Guid\": \"\"}}";
+            var json = $"{{\"guid\": \"\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -499,7 +499,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Guid_NullString()
         {
-            var json = $"{{\"Guid\": null}}";
+            var json = $"{{\"guid\": null}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -510,7 +510,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Guid_Value()
         {
             var target = Guid.NewGuid();
-            var json = $"{{\"Guid\": \"{target}\"}}";
+            var json = $"{{\"guid\": \"{target}\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -520,7 +520,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_DateTime_EmptyString()
         {
-            var json = $"{{\"DateTime\": \"\"}}";
+            var json = $"{{\"dateTime\": \"\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -530,7 +530,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_DateTime_NullString()
         {
-            var json = $"{{\"DateTime\": null}}";
+            var json = $"{{\"dateTime\": null}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -541,7 +541,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_DateTime_Value()
         {
             var target = DateTime.Now;
-            var json = $"{{\"DateTime\": \"{target:o}\"}}";
+            var json = $"{{\"dateTime\": \"{target:o}\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -552,7 +552,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Bool_Value()
         {
             var target = true;
-            var json = $"{{\"Bool\": {target.ToString().ToLower()}}}";
+            var json = $"{{\"bool\": {target.ToString().ToLower()}}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -563,7 +563,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Bool_StringTrue()
         {
             var target = true;
-            var json = $"{{\"Bool\": \"{target.ToString().ToLower()}\"}}";
+            var json = $"{{\"bool\": \"{target.ToString().ToLower()}\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -574,7 +574,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Bool_StringFalse()
         {
             var target = false;
-            var json = $"{{\"Bool\": \"{target.ToString().ToLower()}\"}}";
+            var json = $"{{\"bool\": \"{target.ToString().ToLower()}\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -585,7 +585,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Bool_StringTrueUpperCase()
         {
             var target = true;
-            var json = $"{{\"Bool\": \"{target.ToString().ToUpper()}\"}}";
+            var json = $"{{\"bool\": \"{target.ToString().ToUpper()}\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -595,7 +595,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Bool_StringEmpty()
         {
-            var json = $"{{\"Bool\": \"\"}}";
+            var json = $"{{\"bool\": \"\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -605,7 +605,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Bool_StringNull()
         {
-            var json = $"{{\"Bool\": null}}";
+            var json = $"{{\"bool\": null}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -615,7 +615,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Bool_StringIntTrue()
         {
-            var json = $"{{\"Bool\": \"1\"}}";
+            var json = $"{{\"bool\": \"1\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -625,7 +625,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Bool_StringIntFalse()
         {
-            var json = $"{{\"Bool\": \"0\"}}";
+            var json = $"{{\"bool\": \"0\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -635,7 +635,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Bool_IntTrue()
         {
-            var json = $"{{\"Bool\": 1}}";
+            var json = $"{{\"bool\": 1}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -645,7 +645,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Bool_IntFalse()
         {
-            var json = $"{{\"Bool\": 0}}";
+            var json = $"{{\"bool\": 0}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -655,7 +655,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Float_EmptyString()
         {
-            var json = $"{{\"Float\": \"\"}}";
+            var json = $"{{\"float\": \"\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -665,7 +665,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Float_NullString()
         {
-            var json = $"{{\"Float\": null}}";
+            var json = $"{{\"float\": null}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -676,7 +676,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Float_Value()
         {
             var target = 1F;
-            var json = $"{{\"Float\": {target}}}";
+            var json = $"{{\"float\": {target}}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -687,7 +687,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Float_ValueString()
         {
             var target = 1F;
-            var json = $"{{\"Float\": \"{target}\"}}";
+            var json = $"{{\"float\": \"{target}\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -697,7 +697,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Long_EmptyString()
         {
-            var json = $"{{\"Long\": \"\"}}";
+            var json = $"{{\"long\": \"\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -707,7 +707,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void EC_Long_NullString()
         {
-            var json = $"{{\"Long\": null}}";
+            var json = $"{{\"long\": null}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -718,7 +718,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Long_Value()
         {
             var target = 1L;
-            var json = $"{{\"Long\": {target}}}";
+            var json = $"{{\"long\": {target}}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -729,7 +729,7 @@ namespace Tests.FrameworkContainers.Format
         public void EC_Long_ValueString()
         {
             var target = 1L;
-            var json = $"{{\"Long\": \"{target}\"}}";
+            var json = $"{{\"long\": \"{target}\"}}";
 
             var model = Json.ToModel<Model>(json);
 
@@ -753,7 +753,7 @@ namespace Tests.FrameworkContainers.Format
             var target = "Hello World!";
             var json = $"{{\"PascalCase\": \"{target}\"}}";
 
-            var model = Json.ToModel<Model>(json);
+            var model = Json.ToModel<Model>(json, JsonOptions.Performant);
 
             Assert.AreEqual(target, model.PascalCase);
         }
@@ -788,7 +788,7 @@ namespace Tests.FrameworkContainers.Format
         public void Error_Deserialize_IsCustomType()
         {
             var isCustomType = false;
-            var json = $"{{\"Int\": \"{420.69}\"}}";
+            var json = $"{{\"int\": \"{420.69}\"}}";
 
             try
             {
@@ -810,7 +810,7 @@ namespace Tests.FrameworkContainers.Format
         public void Error_Deserialize_Input()
         {
             var isInputValid = false;
-            var json = $"{{\"Int\": \"{420.69}\"}}";
+            var json = $"{{\"int\": \"{420.69}\"}}";
 
             try
             {
@@ -832,7 +832,7 @@ namespace Tests.FrameworkContainers.Format
         public void Error_Deserialize_TargetType()
         {
             var isTargetTypeValid = false;
-            var json = $"{{\"Int\": \"{420.69}\"}}";
+            var json = $"{{\"int\": \"{420.69}\"}}";
 
             try
             {
@@ -854,7 +854,7 @@ namespace Tests.FrameworkContainers.Format
         public void Error_Deserialize_Format()
         {
             var isFormatValid = false;
-            var json = $"{{\"Int\": \"{420.69}\"}}";
+            var json = $"{{\"int\": \"{420.69}\"}}";
 
             try
             {
@@ -946,7 +946,7 @@ namespace Tests.FrameworkContainers.Format
         public void Response_Deserialize_IsValid()
         {
             var target = 420;
-            var json = $"{{\"Int\": {target}}}";
+            var json = $"{{\"int\": {target}}}";
 
             var model = Json.Response.ToModel<Model>(json);
 
@@ -957,7 +957,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void Response_Deserialize_IsNotValid()
         {
-            var json = "{\"Int\": \"420.69\"}";
+            var json = "{\"int\": \"420.69\"}";
 
             var model = Json.Response.ToModel<Model>(json);
 
@@ -993,7 +993,7 @@ namespace Tests.FrameworkContainers.Format
         public void Maybe_Deserialize_IsValid()
         {
             var target = 420;
-            var json = $"{{\"Int\": {target}}}";
+            var json = $"{{\"int\": {target}}}";
 
             var model = Json.Maybe.ToModel<Model>(json);
 
@@ -1003,7 +1003,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void Maybe_Deserialize_IsNotValid()
         {
-            var json = "{\"Int\": \"420.69\"}";
+            var json = "{\"int\": \"420.69\"}";
 
             var model = Json.Maybe.ToModel<Model>(json);
 
@@ -1013,7 +1013,7 @@ namespace Tests.FrameworkContainers.Format
         [TestMethod]
         public void Maybe_Deserialize_IsNotValid_HasJson()
         {
-            var json = "{\"Int\": \"420.69\"}";
+            var json = "{\"int\": \"420.69\"}";
 
             var model = Json.Maybe.ToModel<Model>(json);
             var input = model.Match(_ => string.Empty, x => ((FormatDeserializeException)x).Input);

@@ -7,7 +7,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models
     /// <summary>Json serializer options.</summary>
     public sealed class JsonOptions
     {
-        internal static JsonOptions Default { get { return Performant; } }
+        internal static JsonOptions Default { get { return PerformantCamelCase; } }
 
         internal JsonSerializerOptions SerializerSettings { get; }
 
@@ -17,8 +17,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models
             {
                 PropertyNamingPolicy = namingPolicy,
                 Converters = {
-                    new JsonStringEnumConverter(namingPolicy),
-                    new JsonStringEnumConverter()
+                    new JsonStringEnumConverter(namingPolicy)
                 },
                 MaxDepth = Constants.Serialize.MAX_DEPTH,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
