@@ -18,11 +18,11 @@ namespace FrameworkContainers.Network.HttpCollective.Models
         /// <summary>When true, the http status is returned; instead of the response body.</summary>
         internal bool RetrieveHttpStatus { get; }
 
-        public HttpOptions(int timeoutSeconds = 0, JsonOptions json = null)
+        public HttpOptions(int timeoutSeconds = default, JsonOptions json = null)
         {
             if (timeoutSeconds < 0 || timeoutSeconds >= 14400) throw new ArgumentOutOfRangeException(nameof(timeoutSeconds));
 
-            TimeoutSeconds = timeoutSeconds == 0 ? Constants.Http.TIMEOUT_SECONDS : timeoutSeconds;
+            TimeoutSeconds = timeoutSeconds == default ? Constants.Http.TIMEOUT_SECONDS : timeoutSeconds;
             Json = json ?? JsonOptions.Default;
             RetrieveHttpStatus = false;
         }
@@ -33,10 +33,15 @@ namespace FrameworkContainers.Network.HttpCollective.Models
             Json = options;
             RetrieveHttpStatus = retrieveHttpStatus;
         }
-        
+
+        // Cast from HttpOptions.
         public static implicit operator JsonSerializerOptions(HttpOptions options) => options.Json.SerializerSettings;
         public static implicit operator JsonOptions(HttpOptions options) => options.Json;
         public static implicit operator int(HttpOptions options) => options.TimeoutSeconds;
         public static implicit operator bool(HttpOptions options) => options.RetrieveHttpStatus;
+
+        // Cast to HttpOptions.
+        public static implicit operator HttpOptions(JsonOptions options) => new HttpOptions(Constants.Http.TIMEOUT_SECONDS, options);
+        public static implicit operator HttpOptions(int seconds) => new HttpOptions(seconds, JsonOptions.Default);
     }
 }
