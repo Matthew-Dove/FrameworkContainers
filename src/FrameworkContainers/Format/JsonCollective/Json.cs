@@ -42,4 +42,9 @@ namespace FrameworkContainers.Format.JsonCollective
             return default;
         }
     }
+
+    public static class Json<T>
+    {
+        public static readonly JsonClient<T> Client = new JsonClient<T>();
+    }
 }

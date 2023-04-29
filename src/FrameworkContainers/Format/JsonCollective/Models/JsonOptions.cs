@@ -51,14 +51,14 @@ namespace FrameworkContainers.Format.JsonCollective.Models
 
         /// <summary>
         /// Add custom JSON converters to the JSON serializer.
-        /// <para>e.g. JsonOptions.WithConverters(JsonFlags.PerformantCamelCase, new DefaultDateTimeConverter(), new DefaultIntConverter())</para>
+        /// <para>e.g. JsonOptions.WithConverters(JsonFlags.Performant | JsonFlags.CamelCase, new DefaultDateTimeConverter(), new DefaultIntConverter())</para>
         /// </summary>
         /// <param name="flags">Set behaviour for the JSON serializer.</param>
         /// <param name="converters">Custom JSON type converters to use when serializing, or deserializing.</param>
         public static JsonOptions WithConverters(JsonFlags flags = JsonFlags.Default, params JsonConverter[] converters)
         {
-            var isPerformant = flags == JsonFlags.Default || flags.HasFlag(JsonFlags.Performant) || flags.HasFlag(JsonFlags.PerformantCamelCase);
-            var isCamelCase = flags == JsonFlags.Default || flags.HasFlag(JsonFlags.PerformantCamelCase) || flags.HasFlag(JsonFlags.PermissiveCamelCase);
+            var isPerformant = flags == JsonFlags.Default || flags.HasFlag(JsonFlags.Performant);
+            var isCamelCase = flags == JsonFlags.Default || flags.HasFlag(JsonFlags.CamelCase);
 
             return new JsonOptions(
                 isPerformant ? JsonSerializerDefaults.General : JsonSerializerDefaults.Web,

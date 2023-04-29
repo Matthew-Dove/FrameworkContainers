@@ -42,4 +42,9 @@ namespace FrameworkContainers.Format.XmlCollective
             return default;
         }
     }
+
+    public static class Xml<T>
+    {
+        public static readonly XmlClient<T> Client = new XmlClient<T>();
+    }
 }
