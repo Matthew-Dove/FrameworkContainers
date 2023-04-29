@@ -11,7 +11,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models
 
         internal JsonSerializerOptions SerializerSettings { get; }
 
-        private JsonOptions(JsonSerializerDefaults defaults, JsonNamingPolicy namingPolicy = null)
+        private JsonOptions(JsonSerializerDefaults defaults, JsonNamingPolicy namingPolicy = null, JsonConverter[] converters = null)
         {
             SerializerSettings = new JsonSerializerOptions(defaults)
             {
@@ -22,6 +22,8 @@ namespace FrameworkContainers.Format.JsonCollective.Models
                 MaxDepth = Constants.Serialize.MAX_DEPTH,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
+
+            for (int i = 0; i < converters?.Length; i++) SerializerSettings.Converters.Add(converters[i]);
 
             if (defaults == JsonSerializerDefaults.Web)
             {
@@ -35,16 +37,34 @@ namespace FrameworkContainers.Format.JsonCollective.Models
             }
         }
 
-        /// <summary>Json serializer will be optimized for performance (this is the default behaviour).</summary>
+        /// <summary>Json serializer will be optimized for performance with the model's property case.</summary>
         public static JsonOptions Performant { get; } = new JsonOptions(JsonSerializerDefaults.General);
 
-        /// <summary>Json serializer will be optimized for performance.</summary>
+        /// <summary>Json serializer will be optimized for performance with camelCase (this is the default behaviour).</summary>
         public static JsonOptions PerformantCamelCase { get; } = new JsonOptions(JsonSerializerDefaults.General, JsonNamingPolicy.CamelCase);
 
-        /// <summary>Json serializer will be optimized to "just work" (use this if you want it to work in the widest range of scenarios).</summary>
+        /// <summary>Json serializer will be optimized to "just work" with the model's property case (use this if you want it to work in the widest range of scenarios).</summary>
         public static JsonOptions Permissive { get; } = new JsonOptions(JsonSerializerDefaults.Web);
 
-        /// <summary>Json serializer will be optimized to "just work" (use this if you want it to work in the widest range of scenarios).</summary>
+        /// <summary>Json serializer will be optimized to "just work" with camelCase (use this if you want it to work in the widest range of scenarios).</summary>
         public static JsonOptions PermissiveCamelCase { get; } = new JsonOptions(JsonSerializerDefaults.Web, JsonNamingPolicy.CamelCase);
+
+        /// <summary>
+        /// Add custom JSON converters to the JSON serializer.
+        /// <para>e.g. JsonOptions.WithConverters(JsonFlags.PerformantCamelCase, new DefaultDateTimeConverter(), new DefaultIntConverter())</para>
+        /// </summary>
+        /// <param name="flags">Set behaviour for the JSON serializer.</param>
+        /// <param name="converters">Custom JSON type converters to use when serializing, or deserializing.</param>
+        public static JsonOptions WithConverters(JsonFlags flags = JsonFlags.Default, params JsonConverter[] converters)
+        {
+            var isPerformant = flags == JsonFlags.Default || flags.HasFlag(JsonFlags.Performant) || flags.HasFlag(JsonFlags.PerformantCamelCase);
+            var isCamelCase = flags == JsonFlags.Default || flags.HasFlag(JsonFlags.PerformantCamelCase) || flags.HasFlag(JsonFlags.PermissiveCamelCase);
+
+            return new JsonOptions(
+                isPerformant ? JsonSerializerDefaults.General : JsonSerializerDefaults.Web,
+                isCamelCase ? JsonNamingPolicy.CamelCase : null,
+                converters
+            );
+        }
     }
 }

@@ -71,9 +71,9 @@ namespace FrameworkContainers.Network.SqlCollective
 
         public static void BulkInsert(string tableName, DataTable dataTable, string connectionString)
         {
-            var bulkCopy = new SqlBulkCopy(connectionString ?? Sql.ConnectionString) { DestinationTableName = tableName };
-            try
+            using (var bulkCopy = new SqlBulkCopy(connectionString ?? Sql.ConnectionString))
             {
+                bulkCopy.DestinationTableName = tableName;
                 for (int i = 0; i < dataTable.Columns.Count; i++)
                 {
                     string columnName = dataTable.Columns[i].ColumnName;
@@ -81,14 +81,13 @@ namespace FrameworkContainers.Network.SqlCollective
                 }
                 bulkCopy.WriteToServer(dataTable);
             }
-            finally { bulkCopy?.Close(); }
         }
 
         public static async Task BulkInsertAsync(string tableName, DataTable dataTable, string connectionString)
         {
-            var bulkCopy = new SqlBulkCopy(connectionString ?? Sql.ConnectionString) { DestinationTableName = tableName };
-            try
+            using (var bulkCopy = new SqlBulkCopy(connectionString ?? Sql.ConnectionString))
             {
+                bulkCopy.DestinationTableName = tableName;
                 for (int i = 0; i < dataTable.Columns.Count; i++)
                 {
                     string columnName = dataTable.Columns[i].ColumnName;
@@ -96,7 +95,6 @@ namespace FrameworkContainers.Network.SqlCollective
                 }
                 await bulkCopy.WriteToServerAsync(dataTable);
             }
-            finally { bulkCopy?.Close(); }
         }
     }
 }

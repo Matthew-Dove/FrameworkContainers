@@ -74,4 +74,9 @@ namespace FrameworkContainers.Network.SqlCollective
             return StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, options.ConnectionString);
         }
     }
+
+    public static class Sql<T>
+    {
+        public static readonly SqlClient<T> Client = new SqlClient<T>();
+    }
 }
