@@ -21,7 +21,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
         public static T ExecuteReader<T>(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return StructuredQueryLanguage.ExecuteReader(reader, usp, options.ConnectionString, parameters);
+            return StructuredQueryLanguage.ExecuteReader(reader, usp, options, parameters);
         }
 
         public static int ExecuteNonQuery(string usp, params SqlParameter[] parameters)
@@ -31,7 +31,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
         public static int ExecuteNonQuery(string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return StructuredQueryLanguage.ExecuteNonQuery(usp, options.ConnectionString, parameters);
+            return StructuredQueryLanguage.ExecuteNonQuery(usp, options, parameters);
         }
 
         public static void BulkInsert(string tableName, DataTable dataTable)
@@ -41,7 +41,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
         public static void BulkInsert(string tableName, DataTable dataTable, SqlOptions options)
         {
-            StructuredQueryLanguage.BulkInsert(tableName, dataTable, options.ConnectionString);
+            StructuredQueryLanguage.BulkInsert(tableName, dataTable, options);
         }
 
         public static Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, params SqlParameter[] parameters)
@@ -51,7 +51,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
         public static Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, options.ConnectionString, parameters);
+            return StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, options, parameters);
         }
 
         public static Task<int> ExecuteNonQueryAsync(string usp, params SqlParameter[] parameters)
@@ -61,7 +61,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
         public static Task<int> ExecuteNonQueryAsync(string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            return StructuredQueryLanguage.ExecuteNonQueryAsync(usp, options.ConnectionString, parameters);
+            return StructuredQueryLanguage.ExecuteNonQueryAsync(usp, options, parameters);
         }
 
         public static Task BulkInsertAsync(string tableName, DataTable dataTable)
@@ -71,7 +71,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
         public static Task BulkInsertAsync(string tableName, DataTable dataTable, SqlOptions options)
         {
-            return StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, options.ConnectionString);
+            return StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, options);
         }
     }
 

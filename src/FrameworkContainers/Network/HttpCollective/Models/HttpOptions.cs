@@ -33,13 +33,13 @@ namespace FrameworkContainers.Network.HttpCollective.Models
             RetrieveHttpStatus = retrieveHttpStatus;
         }
 
-        // Cast from HttpOptions.
+        // Cast from HttpOptions (for internal use).
         public static implicit operator JsonSerializerOptions(HttpOptions options) => options.Json.SerializerSettings;
         public static implicit operator JsonOptions(HttpOptions options) => options.Json;
         public static implicit operator int(HttpOptions options) => options.TimeoutSeconds;
         public static implicit operator bool(HttpOptions options) => options.RetrieveHttpStatus;
 
-        // Cast to HttpOptions.
+        // Cast to HttpOptions (for external use).
         public static implicit operator HttpOptions(JsonOptions options) => new HttpOptions(Constants.Http.TIMEOUT_SECONDS, options);
         public static implicit operator HttpOptions(int seconds) => new HttpOptions(seconds, JsonOptions.Default);
     }

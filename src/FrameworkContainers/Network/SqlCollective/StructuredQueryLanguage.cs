@@ -2,18 +2,20 @@
 using System.Data;
 using System.Threading.Tasks;
 using System;
+using FrameworkContainers.Network.SqlCollective.Models;
 
 namespace FrameworkContainers.Network.SqlCollective
 {
     internal static class StructuredQueryLanguage
     {
-        public static T ExecuteReader<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public static T ExecuteReader<T>(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString ?? Sql.ConnectionString))
+            using (var connection = new SqlConnection(options.ConnectionString ?? Sql.ConnectionString))
             {
                 connection.Open();
                 using (var command = new SqlCommand(usp, connection))
                 {
+                    command.CommandTimeout = options.TimeoutSeconds;
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parameters);
                     using (var dr = command.ExecuteReader())
@@ -24,13 +26,14 @@ namespace FrameworkContainers.Network.SqlCollective
             }
         }
 
-        public static async Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, string connectionString, params SqlParameter[] parameters)
+        public static async Task<T> ExecuteReaderAsync<T>(Func<IDataReader, T> reader, string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString ?? Sql.ConnectionString))
+            using (var connection = new SqlConnection(options.ConnectionString ?? Sql.ConnectionString))
             {
                 await connection.OpenAsync();
                 using (var command = new SqlCommand(usp, connection))
                 {
+                    command.CommandTimeout = options.TimeoutSeconds;
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parameters);
                     using (var dr = await command.ExecuteReaderAsync())
@@ -41,13 +44,14 @@ namespace FrameworkContainers.Network.SqlCollective
             }
         }
 
-        public static int ExecuteNonQuery(string usp, string connectionString, params SqlParameter[] parameters)
+        public static int ExecuteNonQuery(string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString ?? Sql.ConnectionString))
+            using (var connection = new SqlConnection(options.ConnectionString ?? Sql.ConnectionString))
             {
                 connection.Open();
                 using (var command = new SqlCommand(usp, connection))
                 {
+                    command.CommandTimeout = options.TimeoutSeconds;
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parameters);
                     return command.ExecuteNonQuery();
@@ -55,13 +59,14 @@ namespace FrameworkContainers.Network.SqlCollective
             }
         }
 
-        public static async Task<int> ExecuteNonQueryAsync(string usp, string connectionString, params SqlParameter[] parameters)
+        public static async Task<int> ExecuteNonQueryAsync(string usp, SqlOptions options, params SqlParameter[] parameters)
         {
-            using (var connection = new SqlConnection(connectionString ?? Sql.ConnectionString))
+            using (var connection = new SqlConnection(options.ConnectionString ?? Sql.ConnectionString))
             {
                 await connection.OpenAsync();
                 using (var command = new SqlCommand(usp, connection))
                 {
+                    command.CommandTimeout = options.TimeoutSeconds;
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parameters);
                     return await command.ExecuteNonQueryAsync();
@@ -69,11 +74,12 @@ namespace FrameworkContainers.Network.SqlCollective
             }
         }
 
-        public static void BulkInsert(string tableName, DataTable dataTable, string connectionString)
+        public static void BulkInsert(string tableName, DataTable dataTable, SqlOptions options)
         {
-            using (var bulkCopy = new SqlBulkCopy(connectionString ?? Sql.ConnectionString))
+            using (var bulkCopy = new SqlBulkCopy(options.ConnectionString ?? Sql.ConnectionString))
             {
                 bulkCopy.DestinationTableName = tableName;
+                bulkCopy.BulkCopyTimeout = options.TimeoutSeconds;
                 for (int i = 0; i < dataTable.Columns.Count; i++)
                 {
                     string columnName = dataTable.Columns[i].ColumnName;
@@ -83,11 +89,12 @@ namespace FrameworkContainers.Network.SqlCollective
             }
         }
 
-        public static async Task BulkInsertAsync(string tableName, DataTable dataTable, string connectionString)
+        public static async Task BulkInsertAsync(string tableName, DataTable dataTable, SqlOptions options)
         {
-            using (var bulkCopy = new SqlBulkCopy(connectionString ?? Sql.ConnectionString))
+            using (var bulkCopy = new SqlBulkCopy(options.ConnectionString ?? Sql.ConnectionString))
             {
                 bulkCopy.DestinationTableName = tableName;
+                bulkCopy.BulkCopyTimeout = options.TimeoutSeconds;
                 for (int i = 0; i < dataTable.Columns.Count; i++)
                 {
                     string columnName = dataTable.Columns[i].ColumnName;

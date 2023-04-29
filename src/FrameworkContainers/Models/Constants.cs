@@ -29,5 +29,10 @@
             public const int DEFAULT_HTTP_CODE = 504;
             public const string DEFAULT_HTTP_DESCRIPTION = "Gateway Timeout";
         }
+
+        public static class Sql
+        {
+            public const int COMMAND_TIMEOUT_SECONDS = 15; // i.e. not the connection timeout (that one is pulled from the connection string instead).
+        }
     }
 }

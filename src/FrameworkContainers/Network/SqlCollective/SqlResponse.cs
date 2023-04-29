@@ -24,7 +24,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
             try
             {
-                var result = StructuredQueryLanguage.ExecuteReader(reader, usp, options.ConnectionString, parameters);
+                var result = StructuredQueryLanguage.ExecuteReader(reader, usp, options, parameters);
                 response = response.With(result);
             }
             catch (Exception ex)
@@ -46,7 +46,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
             try
             {
-                var result = StructuredQueryLanguage.ExecuteNonQuery(usp, options.ConnectionString, parameters);
+                var result = StructuredQueryLanguage.ExecuteNonQuery(usp, options, parameters);
                 response = response.With(result);
             }
             catch (Exception ex)
@@ -68,7 +68,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
             try
             {
-                StructuredQueryLanguage.BulkInsert(tableName, dataTable, options.ConnectionString);
+                StructuredQueryLanguage.BulkInsert(tableName, dataTable, options);
                 response = response.AsValid();
             }
             catch (Exception ex)
@@ -90,7 +90,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
             try
             {
-                var result = await StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, options.ConnectionString, parameters);
+                var result = await StructuredQueryLanguage.ExecuteReaderAsync(reader, usp, options, parameters);
                 response = response.With(result);
             }
             catch (Exception ex)
@@ -112,7 +112,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
             try
             {
-                var result = await StructuredQueryLanguage.ExecuteNonQueryAsync(usp, options.ConnectionString, parameters);
+                var result = await StructuredQueryLanguage.ExecuteNonQueryAsync(usp, options, parameters);
                 response = response.With(result);
             }
             catch (Exception ex)
@@ -134,7 +134,7 @@ namespace FrameworkContainers.Network.SqlCollective
 
             try
             {
-                await StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, options.ConnectionString);
+                await StructuredQueryLanguage.BulkInsertAsync(tableName, dataTable, options);
                 response = response.AsValid();
             }
             catch (Exception ex)
