@@ -26,7 +26,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
                     else if (value.Equals("false", StringComparison.OrdinalIgnoreCase)) result = false;
                     else if (value.Equals("1")) result = true;
                     else if (value.Equals("0")) result = false;
-                    else throw new JsonException($"Unable to convert \"{reader.GetString()}\" to Boolean.");
+                    else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to Boolean.");
                 }
             }
             else if (reader.TokenType == JsonTokenType.Number)
@@ -34,9 +34,9 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
                 if (reader.TryGetInt32(out int value))
                 {
                     if (value == 0 || value == 1) result = value == 1;
-                    else throw new JsonException($"Unable to convert \"{reader.GetString()}\" to Boolean.");
+                    else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to Boolean.");
                 }
-                else throw new JsonException($"Unable to convert \"{reader.GetString()}\" to Boolean.");
+                else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to Boolean.");
             }
 
             return result;

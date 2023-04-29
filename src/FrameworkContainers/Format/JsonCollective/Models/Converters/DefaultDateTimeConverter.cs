@@ -21,7 +21,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
             {
                 if (reader.TryGetDateTime(out DateTime value)) result = value;
                 else if (string.IsNullOrEmpty(reader.GetString())) { }
-                else throw new JsonException($"Unable to convert \"{reader.GetString()}\" to DateTime.");
+                else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to DateTime.");
             }
 
             return result;

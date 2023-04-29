@@ -21,7 +21,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
             if (reader.TokenType == JsonTokenType.Number || reader.TokenType == JsonTokenType.String)
             {
                 var value = reader.TokenType == JsonTokenType.Number ? reader.GetInt32().ToString() : reader.GetString();
-                if (!string.IsNullOrEmpty(value) && !Enum.TryParse(value, true, out result)) throw new JsonException($"Unable to convert \"{value}\" to Enum \"{typeof(TEnum).FullName}\".");
+                if (!string.IsNullOrEmpty(value) && !Enum.TryParse(value, true, out result)) JsonConverterError($"Unable to convert \"{value}\" to Enum \"{typeof(TEnum).FullName}\".");
             }
 
             return result;

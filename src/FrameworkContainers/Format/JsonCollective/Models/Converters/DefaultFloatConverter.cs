@@ -20,7 +20,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
             if (reader.TokenType == JsonTokenType.Number)
             {
                 if (reader.TryGetSingle(out float value)) result = value;
-                else throw new JsonException($"Unable to convert \"{reader.GetString()}\" to float.");
+                else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to float.");
             }
             else if (reader.TokenType == JsonTokenType.String)
             {
@@ -28,7 +28,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
                 if (!string.IsNullOrEmpty(value))
                 {
                     if (float.TryParse(value, out float number)) result = number;
-                    else throw new JsonException($"Unable to convert \"{value}\" to float.");
+                    else JsonConverterError($"Unable to convert \"{value}\" to float.");
                 }
             }
 

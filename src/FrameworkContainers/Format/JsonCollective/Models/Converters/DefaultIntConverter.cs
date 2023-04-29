@@ -20,7 +20,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
             if (reader.TokenType == JsonTokenType.Number)
             {
                 if (reader.TryGetInt32(out int value)) result = value;
-                else throw new JsonException($"Unable to convert \"{reader.GetString()}\" to Int32.");
+                else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to Int32.");
             }
             else if (reader.TokenType == JsonTokenType.String)
             {
@@ -28,7 +28,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
                 if (!string.IsNullOrEmpty(value))
                 {
                     if (int.TryParse(value, out int number)) result = number;
-                    else throw new JsonException($"Unable to convert \"{value}\" to Int32.");
+                    else JsonConverterError($"Unable to convert \"{value}\" to Int32.");
                 }
             }
 

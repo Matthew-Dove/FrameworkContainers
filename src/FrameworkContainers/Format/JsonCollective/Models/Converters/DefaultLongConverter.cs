@@ -20,7 +20,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
             if (reader.TokenType == JsonTokenType.Number)
             {
                 if (reader.TryGetInt64(out long value)) result = value;
-                else throw new JsonException($"Unable to convert \"{reader.GetString()}\" to long.");
+                else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to long.");
             }
             else if (reader.TokenType == JsonTokenType.String)
             {
@@ -28,7 +28,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
                 if (!string.IsNullOrEmpty(value))
                 {
                     if (long.TryParse(value, out long number)) result = number;
-                    else throw new JsonException($"Unable to convert \"{value}\" to long.");
+                    else JsonConverterError($"Unable to convert \"{value}\" to long.");
                 }
             }
 

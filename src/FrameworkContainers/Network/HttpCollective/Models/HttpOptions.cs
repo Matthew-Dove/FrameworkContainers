@@ -1,6 +1,5 @@
 ﻿using FrameworkContainers.Format.JsonCollective.Models;
 using FrameworkContainers.Models;
-using System;
 using System.Text.Json;
 
 namespace FrameworkContainers.Network.HttpCollective.Models
@@ -20,7 +19,7 @@ namespace FrameworkContainers.Network.HttpCollective.Models
 
         public HttpOptions(int timeoutSeconds = default, JsonOptions json = null)
         {
-            if (timeoutSeconds < 0 || timeoutSeconds >= 14400) throw new ArgumentOutOfRangeException(nameof(timeoutSeconds));
+            if (timeoutSeconds < 0 || timeoutSeconds >= 14400) ArgumentOutOfRangeException(nameof(timeoutSeconds));
 
             TimeoutSeconds = timeoutSeconds == default ? Constants.Http.TIMEOUT_SECONDS : timeoutSeconds;
             Json = json ?? JsonOptions.Default;
