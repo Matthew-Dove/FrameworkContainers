@@ -27,10 +27,6 @@ namespace FrameworkContainers.Network.HttpCollective.Models
             if (string.IsNullOrEmpty(target)) ArgumentOutOfRangeException(argument);
             return target;
         }
-
-        // Min, Max, collectionIsNullOrEmpty, ifNull, ifDefault.
-        // ThrowIfLessThan, ThrowIfGreaterThen, ThrowIfNullOrEmpty, ThrowIfNull, ThrowIfDefault.
-        // where T : struct, IComparable<T>
     }
 }
 

@@ -18,6 +18,8 @@ public sealed class HttpResponse
 
     private static Response<HttpStatus> IdentityResponseStatus<E>(Task<Either<string, E>> t) where E : Exception => t.Result.Match(static x => Response.Create(HttpStatus.Create(x)), Error<HttpStatus>);
 
+    private static Response<HttpBody> IdentityResponseBody<E>(Task<Either<string, E>> t) where E : Exception => t.Result.Match(static x => Response.Create(HttpBody.Create(x)), Error<HttpBody>);
+
     private static Response<T> IdentityResponse<T, E>(Task<Either<T, E>> t) where E : Exception => t.Result.Match(Response.Create<T>, Error<T>);
 
     private static Func<string, Response<T>> Parse<T>(JsonOptions options) { return json => Json.Response.ToModel<T>(json, options); }
@@ -40,16 +42,16 @@ public sealed class HttpResponse
             .Match(Parse<T>(options), Error<T>);
     }
 
-    public Response<string> Post(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Response<HttpBody> Post(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return Post(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Response<string> Post(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Response<HttpBody> Post(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.POST)
-            .Match(Response.Create, Error<string>);
+            .Match(static x => Response.Create(HttpBody.Create(x)), Error<HttpBody>);
     }
 
     public Response<HttpStatus> PostStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -88,16 +90,16 @@ public sealed class HttpResponse
             .Bind(Send<TResponse>(Constants.Http.POST, url, options, headers));
     }
 
-    public Response<string> Put(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Response<HttpBody> Put(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return Put(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Response<string> Put(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Response<HttpBody> Put(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PUT)
-            .Match(Response.Create, Error<string>);
+            .Match(static x => Response.Create(HttpBody.Create(x)), Error<HttpBody>);
     }
 
     public Response<HttpStatus> PutStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -136,16 +138,16 @@ public sealed class HttpResponse
             .Bind(Send<TResponse>(Constants.Http.PUT, url, options, headers));
     }
 
-    public Response<string> Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Response<HttpBody> Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return Patch(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Response<string> Patch(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Response<HttpBody> Patch(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PATCH)
-            .Match(Response.Create, Error<string>);
+            .Match(static x => Response.Create(HttpBody.Create(x)), Error<HttpBody>);
     }
 
     public Response<HttpStatus> PatchStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -184,16 +186,16 @@ public sealed class HttpResponse
             .Bind(Send<TResponse>(Constants.Http.PATCH, url, options, headers));
     }
 
-    public Response<string> Get(Either<string, Uri> url, params Header[] headers)
+    public Response<HttpBody> Get(Either<string, Uri> url, params Header[] headers)
     {
         return Get(url, HttpOptions.Default, headers);
     }
 
-    public Response<string> Get(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+    public Response<HttpBody> Get(Either<string, Uri> url, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.GET)
-            .Match(Response.Create, Error<string>);
+            .Match(static x => Response.Create(HttpBody.Create(x)), Error<HttpBody>);
     }
 
     public Response<HttpStatus> GetStatus(Either<string, Uri> url, params Header[] headers)
@@ -232,16 +234,16 @@ public sealed class HttpResponse
             .Match(static x => Response.Create(HttpStatus.Create(x)), Error<HttpStatus>);
     }
 
-    public Task<Response<string>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Task<Response<HttpBody>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return PostAsync(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Task<Response<string>> PostAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Task<Response<HttpBody>> PostAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Post)
-            .ContinueWith(IdentityResponse);
+            .ContinueWith(IdentityResponseBody);
     }
 
     public Task<Response<HttpStatus>> PostStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -280,16 +282,16 @@ public sealed class HttpResponse
             .ContinueWith(IdentityResponse);
     }
 
-    public Task<Response<string>> PutAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Task<Response<HttpBody>> PutAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return PutAsync(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Task<Response<string>> PutAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Task<Response<HttpBody>> PutAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Put)
-            .ContinueWith(IdentityResponse);
+            .ContinueWith(IdentityResponseBody);
     }
 
     public Task<Response<HttpStatus>> PutStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -328,16 +330,16 @@ public sealed class HttpResponse
             .ContinueWith(IdentityResponse);
     }
 
-    public Task<Response<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Task<Response<HttpBody>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return PatchAsync(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Task<Response<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Task<Response<HttpBody>> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch)
-            .ContinueWith(IdentityResponse);
+            .ContinueWith(IdentityResponseBody);
     }
 
     public Task<Response<HttpStatus>> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -376,16 +378,16 @@ public sealed class HttpResponse
             .ContinueWith(IdentityResponse);
     }
 
-    public Task<Response<string>> GetAsync(Either<string, Uri> url, params Header[] headers)
+    public Task<Response<HttpBody>> GetAsync(Either<string, Uri> url, params Header[] headers)
     {
         return GetAsync(url, HttpOptions.Default, headers);
     }
 
-    public Task<Response<string>> GetAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+    public Task<Response<HttpBody>> GetAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get)
-            .ContinueWith(IdentityResponse);
+            .ContinueWith(IdentityResponseBody);
     }
 
     public Task<Response<HttpStatus>> GetStatusAsync(Either<string, Uri> url, params Header[] headers)

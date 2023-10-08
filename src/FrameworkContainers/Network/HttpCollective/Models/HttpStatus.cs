@@ -4,7 +4,7 @@ using FrameworkContainers.Models;
 namespace FrameworkContainers.Network.HttpCollective.Models
 {
     /// <summary>
-    /// A description of the http status code sent from the server.
+    /// A description of the http status code sent from the upstream server.
     /// <list type="table">
     ///     <listheader>
     ///         <term>Code</term>

@@ -17,6 +17,8 @@ public sealed class HttpMaybe
 
     private static Maybe<HttpStatus> IdentityMaybeStatus<E>(Task<Either<string, E>> t) where E : Exception => t.Result.Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.CreateError<HttpStatus>);
 
+    private static Maybe<HttpBody> IdentityMaybeBody<E>(Task<Either<string, E>> t) where E : Exception => t.Result.Match(static x => Maybe.Create(HttpBody.Create(x)), Maybe.CreateError<HttpBody>);
+
     private static Maybe<T> IdentityMaybe<T, E>(Task<Either<T, E>> t) where E : Exception => t.Result.Match(Maybe.Create<T>, Maybe.CreateError<T>);
 
     private static Func<string, Maybe<T>> Parse<T>(JsonOptions options) { return json => Json.Maybe.ToModel<T>(json, options).Match(Maybe.Create<T>, Maybe.CreateError<T>); }
@@ -35,16 +37,16 @@ public sealed class HttpMaybe
             .Match(Parse<T>(options), Maybe.CreateError<T>);
     }
 
-    public Maybe<string> Post(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Maybe<HttpBody> Post(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return Post(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Maybe<string> Post(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Maybe<HttpBody> Post(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.POST)
-            .Match(Maybe.Create<string>, Maybe.CreateError<string>);
+            .Match(static x => Maybe.Create(HttpBody.Create(x)), Maybe.CreateError<HttpBody>);
     }
 
     public Maybe<HttpStatus> PostStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -85,16 +87,16 @@ public sealed class HttpMaybe
         );
     }
 
-    public Maybe<string> Put(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Maybe<HttpBody> Put(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return Put(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Maybe<string> Put(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Maybe<HttpBody> Put(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PUT)
-            .Match(Maybe.Create<string>, Maybe.CreateError<string>);
+            .Match(static x => Maybe.Create(HttpBody.Create(x)), Maybe.CreateError<HttpBody>);
     }
 
     public Maybe<HttpStatus> PutStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -135,16 +137,16 @@ public sealed class HttpMaybe
         );
     }
 
-    public Maybe<string> Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Maybe<HttpBody> Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return Patch(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Maybe<string> Patch(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Maybe<HttpBody> Patch(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PATCH)
-            .Match(Maybe.Create<string>, Maybe.CreateError<string>);
+            .Match(static x => Maybe.Create(HttpBody.Create(x)), Maybe.CreateError<HttpBody>);
     }
 
     public Maybe<HttpStatus> PatchStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -185,16 +187,16 @@ public sealed class HttpMaybe
         );
     }
 
-    public Maybe<string> Get(Either<string, Uri> url, params Header[] headers)
+    public Maybe<HttpBody> Get(Either<string, Uri> url, params Header[] headers)
     {
         return Get(url, HttpOptions.Default, headers);
     }
 
-    public Maybe<string> Get(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+    public Maybe<HttpBody> Get(Either<string, Uri> url, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .Send(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.GET)
-            .Match(Maybe.Create<string>, Maybe.CreateError<string>);
+            .Match(static x => Maybe.Create(HttpBody.Create(x)), Maybe.CreateError<HttpBody>);
     }
 
     public Maybe<HttpStatus> GetStatus(Either<string, Uri> url, params Header[] headers)
@@ -233,16 +235,16 @@ public sealed class HttpMaybe
             .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.CreateError<HttpStatus>);
     }
 
-    public Task<Maybe<string>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Task<Maybe<HttpBody>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return PostAsync(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Task<Maybe<string>> PostAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Task<Maybe<HttpBody>> PostAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Post)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWith(IdentityMaybeBody);
     }
 
     public Task<Maybe<HttpStatus>> PostStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -281,16 +283,16 @@ public sealed class HttpMaybe
             .ContinueWith(IdentityMaybe);
     }
 
-    public Task<Maybe<string>> PutAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Task<Maybe<HttpBody>> PutAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return PutAsync(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Task<Maybe<string>> PutAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Task<Maybe<HttpBody>> PutAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Put)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWith(IdentityMaybeBody);
     }
 
     public Task<Maybe<HttpStatus>> PutStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -329,16 +331,16 @@ public sealed class HttpMaybe
             .ContinueWith(IdentityMaybe);
     }
 
-    public Task<Maybe<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public Task<Maybe<HttpBody>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return PatchAsync(body, url, contentType, HttpOptions.Default, headers);
     }
 
-    public Task<Maybe<string>> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public Task<Maybe<HttpBody>> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWith(IdentityMaybeBody);
     }
 
     public Task<Maybe<HttpStatus>> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -377,16 +379,16 @@ public sealed class HttpMaybe
             .ContinueWith(IdentityMaybe);
     }
 
-    public Task<Maybe<string>> GetAsync(Either<string, Uri> url, params Header[] headers)
+    public Task<Maybe<HttpBody>> GetAsync(Either<string, Uri> url, params Header[] headers)
     {
         return GetAsync(url, HttpOptions.Default, headers);
     }
 
-    public Task<Maybe<string>> GetAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+    public Task<Maybe<HttpBody>> GetAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
             .SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWith(IdentityMaybeBody);
     }
 
     public Task<Maybe<HttpStatus>> GetStatusAsync(Either<string, Uri> url, params Header[] headers)
