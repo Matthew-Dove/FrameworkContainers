@@ -50,6 +50,7 @@ internal static class HypertextTransferProtocol
         }
     }
 
+    // Generic sync string send, and receive.
     public static Either<string, HttpException> Send(string body, Uri url, string contentType, HttpOptions options, Header[] headers, string httpMethod)
     {
         var response = new Either<string, HttpException>();
@@ -98,6 +99,57 @@ internal static class HypertextTransferProtocol
         return response;
     }
 
+    // Special case for the caller to handle 200, 400, and 500 http status codes manually (sync).
+    public static Either<Http245, HttpException> Send245(string body, Uri url, string contentType, HttpOptions options, Header[] headers, string httpMethod)
+    {
+        var response = new Either<Http245, HttpException>();
+
+        try
+        {
+            var request = WebRequest.Create(url);
+            request.Method = httpMethod;
+            request.Timeout = options * 1000;
+            foreach (var header in headers) request.Headers.Add(header.Key, header.Value);
+            if (!string.IsNullOrEmpty(body) && (Constants.Http.POST.Equals(httpMethod) || Constants.Http.PUT.Equals(httpMethod) || Constants.Http.PATCH.Equals(httpMethod)))
+            {
+                var data = Encoding.UTF8.GetBytes(body);
+                request.ContentType = contentType;
+                request.ContentLength = data.Length;
+                using (var requestStream = request.GetRequestStream())
+                {
+                    requestStream.Write(data, 0, data.Length);
+                }
+            }
+            using (var webResponse = (HttpWebResponse)request.GetResponse())
+            using (var responseStream = webResponse.GetResponseStream())
+            using (var sr = new StreamReader(responseStream))
+            {
+                var responseBody = sr.ReadToEnd();
+                var responseStatusCode = (int)webResponse.StatusCode;
+                var responseheaders = new Header[webResponse.Headers.Count];
+                for (int i = 0; i < webResponse.Headers.Count; i++) responseheaders[i] = new Header(webResponse.Headers.Keys[i], webResponse.Headers[i]);
+                response = new Http245(responseheaders, responseStatusCode, responseBody);
+            }
+        }
+        catch (WebException we) when (we.Response is HttpWebResponse httpResponse)
+        {
+            var responseStatusCode = (int)httpResponse.StatusCode;
+            var responseBody = default(string);
+            using (var sr = new StreamReader(httpResponse.GetResponseStream())) { responseBody = sr.ReadToEnd(); }
+            var responseheaders = new Header[httpResponse.Headers.Count];
+            for (int i = 0; i < httpResponse.Headers.Count; i++) responseheaders[i] = new Header(httpResponse.Headers.Keys[i], httpResponse.Headers[i]);
+            response = new Http245(responseheaders, responseStatusCode, responseBody);
+            httpResponse.Dispose();
+        }
+        catch (Exception ex)
+        {
+            response = new HttpException($"Error calling {httpMethod}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
+        }
+
+        return response;
+    }
+
+    // Generic async string send, and receive.
     public static async Task<Either<string, HttpException>> SendAsync(string body, Uri url, string contentType, HttpOptions options, Header[] headers, HttpMethod httpMethod)
     {
         var response = new Either<string, HttpException>();

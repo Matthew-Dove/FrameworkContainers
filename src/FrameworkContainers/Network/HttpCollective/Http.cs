@@ -24,6 +24,18 @@ public static class Http
 
     private static Func<string, T> Parse<T>(JsonOptions options) { return json => Json.ToModel<T>(json, options); }
 
+    public static Http245 Post245(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Post245(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public static Http245 Post245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.POST)
+            .Match(Identity, Identity<Http245>);
+    }
+
     public static HttpBody Post(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return Post(body, url, contentType, HttpOptions.Default, headers);

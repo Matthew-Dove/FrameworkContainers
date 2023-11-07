@@ -11,6 +11,8 @@ public interface IHttpClient
     HttpMaybe Maybe { get; }
     HttpResponse Response { get; }
 
+    Http245 Post245(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Http245 Post245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     HttpBody Post(string body, Either<string, Uri> url, string contentType, params Header[] headers);
     HttpBody Post(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     HttpStatus PostStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers);
@@ -91,6 +93,8 @@ public sealed class HttpClient : IHttpClient
     public HttpMaybe Maybe => Http.Maybe;
     public HttpResponse Response => Http.Response;
 
+    public Http245 Post245(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.Post245(body, url, contentType, headers);
+    public Http245 Post245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.Post245(body, url, contentType, options, headers);
     public HttpBody Post(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.Post(body, url, contentType, headers);
     public HttpBody Post(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.Post(body, url, contentType, options, headers);
     public HttpStatus PostStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.PostStatus(body, url, contentType, headers);
