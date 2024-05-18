@@ -84,6 +84,18 @@ public static class Http
             .Match(Parse<TResponse>(options), Identity<TResponse>);
     }
 
+    public static Http245 Put245(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Put245(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public static Http245 Put245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PUT)
+            .Match(Identity, Identity<Http245>);
+    }
+
     public static HttpBody Put(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return Put(body, url, contentType, HttpOptions.Default, headers);
@@ -132,6 +144,18 @@ public static class Http
             .Match(Parse<TResponse>(options), Identity<TResponse>);
     }
 
+    public static Http245 Patch245(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Patch245(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public static Http245 Patch245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PATCH)
+            .Match(Identity, Identity<Http245>);
+    }
+
     public static HttpBody Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return Patch(body, url, contentType, HttpOptions.Default, headers);
@@ -178,6 +202,18 @@ public static class Http
         return HypertextTransferProtocol
             .Send(Json.FromModel(model, options), url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, options, headers, Constants.Http.PATCH)
             .Match(Parse<TResponse>(options), Identity<TResponse>);
+    }
+
+    public static Http245 Get245(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Get245(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public static Http245 Get245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.GET)
+            .Match(Identity, Identity<Http245>);
     }
 
     public static HttpBody Get(Either<string, Uri> url, params Header[] headers)

@@ -22,6 +22,8 @@ public interface IHttpClient
     TResponse PostJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
     TResponse PostJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
+    Http245 Put245(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Http245 Put245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     HttpBody Put(string body, Either<string, Uri> url, string contentType, params Header[] headers);
     HttpBody Put(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     HttpStatus PutStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers);
@@ -31,6 +33,8 @@ public interface IHttpClient
     TResponse PutJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
     TResponse PutJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
+    Http245 Patch245(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Http245 Patch245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     HttpBody Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers);
     HttpBody Patch(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     HttpStatus PatchStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers);
@@ -40,6 +44,8 @@ public interface IHttpClient
     TResponse PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
     TResponse PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
+    Http245 Get245(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Http245 Get245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     HttpBody Get(Either<string, Uri> url, params Header[] headers);
     HttpBody Get(Either<string, Uri> url, HttpOptions options, params Header[] headers);
     HttpStatus GetStatus(Either<string, Uri> url, params Header[] headers);
@@ -104,6 +110,8 @@ public sealed class HttpClient : IHttpClient
     public TResponse PostJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PostJson<TRequest, TResponse>(model, url, headers);
     public TResponse PostJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PostJson<TRequest, TResponse>(model, url, options, headers);
 
+    public Http245 Put245(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.Put245(body, url, contentType, headers);
+    public Http245 Put245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.Put245(body, url, contentType, options, headers);
     public HttpBody Put(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.Put(body, url, contentType, headers);
     public HttpBody Put(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.Put(body, url, contentType, options, headers);
     public HttpStatus PutStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.PutStatus(body, url, contentType, headers);
@@ -113,6 +121,8 @@ public sealed class HttpClient : IHttpClient
     public TResponse PutJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PutJson<TRequest, TResponse>(model, url, headers);
     public TResponse PutJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PutJson<TRequest, TResponse>(model, url, options, headers);
 
+    public Http245 Patch245(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.Patch245(body, url, contentType, headers);
+    public Http245 Patch245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.Patch245(body, url, contentType, options, headers);
     public HttpBody Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.Patch(body, url, contentType, headers);
     public HttpBody Patch(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.Patch(body, url, contentType, options, headers);
     public HttpStatus PatchStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.PatchStatus(body, url, contentType, headers);
@@ -122,6 +132,8 @@ public sealed class HttpClient : IHttpClient
     public TResponse PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PatchJson<TRequest, TResponse>(model, url, headers);
     public TResponse PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PatchJson<TRequest, TResponse>(model, url, options, headers);
 
+    public Http245 Get245(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.Get245(body, url, contentType, headers);
+    public Http245 Get245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.Get245(body, url, contentType, options, headers);
     public HttpBody Get(Either<string, Uri> url, params Header[] headers) => Http.Get(url, headers);
     public HttpBody Get(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.Get(url, options, headers);
     public HttpStatus GetStatus(Either<string, Uri> url, params Header[] headers) => Http.GetStatus(url, headers);
