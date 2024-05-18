@@ -56,6 +56,8 @@ public interface IHttpClient
     HttpStatus DeleteStatus(Either<string, Uri> url, params Header[] headers);
     HttpStatus DeleteStatus(Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
+    Task<Http245> Post245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Http245> Post245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     Task<HttpBody> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
     Task<HttpBody> PostAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     Task<HttpStatus> PostStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
@@ -65,6 +67,8 @@ public interface IHttpClient
     Task<TResponse> PostJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
     Task<TResponse> PostJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
+    Task<Http245> Put245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Http245> Put245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     Task<HttpBody> PutAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
     Task<HttpBody> PutAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     Task<HttpStatus> PutStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
@@ -74,6 +78,8 @@ public interface IHttpClient
     Task<TResponse> PutJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
     Task<TResponse> PutJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
+    Task<Http245> Patch245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Http245> Patch245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     Task<HttpBody> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
     Task<HttpBody> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
     Task<HttpStatus> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
@@ -83,6 +89,8 @@ public interface IHttpClient
     Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
     Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
+    Task<Http245> Get245Async(Either<string, Uri> url, params Header[] headers);
+    Task<Http245> Get245Async(Either<string, Uri> url, HttpOptions options, params Header[] headers);
     Task<HttpBody> GetAsync(Either<string, Uri> url, params Header[] headers);
     Task<HttpBody> GetAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers);
     Task<HttpStatus> GetStatusAsync(Either<string, Uri> url, params Header[] headers);
@@ -144,6 +152,8 @@ public sealed class HttpClient : IHttpClient
     public HttpStatus DeleteStatus(Either<string, Uri> url, params Header[] headers) => Http.DeleteStatus(url, headers);
     public HttpStatus DeleteStatus(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.DeleteStatus(url, options, headers);
 
+    public Task<Http245> Post245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.Post245Async(body, url, contentType, headers);
+    public Task<Http245> Post245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.Post245Async(body, url, contentType, options, headers);
     public Task<HttpBody> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.PostAsync(body, url, contentType, headers);
     public Task<HttpBody> PostAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.PostAsync(body, url, contentType, options, headers);
     public Task<HttpStatus> PostStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.PostStatusAsync(body, url, contentType, headers);
@@ -153,6 +163,8 @@ public sealed class HttpClient : IHttpClient
     public Task<TResponse> PostJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PostJsonAsync<TRequest, TResponse>(model, url, headers);
     public Task<TResponse> PostJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PostJsonAsync<TRequest, TResponse>(model, url, options, headers);
 
+    public Task<Http245> Put245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.Put245Async(body, url, contentType, headers);
+    public Task<Http245> Put245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.Put245Async(body, url, contentType, options, headers);
     public Task<HttpBody> PutAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.PutAsync(body, url, contentType, headers);
     public Task<HttpBody> PutAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.PutAsync(body, url, contentType, options, headers);
     public Task<HttpStatus> PutStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.PutStatusAsync(body, url, contentType, headers);
@@ -162,6 +174,8 @@ public sealed class HttpClient : IHttpClient
     public Task<TResponse> PutJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PutJsonAsync<TRequest, TResponse>(model, url, headers);
     public Task<TResponse> PutJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PutJsonAsync<TRequest, TResponse>(model, url, options, headers);
 
+    public Task<Http245> Patch245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.Patch245Async(body, url, contentType, headers);
+    public Task<Http245> Patch245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.Patch245Async(body, url, contentType, options, headers);
     public Task<HttpBody> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.PatchAsync(body, url, contentType, headers);
     public Task<HttpBody> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.PatchAsync(body, url, contentType, options, headers);
     public Task<HttpStatus> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.PatchStatusAsync(body, url, contentType, headers);
@@ -171,6 +185,8 @@ public sealed class HttpClient : IHttpClient
     public Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PatchJsonAsync<TRequest, TResponse>(model, url, headers);
     public Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PatchJsonAsync<TRequest, TResponse>(model, url, options, headers);
 
+    public Task<Http245> Get245Async(Either<string, Uri> url, params Header[] headers) => Http.Get245Async(url, headers);
+    public Task<Http245> Get245Async(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.Get245Async(url, options, headers);
     public Task<HttpBody> GetAsync(Either<string, Uri> url, params Header[] headers) => Http.GetAsync(url, headers);
     public Task<HttpBody> GetAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.GetAsync(url, options, headers);
     public Task<HttpStatus> GetStatusAsync(Either<string, Uri> url, params Header[] headers) => Http.GetStatusAsync(url, headers);

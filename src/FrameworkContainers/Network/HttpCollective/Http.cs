@@ -264,6 +264,18 @@ public static class Http
             .Match(HttpStatus.Create, Identity<HttpStatus>);
     }
 
+    public static Task<Http245> Post245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Post245Async(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public static Task<Http245> Post245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Post)
+            .ContinueWith(IdentityValue);
+    }
+
     public static Task<HttpBody> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return PostAsync(body, url, contentType, HttpOptions.Default, headers);
@@ -309,6 +321,18 @@ public static class Http
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HttpMethod.Post)
+            .ContinueWith(IdentityValue);
+    }
+
+    public static Task<Http245> Put245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Put245Async(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public static Task<Http245> Put245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Put)
             .ContinueWith(IdentityValue);
     }
 
@@ -360,6 +384,18 @@ public static class Http
             .ContinueWith(IdentityValue);
     }
 
+    public static Task<Http245> Patch245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Patch245Async(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public static Task<Http245> Patch245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch)
+            .ContinueWith(IdentityValue);
+    }
+
     public static Task<HttpBody> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return PatchAsync(body, url, contentType, HttpOptions.Default, headers);
@@ -405,6 +441,18 @@ public static class Http
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HypertextTransferProtocol.Patch)
+            .ContinueWith(IdentityValue);
+    }
+
+    public static Task<Http245> Get245Async(Either<string, Uri> url, params Header[] headers)
+    {
+        return Get245Async(url, HttpOptions.Default, headers);
+    }
+
+    public static Task<Http245> Get245Async(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245Async(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get)
             .ContinueWith(IdentityValue);
     }
 
