@@ -1,5 +1,4 @@
 ﻿using ContainerExpressions.Containers;
-using FrameworkContainers.Format.XmlCollective.Models;
 using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
 using System;
@@ -13,15 +12,13 @@ namespace FrameworkContainers.Format.XmlCollective
 
         private XmlMaybe() { }
 
-        public Maybe<T> ToModel<T>(string xml) => ToModel<T>(xml, XmlReadOptions.Default);
-
-        public Maybe<T> ToModel<T>(string xml, XmlReadOptions options)
+        public Maybe<T> ToModel<T>(string xml)
         {
             var maybe = new Maybe<T>();
 
             try
             {
-                var model = ExtensibleMarkupLanguage.XmlToModel<T>(xml, options);
+                var model = ExtensibleMarkupLanguage.XmlToModel<T>(xml);
                 maybe = maybe.With(model);
             }
             catch (Exception ex)
@@ -32,15 +29,13 @@ namespace FrameworkContainers.Format.XmlCollective
             return maybe;
         }
 
-        public Maybe<string> FromModel<T>(T model) => FromModel(model, XmlWriteOptions.Default);
-
-        public Maybe<string> FromModel<T>(T model, XmlWriteOptions options)
+        public Maybe<string> FromModel<T>(T model)
         {
             var maybe = new Maybe<string>();
 
             try
             {
-                var xml = ExtensibleMarkupLanguage.ModelToXml<T>(model, options);
+                var xml = ExtensibleMarkupLanguage.ModelToXml<T>(model);
                 maybe = maybe.With(xml);
             }
             catch (Exception ex)
@@ -61,10 +56,6 @@ namespace FrameworkContainers.Format.XmlCollective
 
         public Maybe<T> ToModel(string xml) => XmlMaybe.Instance.ToModel<T>(xml);
 
-        public Maybe<T> ToModel(string xml, XmlReadOptions options) => XmlMaybe.Instance.ToModel<T>(xml, options);
-
         public Maybe<string> FromModel(T model) => XmlMaybe.Instance.FromModel<T>(model);
-
-        public Maybe<string> FromModel(T model, XmlWriteOptions options) => XmlMaybe.Instance.FromModel<T>(model, options);
     }
 }

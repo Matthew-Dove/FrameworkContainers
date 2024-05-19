@@ -1,5 +1,4 @@
-﻿using FrameworkContainers.Format.XmlCollective.Models;
-using System;
+﻿using System;
 
 namespace FrameworkContainers.Format.XmlCollective
 {
@@ -12,13 +11,11 @@ namespace FrameworkContainers.Format.XmlCollective
         /// <summary>Access to XML serialize, and deserialize methods that return the result in a Response container.</summary>
         public static readonly XmlResponse Response = XmlResponse.Instance;
 
-        public static T ToModel<T>(string xml) => ToModel<T>(xml, XmlReadOptions.Default);
-
-        public static T ToModel<T>(string xml, XmlReadOptions options)
+        public static T ToModel<T>(string xml)
         {
             try
             {
-                return ExtensibleMarkupLanguage.XmlToModel<T>(xml, options);
+                return ExtensibleMarkupLanguage.XmlToModel<T>(xml);
             }
             catch (Exception ex)
             {
@@ -27,13 +24,11 @@ namespace FrameworkContainers.Format.XmlCollective
             return default;
         }
 
-        public static string FromModel<T>(T model) => FromModel(model, XmlWriteOptions.Default);
-
-        public static string FromModel<T>(T model, XmlWriteOptions options)
+        public static string FromModel<T>(T model)
         {
             try
             {
-                return ExtensibleMarkupLanguage.ModelToXml<T>(model, options);
+                return ExtensibleMarkupLanguage.ModelToXml<T>(model);
             }
             catch (Exception ex)
             {
