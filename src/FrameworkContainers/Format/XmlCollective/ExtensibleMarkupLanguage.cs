@@ -1,52 +1,42 @@
-﻿using FrameworkContainers.Format.XmlCollective.Models;
-using FrameworkContainers.Models.Streams;
+﻿using FrameworkContainers.Models.Streams;
 using FrameworkContainers.Models;
 using System.Xml.Serialization;
 using System.Xml;
+using System.Text;
 
 namespace FrameworkContainers.Format.XmlCollective
 {
     internal static class ExtensibleMarkupLanguage
     {
+        private static readonly XmlDictionaryReaderQuotas _readerQuotas = new XmlDictionaryReaderQuotas { MaxDepth = Constants.Serialize.MAX_DEPTH, MaxStringContentLength = Constants.Serialize.MAX_READ_LENGTH };
+        private static readonly XmlSerializerNamespaces _namespaces = new(new[] { XmlQualifiedName.Empty });
+        private static readonly XmlWriterSettings _settings = new() { Indent = true, OmitXmlDeclaration = true, CheckCharacters = false };
+        private static readonly Encoding _encoding = Encoding.Unicode;
+
         /// <summary>Converts an object to its serialized XML format.</summary>
         /// <typeparam name="T">The type of object we are operating on.</typeparam>
         /// <param name="value">The object we are operating on.</param>
         /// <returns>The XML string representation of the object.</returns>
-        public static string ModelToXml<T>(T value, XmlWriteOptions options)
+        public static string ModelToXml<T>(T value)
         {
-            var namespaces = options.RemoveDefaultXmlNamespaces ? new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty }) : null;
-            var settings = new XmlWriterSettings
-            {
-                Indent = true,
-                OmitXmlDeclaration = options.OmitXmlDeclaration,
-                CheckCharacters = false
-            };
-
-            using (var stream = new StringWriterWithEncoding(options.Encoding))
-            using (var writer = XmlWriter.Create(stream, settings))
-            {
-                var serializer = new XmlSerializer(value.GetType());
-                serializer.Serialize(writer, value, namespaces);
-                return stream.ToString();
-            }
+            using var stream = new StringWriterWithEncoding(_encoding);
+            using var writer = XmlWriter.Create(stream, _settings);
+            var serializer = new XmlSerializer(value.GetType());
+            serializer.Serialize(writer, value, _namespaces);
+            return stream.ToString();
         }
 
         /// <summary>Creates an object instance from the specified XML string.</summary>
         /// <typeparam name="T">The Type of the object we are operating on.</typeparam>
         /// <param name="xml">The XML string to deserialize from.</param>
         /// <returns>An object instance.</returns>
-        public static T XmlToModel<T>(string xml, XmlReadOptions options)
+        public static T XmlToModel<T>(string xml)
         {
-            using (var stream = new StringStream(xml))
-            using (var reader = XmlDictionaryReader.CreateTextReader(stream, options.Encoding, _readerQuotas, OnClose))
-            {
-                var serializer = new XmlSerializer(typeof(T));
-                return (T)serializer.Deserialize(reader);
-            }
+            static void OnClose(XmlDictionaryReader _) { }
+            using var stream = new StringStream(xml);
+            using var reader = XmlDictionaryReader.CreateTextReader(stream, _encoding, _readerQuotas, OnClose);
+            var serializer = new XmlSerializer(typeof(T));
+            return (T)serializer.Deserialize(reader);
         }
-
-        private readonly static XmlDictionaryReaderQuotas _readerQuotas = new XmlDictionaryReaderQuotas { MaxDepth = Constants.Serialize.MAX_DEPTH, MaxStringContentLength = Constants.Serialize.MAX_READ_LENGTH };
-
-        private static void OnClose(XmlDictionaryReader _) { }
     }
 }

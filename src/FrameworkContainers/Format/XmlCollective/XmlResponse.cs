@@ -1,5 +1,4 @@
 ﻿using ContainerExpressions.Containers;
-using FrameworkContainers.Format.XmlCollective.Models;
 using System;
 
 namespace FrameworkContainers.Format.XmlCollective
@@ -11,15 +10,13 @@ namespace FrameworkContainers.Format.XmlCollective
 
         private XmlResponse() { }
 
-        public Response<T> ToModel<T>(string xml) => ToModel<T>(xml, XmlReadOptions.Default);
-
-        public Response<T> ToModel<T>(string xml, XmlReadOptions options)
+        public Response<T> ToModel<T>(string xml)
         {
             var response = new Response<T>();
 
             try
             {
-                var model = ExtensibleMarkupLanguage.XmlToModel<T>(xml, options);
+                var model = ExtensibleMarkupLanguage.XmlToModel<T>(xml);
                 response = response.With(model);
             }
             catch (Exception ex)
@@ -30,15 +27,13 @@ namespace FrameworkContainers.Format.XmlCollective
             return response;
         }
 
-        public Response<string> FromModel<T>(T model) => FromModel(model, XmlWriteOptions.Default);
-
-        public Response<string> FromModel<T>(T model, XmlWriteOptions options)
+        public Response<string> FromModel<T>(T model)
         {
             var response = new Response<string>();
 
             try
             {
-                var json = ExtensibleMarkupLanguage.ModelToXml<T>(model, options);
+                var json = ExtensibleMarkupLanguage.ModelToXml<T>(model);
                 response = response.With(json);
             }
             catch (Exception ex)
@@ -59,10 +54,6 @@ namespace FrameworkContainers.Format.XmlCollective
 
         public Response<T> ToModel(string xml) => XmlResponse.Instance.ToModel<T>(xml);
 
-        public Response<T> ToModel(string xml, XmlReadOptions options) => XmlResponse.Instance.ToModel<T>(xml, options);
-
         public Response<string> FromModel(T model) => XmlResponse.Instance.FromModel<T>(model);
-
-        public Response<string> FromModel(T model, XmlWriteOptions options) => XmlResponse.Instance.FromModel<T>(model, options);
     }
 }
