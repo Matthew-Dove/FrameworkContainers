@@ -204,15 +204,15 @@ public static class Http
             .Match(Parse<TResponse>(options), Identity<TResponse>);
     }
 
-    public static Http245 Get245(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    public static Http245 Get245(Either<string, Uri> url, params Header[] headers)
     {
-        return Get245(body, url, contentType, HttpOptions.Default, headers);
+        return Get245(url, HttpOptions.Default, headers);
     }
 
-    public static Http245 Get245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    public static Http245 Get245(Either<string, Uri> url, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
-            .Send245(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.GET)
+            .Send245(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.GET)
             .Match(Identity, Identity<Http245>);
     }
 
