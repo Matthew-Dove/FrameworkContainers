@@ -50,6 +50,7 @@ internal static class HypertextTransferProtocol
         }
     }
 
+    // Generic sync string send, and receive.
     public static Either<string, HttpException> Send(string body, Uri url, string contentType, HttpOptions options, Header[] headers, string httpMethod)
     {
         var response = new Either<string, HttpException>();
@@ -92,12 +93,63 @@ internal static class HypertextTransferProtocol
         }
         catch (Exception ex)
         {
-            response = new HttpException($"Error calling {httpMethod}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
+            response = new HttpException($"Error calling {httpMethod}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, Array.Empty<Header>());
         }
 
         return response;
     }
 
+    // Special case for the caller to handle 200, 400, and 500 http status codes manually (sync).
+    public static Either<Http245, HttpException> Send245(string body, Uri url, string contentType, HttpOptions options, Header[] headers, string httpMethod)
+    {
+        var response = new Either<Http245, HttpException>();
+
+        try
+        {
+            var request = WebRequest.Create(url);
+            request.Method = httpMethod;
+            request.Timeout = options * 1000;
+            foreach (var header in headers) request.Headers.Add(header.Key, header.Value);
+            if (!string.IsNullOrEmpty(body) && (Constants.Http.POST.Equals(httpMethod) || Constants.Http.PUT.Equals(httpMethod) || Constants.Http.PATCH.Equals(httpMethod)))
+            {
+                var data = Encoding.UTF8.GetBytes(body);
+                request.ContentType = contentType;
+                request.ContentLength = data.Length;
+                using (var requestStream = request.GetRequestStream())
+                {
+                    requestStream.Write(data, 0, data.Length);
+                }
+            }
+            using (var webResponse = (HttpWebResponse)request.GetResponse())
+            using (var responseStream = webResponse.GetResponseStream())
+            using (var sr = new StreamReader(responseStream))
+            {
+                var responseBody = sr.ReadToEnd();
+                var responseStatusCode = (int)webResponse.StatusCode;
+                var responseheaders = new Header[webResponse.Headers.Count];
+                for (int i = 0; i < webResponse.Headers.Count; i++) responseheaders[i] = new Header(webResponse.Headers.Keys[i], webResponse.Headers[i]);
+                response = new Http245(responseheaders, responseStatusCode, responseBody);
+            }
+        }
+        catch (WebException we) when (we.Response is HttpWebResponse httpResponse)
+        {
+            var responseStatusCode = (int)httpResponse.StatusCode;
+            var responseBody = default(string);
+            using (var sr = new StreamReader(httpResponse.GetResponseStream())) { responseBody = sr.ReadToEnd(); }
+            var responseheaders = new Header[httpResponse.Headers.Count];
+            for (int i = 0; i < httpResponse.Headers.Count; i++) responseheaders[i] = new Header(httpResponse.Headers.Keys[i], httpResponse.Headers[i]);
+            response = new Http245(responseheaders, responseStatusCode, responseBody);
+            httpResponse.Dispose();
+        }
+        catch (Exception ex)
+        {
+            response = new HttpException($"Error calling {httpMethod}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, Array.Empty<Header>());
+        }
+
+        return response;
+    }
+
+    // Generic async string send, and receive.
     public static async Task<Either<string, HttpException>> SendAsync(string body, Uri url, string contentType, HttpOptions options, Header[] headers, HttpMethod httpMethod)
     {
         var response = new Either<string, HttpException>();
@@ -122,7 +174,7 @@ internal static class HypertextTransferProtocol
                         if (!raw)
                         {
                             var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
-                            var rawHeaders = new Header[0];
+                            var rawHeaders = Array.Empty<Header>();
                             if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                             {
                                 rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
@@ -135,7 +187,7 @@ internal static class HypertextTransferProtocol
                     {
                         var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
                         var rawBody = await httpResponse.TryGetBody().ConfigureAwait(false);
-                        var rawHeaders = new Header[0];
+                        var rawHeaders = Array.Empty<Header>();
                         if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                         {
                             rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
@@ -148,7 +200,8 @@ internal static class HypertextTransferProtocol
         }
         catch (Exception ex)
         {
-            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
+            if (ex is AggregateException ae) ex = ae.InnerException;
+            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, Array.Empty<Header>());
         }
 
         return response;
@@ -175,7 +228,8 @@ internal static class HypertextTransferProtocol
         }
         catch (Exception ex)
         {
-            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
+            if (ex is AggregateException ae) ex = ae.InnerException;
+            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, Array.Empty<Header>());
         }
 
         return response;
@@ -203,7 +257,7 @@ internal static class HypertextTransferProtocol
                         if (!raw)
                         {
                             var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
-                            var rawHeaders = new Header[0];
+                            var rawHeaders = Array.Empty<Header>();
                             if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                             {
                                 rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
@@ -215,7 +269,7 @@ internal static class HypertextTransferProtocol
                     {
                         var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
                         var rawBody = await httpResponse.TryGetBody().ConfigureAwait(false);
-                        var rawHeaders = new Header[0];
+                        var rawHeaders = Array.Empty<Header>();
                         if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                         {
                             rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
@@ -227,7 +281,8 @@ internal static class HypertextTransferProtocol
         }
         catch (Exception ex)
         {
-            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
+            if (ex is AggregateException ae) ex = ae.InnerException;
+            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, Array.Empty<Header>());
         }
 
         return response;
@@ -254,7 +309,7 @@ internal static class HypertextTransferProtocol
                         if (!raw)
                         {
                             var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
-                            var rawHeaders = new Header[0];
+                            var rawHeaders = Array.Empty<Header>();
                             if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                             {
                                 rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
@@ -266,7 +321,7 @@ internal static class HypertextTransferProtocol
                     {
                         var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
                         var rawBody = await httpResponse.TryGetBody().ConfigureAwait(false);
-                        var rawHeaders = new Header[0];
+                        var rawHeaders = Array.Empty<Header>();
                         if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                         {
                             rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
@@ -278,7 +333,61 @@ internal static class HypertextTransferProtocol
         }
         catch (Exception ex)
         {
-            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, new Header[0]);
+            if (ex is AggregateException ae) ex = ae.InnerException;
+            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, Array.Empty<Header>());
+        }
+
+        return response;
+    }
+
+    // Special case for the caller to handle 200, 400, and 500 http status codes manually (async).
+    public static async Task<Either<Http245, HttpException>> Send245Async(string body, Uri url, string contentType, HttpOptions options, Header[] headers, HttpMethod httpMethod)
+    {
+        var response = new Either<Http245, HttpException>();
+
+        try
+        {
+            using (var cts = new CancellationTokenSource(options * 1000))
+            using (var httpRequest = new HttpRequestMessage(httpMethod, url))
+            {
+                AddDnsRenew(url);
+                foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
+                if (!string.IsNullOrEmpty(body) && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put || httpMethod == Patch))
+                {
+                    httpRequest.Content = new StringContent(body, Encoding.UTF8, contentType);
+                }
+                using (var httpResponse = await _client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token).ContinueWith(HttpResult.Create).ConfigureAwait(false))
+                {
+                    if (httpResponse.IsValid && httpResponse.Value.IsSuccessStatusCode && httpResponse.Value.Content is object)
+                    {
+                        var raw = await httpResponse.Value.Content.ReadAsStringAsync().ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
+                        var rawBody = raw.GetValueOr(default);
+                        var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
+                        var rawHeaders = Array.Empty<Header>();
+                        if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
+                        {
+                            rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                        }
+                        response = new Http245(rawHeaders, rawStatusCode, rawBody);
+                    }
+                    else
+                    {
+                        var rawBody = await httpResponse.TryGetBody().ConfigureAwait(false);
+                        var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
+                        var rawHeaders = Array.Empty<Header>();
+                        if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
+                        {
+                            rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                        }
+                        response = new Http245(rawHeaders, rawStatusCode, rawBody);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            if (ex is AggregateException ae) ex = ae.InnerException;
+            response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, Array.Empty<Header>());
         }
 
         return response;
