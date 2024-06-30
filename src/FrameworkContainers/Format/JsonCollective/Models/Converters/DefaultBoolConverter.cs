@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ContainerExpressions.Containers.Extensions;
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -26,7 +27,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
                     else if (value.Equals("false", StringComparison.OrdinalIgnoreCase)) result = false;
                     else if (value.Equals("1")) result = true;
                     else if (value.Equals("0")) result = false;
-                    else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to Boolean.");
+                    else new JsonException($"Unable to convert \"{reader.GetString()}\" to Boolean.").ThrowError();
                 }
             }
             else if (reader.TokenType == JsonTokenType.Number)
@@ -34,9 +35,9 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
                 if (reader.TryGetInt32(out int value))
                 {
                     if (value == 0 || value == 1) result = value == 1;
-                    else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to Boolean.");
+                    else new JsonException($"Unable to convert \"{reader.GetString()}\" to Boolean.").ThrowError();
                 }
-                else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to Boolean.");
+                else new JsonException($"Unable to convert \"{reader.GetString()}\" to Boolean.").ThrowError();
             }
 
             return result;

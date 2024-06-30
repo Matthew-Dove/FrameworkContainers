@@ -1,5 +1,8 @@
 ﻿using FrameworkContainers.Format.JsonCollective.Models;
+using FrameworkContainers.Models.Exceptions;
+using FrameworkContainers.Models;
 using System;
+using ContainerExpressions.Containers.Extensions;
 
 namespace FrameworkContainers.Format.JsonCollective
 {
@@ -22,7 +25,7 @@ namespace FrameworkContainers.Format.JsonCollective
             }
             catch (Exception ex)
             {
-                JsonDeserializeError(ex, typeof(T), json);
+                new FormatDeserializeException(Constants.Format.DESERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, typeof(T), json).ThrowError();
             }
             return default;
         }
@@ -37,7 +40,7 @@ namespace FrameworkContainers.Format.JsonCollective
             }
             catch (Exception ex)
             {
-                JsonSerializeError(ex, model);
+                new FormatSerializeException(Constants.Format.SERIALIZE_ERROR_MESSAGE, ex, FormatRange.Json, model).ThrowError();
             }
             return default;
         }

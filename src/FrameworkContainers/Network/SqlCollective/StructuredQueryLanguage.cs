@@ -15,7 +15,7 @@ namespace FrameworkContainers.Network.SqlCollective
                 connection.Open();
                 using (var command = new SqlCommand(usp, connection))
                 {
-                    command.CommandTimeout = options.TimeoutSeconds;
+                    command.CommandTimeout = options.CommandTimeoutSeconds;
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parameters);
                     using (var dr = command.ExecuteReader())
@@ -33,7 +33,7 @@ namespace FrameworkContainers.Network.SqlCollective
                 await connection.OpenAsync();
                 using (var command = new SqlCommand(usp, connection))
                 {
-                    command.CommandTimeout = options.TimeoutSeconds;
+                    command.CommandTimeout = options.CommandTimeoutSeconds;
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parameters);
                     using (var dr = await command.ExecuteReaderAsync())
@@ -51,7 +51,7 @@ namespace FrameworkContainers.Network.SqlCollective
                 connection.Open();
                 using (var command = new SqlCommand(usp, connection))
                 {
-                    command.CommandTimeout = options.TimeoutSeconds;
+                    command.CommandTimeout = options.CommandTimeoutSeconds;
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parameters);
                     return command.ExecuteNonQuery();
@@ -66,7 +66,7 @@ namespace FrameworkContainers.Network.SqlCollective
                 await connection.OpenAsync();
                 using (var command = new SqlCommand(usp, connection))
                 {
-                    command.CommandTimeout = options.TimeoutSeconds;
+                    command.CommandTimeout = options.CommandTimeoutSeconds;
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parameters);
                     return await command.ExecuteNonQueryAsync();
@@ -79,7 +79,7 @@ namespace FrameworkContainers.Network.SqlCollective
             using (var bulkCopy = new SqlBulkCopy(options.ConnectionString ?? Sql.ConnectionString))
             {
                 bulkCopy.DestinationTableName = tableName;
-                bulkCopy.BulkCopyTimeout = options.TimeoutSeconds;
+                bulkCopy.BulkCopyTimeout = options.CommandTimeoutSeconds;
                 for (int i = 0; i < dataTable.Columns.Count; i++)
                 {
                     string columnName = dataTable.Columns[i].ColumnName;
@@ -94,7 +94,7 @@ namespace FrameworkContainers.Network.SqlCollective
             using (var bulkCopy = new SqlBulkCopy(options.ConnectionString ?? Sql.ConnectionString))
             {
                 bulkCopy.DestinationTableName = tableName;
-                bulkCopy.BulkCopyTimeout = options.TimeoutSeconds;
+                bulkCopy.BulkCopyTimeout = options.CommandTimeoutSeconds;
                 for (int i = 0; i < dataTable.Columns.Count; i++)
                 {
                     string columnName = dataTable.Columns[i].ColumnName;

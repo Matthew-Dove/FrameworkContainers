@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ContainerExpressions.Containers.Extensions;
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -20,7 +21,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
             if (reader.TokenType == JsonTokenType.Number)
             {
                 if (reader.TryGetInt32(out int value)) result = value;
-                else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to Int32.");
+                else new JsonException($"Unable to convert \"{reader.GetString()}\" to Int32.").ThrowError();
             }
             else if (reader.TokenType == JsonTokenType.String)
             {
@@ -28,7 +29,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
                 if (!string.IsNullOrEmpty(value))
                 {
                     if (int.TryParse(value, out int number)) result = number;
-                    else JsonConverterError($"Unable to convert \"{value}\" to Int32.");
+                    else new JsonException($"Unable to convert \"{value}\" to Int32.").ThrowError();
                 }
             }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ContainerExpressions.Containers.Extensions;
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -21,7 +22,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
             {
                 if (reader.TryGetGuid(out Guid value)) result = value;
                 else if (string.IsNullOrEmpty(reader.GetString())) { }
-                else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to Guid.");
+                else new JsonException($"Unable to convert \"{reader.GetString()}\" to Guid.").ThrowError();
             }
 
             return result;

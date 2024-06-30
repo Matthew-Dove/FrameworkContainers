@@ -1,4 +1,7 @@
-﻿using System;
+﻿using FrameworkContainers.Models.Exceptions;
+using FrameworkContainers.Models;
+using System;
+using ContainerExpressions.Containers.Extensions;
 
 namespace FrameworkContainers.Format.XmlCollective
 {
@@ -19,7 +22,7 @@ namespace FrameworkContainers.Format.XmlCollective
             }
             catch (Exception ex)
             {
-                XmlDeserializeError(ex, typeof(T), xml);
+                new FormatDeserializeException(Constants.Format.DESERIALIZE_ERROR_MESSAGE, ex, FormatRange.Xml, typeof(T), xml).ThrowError();
             }
             return default;
         }
@@ -32,7 +35,7 @@ namespace FrameworkContainers.Format.XmlCollective
             }
             catch (Exception ex)
             {
-                XmlSerializeError(ex, model);
+                new FormatSerializeException(Constants.Format.SERIALIZE_ERROR_MESSAGE, ex, FormatRange.Xml, model).ThrowError();
             }
             return default;
         }

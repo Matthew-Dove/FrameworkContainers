@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ContainerExpressions.Containers.Extensions;
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -20,7 +21,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
             if (reader.TokenType == JsonTokenType.Number)
             {
                 if (reader.TryGetSingle(out float value)) result = value;
-                else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to float.");
+                else new JsonException($"Unable to convert \"{reader.GetString()}\" to float.").ThrowError();
             }
             else if (reader.TokenType == JsonTokenType.String)
             {
@@ -28,7 +29,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
                 if (!string.IsNullOrEmpty(value))
                 {
                     if (float.TryParse(value, out float number)) result = number;
-                    else JsonConverterError($"Unable to convert \"{value}\" to float.");
+                    else new JsonException($"Unable to convert \"{value}\" to float.").ThrowError();
                 }
             }
 

@@ -25,6 +25,7 @@
             public const string DELETE = "DELETE";
 
             public const int TIMEOUT_SECONDS = 15;
+            public const int MAX_TIMEOUT_SECONDS = 14400;
 
             public const int DEFAULT_HTTP_CODE = 504;
             public const string DEFAULT_HTTP_DESCRIPTION = "Gateway Timeout";
@@ -33,6 +34,7 @@
         public static class Sql
         {
             public const int COMMAND_TIMEOUT_SECONDS = 15; // i.e. not the connection timeout (that one is pulled from the connection string instead).
+            public const int MAX_COMMAND_TIMEOUT_SECONDS = 14400;
         }
     }
 }

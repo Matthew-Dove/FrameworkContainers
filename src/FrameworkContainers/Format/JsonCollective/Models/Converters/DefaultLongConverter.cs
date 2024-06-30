@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ContainerExpressions.Containers.Extensions;
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -20,7 +21,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
             if (reader.TokenType == JsonTokenType.Number)
             {
                 if (reader.TryGetInt64(out long value)) result = value;
-                else JsonConverterError($"Unable to convert \"{reader.GetString()}\" to long.");
+                else new JsonException($"Unable to convert \"{reader.GetString()}\" to long.").ThrowError();
             }
             else if (reader.TokenType == JsonTokenType.String)
             {
@@ -28,7 +29,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
                 if (!string.IsNullOrEmpty(value))
                 {
                     if (long.TryParse(value, out long number)) result = number;
-                    else JsonConverterError($"Unable to convert \"{value}\" to long.");
+                    else new JsonException($"Unable to convert \"{value}\" to long.").ThrowError();
                 }
             }
 
