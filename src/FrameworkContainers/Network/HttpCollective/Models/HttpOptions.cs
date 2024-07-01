@@ -35,6 +35,7 @@ namespace FrameworkContainers.Network.HttpCollective.Models
         {
             TimeoutSeconds = options;
             Json = options;
+            WebClient = options.WebClient;
             RetrieveHttpStatus = retrieveHttpStatus;
         }
 
