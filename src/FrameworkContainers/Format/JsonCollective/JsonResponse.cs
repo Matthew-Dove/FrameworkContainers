@@ -24,7 +24,7 @@ namespace FrameworkContainers.Format.JsonCollective
             }
             catch (Exception ex)
             {
-                ex.LogValue($"Error deserializing format to type {typeof(T).FullName}: {ex}");
+                ex.LogError($"Error deserializing format to type: \"{typeof(T).FullName}\".");
             }
 
             return response;
@@ -43,7 +43,7 @@ namespace FrameworkContainers.Format.JsonCollective
             }
             catch (Exception ex)
             {
-                ex.LogValue($"Error deserializing format to type {typeof(T).FullName}: {ex}");
+                ex.LogError($"Error serializing format to type: \"{typeof(T).FullName}\".");
             }
 
             return response;

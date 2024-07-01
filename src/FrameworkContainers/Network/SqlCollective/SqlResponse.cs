@@ -29,7 +29,7 @@ namespace FrameworkContainers.Network.SqlCollective
             }
             catch (Exception ex)
             {
-                ex.LogValue($"Error calling {usp} for type {typeof(T).FullName}: {ex}");
+                ex.LogError($"Error calling sproc [{usp}] for type \"{typeof(T).FullName}\".");
             }
 
             return response;
@@ -51,7 +51,7 @@ namespace FrameworkContainers.Network.SqlCollective
             }
             catch (Exception ex)
             {
-                ex.LogValue($"Error calling {usp}: {ex}");
+                ex.LogError($"Error calling sproc [{usp}].");
             }
 
             return response;
@@ -73,7 +73,7 @@ namespace FrameworkContainers.Network.SqlCollective
             }
             catch (Exception ex)
             {
-                ex.LogValue($"Error calling {tableName}: {ex}");
+                ex.LogError($"Error calling table [{tableName}].");
             }
 
             return response;
@@ -95,7 +95,7 @@ namespace FrameworkContainers.Network.SqlCollective
             }
             catch (Exception ex)
             {
-                ex.LogValue($"Error calling {usp} for type {typeof(T).FullName}: {ex}");
+                ex.LogError($"Error calling sproc [{usp}] for type \"{typeof(T).FullName}\"");
             }
 
             return response;
@@ -117,7 +117,7 @@ namespace FrameworkContainers.Network.SqlCollective
             }
             catch (Exception ex)
             {
-                ex.LogValue($"Error calling {usp}: {ex}");
+                ex.LogError($"Error calling sproc [{usp}].");
             }
 
             return response;
@@ -139,7 +139,7 @@ namespace FrameworkContainers.Network.SqlCollective
             }
             catch (Exception ex)
             {
-                ex.LogValue($"Error calling {tableName}: {ex}");
+                ex.LogError($"Error calling table [{tableName}].");
             }
 
             return response;

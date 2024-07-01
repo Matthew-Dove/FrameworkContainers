@@ -26,7 +26,7 @@ public sealed class HttpResponse
 
     private static Func<Task<Either<string, HttpException>>, Response<T>> ParseAsync<T>(JsonOptions options) { return x => x.Result.Match(Parse<T>(options), Error<T>); }
 
-    private static Response<T> Error<T>(Exception ex) { ex.LogValue(ex.ToString()); return new Response<T>(); }
+    private static Response<T> Error<T>(Exception ex) { ex.LogError(); return new Response<T>(); }
 
     private static Func<string, Response<HttpStatus>> Send(string httpMethod, Either<string, Uri> url, HttpOptions options, Header[] headers)
     {
