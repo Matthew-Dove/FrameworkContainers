@@ -306,3 +306,10 @@ public void ConfigureServices(IServiceCollection services)
 * Optimized the XML deserializer, to reduce string allocation when writing to a stream; adding seperate read, and write `XmlOptions`.
 * Added JSON options to the HTTP options model.
 * Generally aligned the interfaces between the clients.
+
+## 4.0.0
+
+* Replaced raw http string responses with a type: `HttpBody`.
+* Added a new method to `Http`: **Post245**, a general way to cover 200, 400, and 500 http responses individually.
+* Simplifed `Xml`, removing it's `XmlOptions` type.
+* Added new `WebClientOptions` to `HttpOptions` for custom `HttpClient` configuration, and cancellation tokens.
