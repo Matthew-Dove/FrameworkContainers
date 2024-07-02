@@ -313,3 +313,7 @@ public void ConfigureServices(IServiceCollection services)
 * Added a new method to `Http`: **Post245**, a general way to cover 200, 400, and 500 http responses individually.
 * Simplifed `Xml`, removing it's `XmlOptions` type.
 * Added new `WebClientOptions` to `HttpOptions` for custom `HttpClient` configuration, and cancellation tokens.
+
+## 4.1.0
+
+* Added new awaitable http verb types allowing: `var response = await new Get("https://example.com");`
