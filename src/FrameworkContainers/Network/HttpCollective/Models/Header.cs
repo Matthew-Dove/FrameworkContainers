@@ -1,4 +1,4 @@
-﻿using ContainerExpressions.Containers.Extensions;
+﻿using ContainerExpressions.Containers;
 
 namespace FrameworkContainers.Network.HttpCollective.Models
 {

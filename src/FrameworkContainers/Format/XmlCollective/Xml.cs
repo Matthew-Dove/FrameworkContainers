@@ -1,7 +1,7 @@
 ﻿using FrameworkContainers.Models.Exceptions;
 using FrameworkContainers.Models;
 using System;
-using ContainerExpressions.Containers.Extensions;
+using ContainerExpressions.Containers;
 
 namespace FrameworkContainers.Format.XmlCollective
 {

@@ -1,4 +1,4 @@
-﻿using ContainerExpressions.Containers.Extensions;
+﻿using ContainerExpressions.Containers;
 using FrameworkContainers.Models;
 
 namespace FrameworkContainers.Network.SqlCollective.Models

@@ -1,4 +1,4 @@
-﻿using ContainerExpressions.Containers.Extensions;
+﻿using ContainerExpressions.Containers;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
