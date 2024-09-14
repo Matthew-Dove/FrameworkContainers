@@ -83,6 +83,26 @@ Create a new `User` from an `Onboard` request object using `JSON`, and the `asyn
 User user = await Http.PostJsonAsync<User, Onboard>(request);
 ```
 
+### [Http + Json + Model == Shortcuts]
+
+```cs
+var request = new Request();
+
+// Awaitable http verbs that send / receive json, and serialize the request / response models.
+var get = await new Get<Response>("https://example.com");
+var put = await new Put<Request, Response>(request, "https://example.com");
+var post = await new Post<Request, Response>(request, "https://example.com");
+var patch = await new Patch<Request, Response>(request, "https://example.com");
+var delete = await new DeleteStatus("https://example.com");
+
+// Extension methods that collect the "Request" type, and wrap http / json calls.
+var get = await "https://example.com".Get<Response>();
+var post = await request.Send("https://example.com").Post<Response>();
+var put = await request.Send("https://example.com").Put<Response>();
+var patch = await request.Send("https://example.com").Patch<Response>();
+var delete = await "https://example.com".DeleteStatus();
+```
+
 ## Json Component
 
 Serialize, and deserialize JSON to, and from domain models.  
@@ -317,3 +337,8 @@ public void ConfigureServices(IServiceCollection services)
 ## 4.1.0
 
 * Added new awaitable http verb types allowing: `var response = await new Get("https://example.com");`
+
+## 4.2.0
+
+* Updated downstream dependencies.
+* Added `HttpExtensions` allowing for simple web calls off models, and uris.
