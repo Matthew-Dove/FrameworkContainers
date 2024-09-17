@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -10,12 +11,27 @@ namespace FrameworkContainers.Infrastructure
         /// <summary>
         /// Matches IService to Service.
         /// <para>In sandbox mode, matches IService to ServiceSandbox.</para>
-        /// <para>Example usage with ASP.NET's IServiceCollection: DependencyInjection.AddServicesByConvention((x, y) => services.AddSingleton(x, y));.</para>
+        /// <para>Example usage with ASP.NET's IServiceCollection: builder.services.AddServicesByConvention();.</para>
         /// </summary>
         /// <param name="isSandbox">When in sandbox mode, check if a sandbox implementation exists, and prefer that version.</param>
         /// <param name="assemblyStartsWith">Adds any referenced assemblies starting with this name.</param>
         /// <param name="explicitlyNamedAssemblies">Add any assemblies that may not be loaded yet, but you'd like included.</param>
+        /// <returns></returns>
+        public static IServiceCollection AddServicesByConvention(this IServiceCollection services, bool isSandbox = false, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
+        {
+            AddServicesByConvention((x, y) => services.AddSingleton(x, y), isSandbox, assemblyStartsWith, explicitlyNamedAssemblies);
+            return services;
+        }
+
+        /// <summary>
+        /// Matches IService to Service.
+        /// <para>In sandbox mode, matches IService to ServiceSandbox.</para>
+        /// <para>Example usage with ASP.NET's IServiceCollection: DependencyInjection.AddServicesByConvention((x, y) => services.AddSingleton(x, y));.</para>
+        /// </summary>
         /// <param name="resolver">A wrapper around the dependency injection framework you're using.</param>
+        /// <param name="isSandbox">When in sandbox mode, check if a sandbox implementation exists, and prefer that version.</param>
+        /// <param name="assemblyStartsWith">Adds any referenced assemblies starting with this name.</param>
+        /// <param name="explicitlyNamedAssemblies">Add any assemblies that may not be loaded yet, but you'd like included.</param>
         public static void AddServicesByConvention(Action<Type, Type> resolver, bool isSandbox = false, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
         {
             var types = GetTypesFromAssemblies(assemblyStartsWith, explicitlyNamedAssemblies);

@@ -298,6 +298,11 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
+Also using `IServiceCollection`, adding services as singletons by default:
+```cs
+builder.services.AddServicesByConvention();
+```
+
 # Credits
 * [Icon](https://www.flaticon.com/free-icon/bird_2630452) made by [Vitaly Gorbachev](https://www.flaticon.com/authors/vitaly-gorbachev) from [Flaticon](https://www.flaticon.com/).
 
@@ -343,3 +348,4 @@ public void ConfigureServices(IServiceCollection services)
 * Updated downstream dependencies.
 * Added `HttpExtensions` allowing for simple web calls off models, and uris.
 * Added a json converter for `SmartEnum<T>` - `[JsonConverter(typeof(SmartEnumConverter<T>))]`.
+* Added explicit support for dependency injection though `IServiceCollection`.
