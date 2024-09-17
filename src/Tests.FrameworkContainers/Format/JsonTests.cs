@@ -95,6 +95,12 @@ namespace Tests.FrameworkContainers.Format
             [JsonConverter(typeof(DefaultLongConverter))]
             public long Long { get; set; }
 
+            [JsonConverter(typeof(SmartEnumConverterUpperCase<Colour>))]
+            public EnumRange<Colour> SmartEnum { get; set; }
+
+            [JsonConverter(typeof(SmartEnumConverter<NoZero>))]
+            public EnumRange<NoZero> SmartEnumNoZero { get; set; }
+
             public string PascalCase { get; set; }
 
             public string camelCase { get; set; }
@@ -104,6 +110,22 @@ namespace Tests.FrameworkContainers.Format
         {
             public Guid Id { get; } = Guid.NewGuid();
             public string Error { get { throw new Exception("Error!!!"); } }
+        }
+
+        private class Colour : SmartEnum
+        {
+            public static readonly Colour None = new(0);
+            public static readonly Colour Red = new(1);
+            public static readonly Colour Green = new(2);
+
+            private Colour(int value) : base(value) { }
+        }
+
+        private class NoZero : SmartEnum
+        {
+            public static readonly NoZero One = new(1);
+
+            private NoZero(int value) : base(value) { }
         }
 
         #endregion
@@ -778,6 +800,95 @@ namespace Tests.FrameworkContainers.Format
             var model = Json.ToModel<Model>(json);
 
             Assert.AreEqual(target, model.camelCase);
+        }
+
+        [TestMethod]
+        public void EC_SmartEnum_EmptyString()
+        {
+            var json = $"{{\"smartEnum\": \"\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.IsTrue(model.SmartEnum == Colour.None);
+        }
+
+        [TestMethod]
+        public void EC_SmartEnum_NullString()
+        {
+            var json = $"{{\"smartEnum\": null}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.IsTrue(model.SmartEnum == Colour.None);
+        }
+
+        [TestMethod]
+        public void EC_SmartEnum_StringValue()
+        {
+            var target = SmartEnum<Colour>.FromNames("red,green");
+            var json = $"{{\"smartEnum\": \"{target}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.SmartEnum);
+        }
+
+        [TestMethod]
+        public void EC_SmartEnum_IntValue()
+        {
+            var target = SmartEnum<Colour>.FromNames("red,green");
+            var json = $"{{\"smartEnum\": {3}}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(target, model.SmartEnum);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatDeserializeException))]
+        public void EC_SmartEnum_StringInvalidValue()
+        {
+            var json = $"{{\"smartEnum\": \"{"blue"}\"}}";
+            var model = Json.ToModel<Model>(json);
+        }
+
+        [TestMethod]
+        public void EC_SmartEnum_StringInvalidValue_NoException()
+        {
+            var json = $"{{\"smartEnum\": \"{"blue"}\"}}";
+            var model = Json.Response.ToModel<Model>(json);
+            Assert.IsFalse(model);
+        }
+
+        [TestMethod]
+        public void EC_SmartEnum_SerializeModel()
+        {
+            var model = new Model { SmartEnum = SmartEnum<Colour>.FromObjects(Colour.Red, Colour.Green) };
+
+            var json = Json.FromModel(model);
+
+            Assert.IsTrue(json.Contains("RED,"));
+            Assert.IsFalse(json.Contains("red,"));
+        }
+
+        [TestMethod]
+        public void EC_SmartEnum_StringIntValue()
+        {
+            var json = $"{{\"smartEnum\": \"{3}\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(SmartEnum<Colour>.FromObjects(Colour.Red, Colour.Green), model.SmartEnum);
+        }
+
+        [TestMethod]
+        public void EC_SmartEnum_EmptyString_NoZero()
+        {
+            var json = $"{{\"smartEnumNoZero\": \"\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(new EnumRange<NoZero>(), model.SmartEnumNoZero);
         }
 
         #endregion
