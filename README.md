@@ -342,3 +342,4 @@ public void ConfigureServices(IServiceCollection services)
 
 * Updated downstream dependencies.
 * Added `HttpExtensions` allowing for simple web calls off models, and uris.
+* Added a json converter for `SmartEnum<T>` - `[JsonConverter(typeof(SmartEnumConverter<T>))]`.
