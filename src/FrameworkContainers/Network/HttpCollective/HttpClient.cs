@@ -5,7 +5,7 @@ using FrameworkContainers.Network.HttpCollective.Models;
 
 namespace FrameworkContainers.Network.HttpCollective;
 
-/// <summary>Dependency inversion alterative to the static class.</summary>
+/// <summary>Dependency injection alterative to the static class.</summary>
 public interface IHttpClient
 {
     HttpMaybe Maybe { get; }
@@ -198,7 +198,7 @@ public sealed class HttpClient : IHttpClient
     public Task<HttpStatus> DeleteStatusAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.DeleteStatusAsync(url, options, headers);
 }
 
-/// <summary>Dependency inversion alterative to the static class (for a single type).</summary>
+/// <summary>Dependency injection alterative to the static class (for a single type).</summary>
 public interface IHttpClient<T>
 {
     HttpMaybe<T> Maybe { get; }
@@ -283,7 +283,7 @@ public sealed class HttpClient<T> : IHttpClient<T>
     public Task<T> GetJsonAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.GetJsonAsync<T>(url, options, headers);
 }
 
-/// <summary>Dependency inversion alterative to the static class (for a two types).</summary>
+/// <summary>Dependency injection alterative to the static class (for a two types).</summary>
 public interface IHttpClient<TRequest, TResponse>
 {
     HttpMaybe<TRequest, TResponse> Maybe { get; }

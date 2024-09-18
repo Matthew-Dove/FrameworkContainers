@@ -6,7 +6,7 @@ using FrameworkContainers.Network.SqlCollective.Models;
 
 namespace FrameworkContainers.Network.SqlCollective
 {
-    /// <summary>Dependency inversion alterative to the static class.</summary>
+    /// <summary>Dependency injection alterative to the static class.</summary>
     public interface ISqlClient
     {
         SqlMaybe Maybe { get; }
@@ -51,7 +51,7 @@ namespace FrameworkContainers.Network.SqlCollective
         public Task BulkInsertAsync(string tableName, DataTable dataTable, SqlOptions options) => Sql.BulkInsertAsync(tableName, dataTable, options);
     }
 
-    /// <summary>Dependency inversion alterative to the static class (for a single type).</summary>
+    /// <summary>Dependency injection alterative to the static class (for a single type).</summary>
     public interface ISqlClient<T>
     {
         SqlMaybe<T> Maybe { get; }

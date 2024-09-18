@@ -2,7 +2,7 @@
 
 namespace FrameworkContainers.Format.JsonCollective
 {
-    /// <summary>Dependency inversion alterative to the static class.</summary>
+    /// <summary>Dependency injection alterative to the static class.</summary>
     public interface IJsonClient
     {
         JsonMaybe Maybe { get; }
@@ -25,7 +25,7 @@ namespace FrameworkContainers.Format.JsonCollective
         public string FromModel<T>(T model, JsonOptions options) => Json.FromModel(model, options);
     }
 
-    /// <summary>Dependency inversion alterative to the static class (for a single type).</summary>
+    /// <summary>Dependency injection alterative to the static class (for a single type).</summary>
     public interface IJsonClient<T>
     {
         JsonMaybe<T> Maybe { get; }

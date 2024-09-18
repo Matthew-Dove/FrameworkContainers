@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FrameworkContainers.Format.JsonCollective;
+using FrameworkContainers.Format.XmlCollective;
+using FrameworkContainers.Network.HttpCollective;
+using FrameworkContainers.Network.SqlCollective;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -13,13 +17,15 @@ namespace FrameworkContainers.Infrastructure
         /// <para>In sandbox mode, matches IService to ServiceSandbox.</para>
         /// <para>Example usage with ASP.NET's IServiceCollection: builder.services.AddServicesByConvention();.</para>
         /// </summary>
+        /// <param name="services">The service collection used for dependency injection.</param>
+        /// <param name="assembly">The caller's main assembly i.e. Assembly.GetExecutingAssembly().GetName().FullName;.</param>
         /// <param name="isSandbox">When in sandbox mode, check if a sandbox implementation exists, and prefer that version.</param>
         /// <param name="assemblyStartsWith">Adds any referenced assemblies starting with this name.</param>
         /// <param name="explicitlyNamedAssemblies">Add any assemblies that may not be loaded yet, but you'd like included.</param>
         /// <returns></returns>
-        public static IServiceCollection AddServicesByConvention(this IServiceCollection services, bool isSandbox = false, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
+        public static IServiceCollection AddServicesByConvention(this IServiceCollection services, string assembly, bool isSandbox = false, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
         {
-            AddServicesByConvention((x, y) => services.AddSingleton(x, y), isSandbox, assemblyStartsWith, explicitlyNamedAssemblies);
+            AddServicesByConvention((x, y) => services.AddSingleton(x, y), assembly, isSandbox, assemblyStartsWith, explicitlyNamedAssemblies);
             return services;
         }
 
@@ -29,30 +35,31 @@ namespace FrameworkContainers.Infrastructure
         /// <para>Example usage with ASP.NET's IServiceCollection: DependencyInjection.AddServicesByConvention((x, y) => services.AddSingleton(x, y));.</para>
         /// </summary>
         /// <param name="resolver">A wrapper around the dependency injection framework you're using.</param>
+        /// <param name="assembly">The caller's main assembly i.e. Assembly.GetExecutingAssembly().GetName().FullName;.</param>
         /// <param name="isSandbox">When in sandbox mode, check if a sandbox implementation exists, and prefer that version.</param>
         /// <param name="assemblyStartsWith">Adds any referenced assemblies starting with this name.</param>
         /// <param name="explicitlyNamedAssemblies">Add any assemblies that may not be loaded yet, but you'd like included.</param>
-        public static void AddServicesByConvention(Action<Type, Type> resolver, bool isSandbox = false, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
+        public static void AddServicesByConvention(Action<Type, Type> resolver, string assembly, bool isSandbox = false, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
         {
-            var types = GetTypesFromAssemblies(assemblyStartsWith, explicitlyNamedAssemblies);
+            var types = GetTypesFromAssemblies(assembly, assemblyStartsWith, explicitlyNamedAssemblies);
             AddServicesByConvention(types, resolver, isSandbox);
         }
 
         /// <summary>Scans all assemblies supplied, extracting the exported types.</summary>
-        private static Type[] GetTypesFromAssemblies(string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
+        private static Type[] GetTypesFromAssemblies(string assembly, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var explicitAssemblies = explicitlyNamedAssemblies.Select(x => Assembly.Load(x));
+            var mainAssembly = Assembly.Load(assembly);
+            var explicitAssemblies = explicitlyNamedAssemblies.Select(Assembly.Load);
 
             var referencedAssemblies = Enumerable.Empty<Assembly>();
             var explicitReferencedAssemblies = Enumerable.Empty<Assembly>();
             if (!string.IsNullOrEmpty(assemblyStartsWith))
             {
-                referencedAssemblies = assembly.GetReferencedAssemblies().Where(x => x.Name.StartsWith(assemblyStartsWith)).Select(y => Assembly.Load(y));
-                explicitReferencedAssemblies = explicitAssemblies.SelectMany(x => x.GetReferencedAssemblies().Where(y => y.Name.StartsWith(assemblyStartsWith)).Select(z => Assembly.Load(z)));
+                referencedAssemblies = mainAssembly.GetReferencedAssemblies().Where(x => x.Name.StartsWith(assemblyStartsWith)).Select(Assembly.Load);
+                explicitReferencedAssemblies = explicitAssemblies.SelectMany(x => x.GetReferencedAssemblies().Where(y => y.Name.StartsWith(assemblyStartsWith)).Select(Assembly.Load));
             }
 
-            var assemblies = new Assembly[] { assembly }.Concat(referencedAssemblies).Concat(explicitAssemblies).Concat(explicitReferencedAssemblies).Distinct();
+            var assemblies = new Assembly[] { mainAssembly }.Concat(referencedAssemblies).Concat(explicitAssemblies).Concat(explicitReferencedAssemblies).Distinct();
             return assemblies.SelectMany(x => x.GetExportedTypes()).ToArray();
         }
 
@@ -81,6 +88,79 @@ namespace FrameworkContainers.Infrastructure
                     resolver(@interface, implementation);
                 }
             }
+        }
+
+        /// <summary>Adds all of framework's client interfaces, and implementations to DI.</summary>
+        public static IServiceCollection AddFrameworkEverythingEverywhereAllAtOnce(this IServiceCollection services)
+        {
+            AddFrameworkEverythingEverywhereAllAtOnce((x, y) => services.AddSingleton(x, y));
+            return services;
+        }
+
+        /// <summary>Adds all of framework's client interfaces, and implementations to DI.</summary>
+        public static void AddFrameworkEverythingEverywhereAllAtOnce(Action<Type, Type> resolver)
+        {
+            AddFrameworkXmlClient(resolver);
+            AddFrameworkJsonClient(resolver);
+            AddFrameworkSqlClient(resolver);
+            AddFrameworkHttpClient(resolver);
+        }
+
+        /// <summary>Adds XmlClient's interfaces, and implementations to DI.</summary>
+        public static IServiceCollection AddFrameworkXmlClient(this IServiceCollection services)
+        {
+            AddFrameworkXmlClient((x, y) => services.AddSingleton(x, y));
+            return services;
+        }
+
+        /// <summary>Adds XmlClient's interfaces, and implementations to DI.</summary>
+        public static void AddFrameworkXmlClient(Action<Type, Type> resolver)
+        {
+            resolver(typeof(IXmlClient), typeof(XmlClient));
+            resolver(typeof(IXmlClient<>), typeof(XmlClient<>));
+        }
+
+        /// <summary>Adds JsonClient's interfaces, and implementations to DI.</summary>
+        public static IServiceCollection AddFrameworkJsonClient(this IServiceCollection services)
+        {
+            AddFrameworkJsonClient((x, y) => services.AddSingleton(x, y));
+            return services;
+        }
+
+        /// <summary>Adds JsonClient's interfaces, and implementations to DI.</summary>
+        public static void AddFrameworkJsonClient(Action<Type, Type> resolver)
+        {
+            resolver(typeof(IJsonClient), typeof(JsonClient));
+            resolver(typeof(IJsonClient<>), typeof(JsonClient<>));
+        }
+
+        /// <summary>Adds SqlClient's interfaces, and implementations to DI.</summary>
+        public static IServiceCollection AddFrameworkSqlClient(this IServiceCollection services)
+        {
+            AddFrameworkSqlClient((x, y) => services.AddSingleton(x, y));
+            return services;
+        }
+
+        /// <summary>Adds SqlClient's interfaces, and implementations to DI.</summary>
+        public static void AddFrameworkSqlClient(Action<Type, Type> resolver)
+        {
+            resolver(typeof(ISqlClient), typeof(SqlClient));
+            resolver(typeof(ISqlClient<>), typeof(SqlClient<>));
+        }
+
+        /// <summary>Adds HttpClient's interfaces, and implementations to DI.</summary>
+        public static IServiceCollection AddFrameworkHttpClient(this IServiceCollection services)
+        {
+            AddFrameworkHttpClient((x, y) => services.AddSingleton(x, y));
+            return services;
+        }
+
+        /// <summary>Adds HttpClient's interfaces, and implementations to DI.</summary>
+        public static void AddFrameworkHttpClient(Action<Type, Type> resolver)
+        {
+            resolver(typeof(IHttpClient), typeof(HttpClient));
+            resolver(typeof(IHttpClient<>), typeof(HttpClient<>));
+            resolver(typeof(IHttpClient<,>), typeof(HttpClient<,>));
         }
     }
 }

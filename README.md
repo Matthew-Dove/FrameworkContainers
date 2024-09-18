@@ -294,13 +294,24 @@ Using ASP.NET CORE's `IServiceCollection`:
 ```cs
 public void ConfigureServices(IServiceCollection services)
 {
-	DependencyInjection.AddServicesByConvention((x, y) => services.AddSingleton(x, y));
+	DependencyInjection.AddServicesByConvention((x, y) => services.AddSingleton(x, y), Assembly.GetExecutingAssembly().GetName().Name);
 }
 ```
 
 Also using `IServiceCollection`, adding services as singletons by default:
 ```cs
-builder.services.AddServicesByConvention();
+builder.services.AddServicesByConvention(Assembly.GetExecutingAssembly().GetName().Name);
+```
+
+Some helper functions off `IServiceCollection` to add Framework's clients to DI:
+```cs
+builder.services.AddFrameworkXmlClient();
+builder.services.AddFrameworkJsonClient();
+builder.services.AddFrameworkSqlClient();
+builder.services.AddFrameworkHttpClient();
+
+// You can add all of the above with:
+builder.services.AddEverythingEverywhereAllAtOnce();
 ```
 
 # Credits

@@ -1,6 +1,6 @@
 ﻿namespace FrameworkContainers.Format.XmlCollective
 {
-    /// <summary>Dependency inversion alterative to the static class.</summary>
+    /// <summary>Dependency injection alterative to the static class.</summary>
     public interface IXmlClient
     {
         XmlMaybe Maybe { get; }
@@ -19,7 +19,7 @@
         public string FromModel<T>(T model) => Xml.FromModel(model);
     }
 
-    /// <summary>Dependency inversion alterative to the static class (for a single type).</summary>
+    /// <summary>Dependency injection alterative to the static class (for a single type).</summary>
     public interface IXmlClient<T>
     {
         XmlMaybe<T> Maybe { get; }
