@@ -29,5 +29,8 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
         }
 
         public override void Write(Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options) => writer.WriteStringValue(value.ToString());
+
+        public override int GetHashCode() => base.GetHashCode();
+        public override bool Equals(object obj) => obj is DefaultEnumConverter<TEnum> c && c is not null;
     }
 }

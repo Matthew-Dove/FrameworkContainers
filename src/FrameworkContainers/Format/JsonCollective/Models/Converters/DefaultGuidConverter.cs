@@ -29,5 +29,8 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
         }
 
         public override void Write(Utf8JsonWriter writer, Guid value, JsonSerializerOptions options) => writer.WriteStringValue(value);
+
+        public override int GetHashCode() => base.GetHashCode();
+        public override bool Equals(object obj) => obj is DefaultGuidConverter c && c is not null;
     }
 }

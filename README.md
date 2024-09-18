@@ -111,7 +111,7 @@ This component's APIs are built on top of `System.Text.Json.JsonSerializer`.
 ### [Things we do for you]
 
   * Two serializer categories: *Performant*, and *Permissive*; one for speed, and one that "just works".
-  * JSON converters for standard types to "just work", they include: `bool`, `DateTime`, `Enum`, `Float`, `Guid`, `Int`, and `Long`.
+  * JSON converters for standard types to "just work", they include: `Bool`, `DateTime`, `Enum`, `Float`, `Guid`, `Int`, and `Long`.
 
 ### [Examples]
 
@@ -152,6 +152,33 @@ Using `IJsonClient`:
 ```cs
 IJsonClient json = new JsonClient();
 User user = json.ToModel<User>(json);
+```
+
+### [JSON converters]
+
+You can add converters to `JsonOptions`, or to `JsonSerializerOptions` as follows:
+```cs
+// JsonOptions (i.e. FrameworkContainers):
+var converters = JsonOptions.GetJsonConverters(); // Get's all primitive "default" converters (int, bool, etc).
+converters.AddEnumConverter<Enum>(); // Add any enum properties you have.
+converters.AddSmartEnumConverter<Colour>(); // Add any smart enum properties you have.
+
+var options = JsonOptions.WithConverters(converters: converters.ToArray());
+var payload = new OptionsModel();
+
+var json = Json.FromModel(payload, options); // Json converters are sent in with the options.
+var model = Json.ToModel<OptionsModel>(json, options);
+
+// JsonSerializerOptions (i.e. System.Text.Json):
+var settings = new JsonSerializerOptions();
+settings.AddJsonConverters();
+settings.Converters.AddEnumConverter<Enum>();
+settings.Converters.AddSmartEnumConverter<Colour>();
+
+var payload = new OptionsModel();
+
+var json = JsonSerializer.Serialize(payload, settings);
+var model = JsonSerializer.Deserialize<OptionsModel>(json, settings);
 ```
 
 ## Xml Component

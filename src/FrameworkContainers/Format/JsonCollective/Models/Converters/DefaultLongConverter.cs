@@ -37,5 +37,8 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
         }
 
         public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options) => writer.WriteNumberValue(value);
+
+        public override int GetHashCode() => base.GetHashCode();
+        public override bool Equals(object obj) => obj is DefaultLongConverter c && c is not null;
     }
 }

@@ -5,6 +5,8 @@ using FrameworkContainers.Format.JsonCollective.Models.Converters;
 using FrameworkContainers.Models.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Tests.FrameworkContainers.Format
@@ -126,6 +128,13 @@ namespace Tests.FrameworkContainers.Format
             public static readonly NoZero One = new(1);
 
             private NoZero(int value) : base(value) { }
+        }
+
+        private class OptionsModel
+        {
+            public EnumRange<Colour> SmartEnum { get; set; }
+            public Enum Enum { get; set; }
+            public int Int { get; set; }
         }
 
         #endregion
@@ -1152,6 +1161,47 @@ namespace Tests.FrameworkContainers.Format
 
             Assert.IsFalse(json.Match(_ => true, _ => false));
         }
+
+        #endregion
+
+        #region Add Json Converters
+
+        [TestMethod]
+        public void JC_AddJsonOptions()
+        {
+            var converters = JsonOptions.GetJsonConverters();
+            converters.AddEnumConverter<Enum>();
+            converters.AddSmartEnumConverter<Colour>();
+
+            var options = JsonOptions.WithConverters(converters: converters.ToArray());
+            var model = new OptionsModel();
+
+            var json = Json.FromModel(model, options);
+            var nosj = Json.ToModel<OptionsModel>(json, options);
+
+            Assert.AreEqual(Colour.None, nosj.SmartEnum.Objects.Single());
+            Assert.AreEqual(Enum.Zero, nosj.Enum);
+            Assert.AreEqual(0, nosj.Int);
+        }
+
+        [TestMethod]
+        public void JC_AddJsonSettings()
+        {
+            var settings = new JsonSerializerOptions();
+            settings.AddJsonConverters();
+            settings.Converters.AddEnumConverter<Enum>();
+            settings.Converters.AddSmartEnumConverter<Colour>();
+
+            var model = new OptionsModel();
+
+            var json = JsonSerializer.Serialize(model, settings);
+            var nosj = JsonSerializer.Deserialize<OptionsModel>(json, settings);
+
+            Assert.AreEqual(Colour.None, nosj.SmartEnum.Objects.Single());
+            Assert.AreEqual(Enum.Zero, nosj.Enum);
+            Assert.AreEqual(0, nosj.Int);
+        }
+
         #endregion
     }
 }

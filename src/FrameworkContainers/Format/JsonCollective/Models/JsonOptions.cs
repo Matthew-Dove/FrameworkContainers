@@ -1,4 +1,6 @@
-﻿using FrameworkContainers.Models;
+﻿using FrameworkContainers.Format.JsonCollective.Models.Converters;
+using FrameworkContainers.Models;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -65,6 +67,20 @@ namespace FrameworkContainers.Format.JsonCollective.Models
                 isCamelCase ? JsonNamingPolicy.CamelCase : null,
                 converters
             );
+        }
+
+        public static IList<JsonConverter> GetJsonConverters()
+        {
+            var converters = new List<JsonConverter>(6);
+
+            converters.Add(new DefaultBoolConverter());
+            converters.Add(new DefaultDateTimeConverter());
+            converters.Add(new DefaultFloatConverter());
+            converters.Add(new DefaultGuidConverter());
+            converters.Add(new DefaultIntConverter());
+            converters.Add(new DefaultLongConverter());
+
+            return converters;
         }
     }
 }

@@ -11,10 +11,12 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
     /// <para>If an incorrect string, or integer value is sent; an exception is thrown.</para>
     /// <para>The string json value input is expected to be CSV (case insensitive), the output smart enum value(s) will be lowercase.</para>
     /// </summary>
-    public sealed class SmartEnumConverter<T> : JsonConverter<EnumRange<T>> where T : SmartEnum
+    public sealed class SmartEnumConverter<TSmartEnum> : JsonConverter<EnumRange<TSmartEnum>> where TSmartEnum : SmartEnum
     {
-        public override EnumRange<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => SmartEnumConverter.Read<T>(ref reader);
-        public override void Write(Utf8JsonWriter writer, EnumRange<T> value, JsonSerializerOptions options) => SmartEnumConverter.Write<T>(writer, value, FormatOptions.Lowercase);
+        public override EnumRange<TSmartEnum> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => SmartEnumConverter.Read<TSmartEnum>(ref reader);
+        public override void Write(Utf8JsonWriter writer, EnumRange<TSmartEnum> value, JsonSerializerOptions options) => SmartEnumConverter.Write<TSmartEnum>(writer, value, FormatOptions.Lowercase);
+        public override int GetHashCode() => base.GetHashCode();
+        public override bool Equals(object obj) => obj is SmartEnumConverter<TSmartEnum> c && c is not null;
     }
 
     /// <summary>
@@ -23,10 +25,12 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
     /// <para>If an incorrect string, or integer value is sent; an exception is thrown.</para>
     /// <para>The string json value input is expected to be CSV (case insensitive), the output smart enum value(s) will be lowercase.</para>
     /// </summary>
-    public sealed class SmartEnumConverterLowerCase<T> : JsonConverter<EnumRange<T>> where T : SmartEnum
+    public sealed class SmartEnumConverterLowerCase<TSmartEnum> : JsonConverter<EnumRange<TSmartEnum>> where TSmartEnum : SmartEnum
     {
-        public override EnumRange<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => SmartEnumConverter.Read<T>(ref reader);
-        public override void Write(Utf8JsonWriter writer, EnumRange<T> value, JsonSerializerOptions options) => SmartEnumConverter.Write<T>(writer, value, FormatOptions.Lowercase);
+        public override EnumRange<TSmartEnum> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => SmartEnumConverter.Read<TSmartEnum>(ref reader);
+        public override void Write(Utf8JsonWriter writer, EnumRange<TSmartEnum> value, JsonSerializerOptions options) => SmartEnumConverter.Write<TSmartEnum>(writer, value, FormatOptions.Lowercase);
+        public override int GetHashCode() => base.GetHashCode();
+        public override bool Equals(object obj) => obj is SmartEnumConverterLowerCase<TSmartEnum> c && c is not null;
     }
 
     /// <summary>
@@ -35,10 +39,12 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
     /// <para>If an incorrect string, or integer value is sent; an exception is thrown.</para>
     /// <para>The string json value input is expected to be CSV (case insensitive), the output smart enum value(s) will be UPPERCASE.</para>
     /// </summary>
-    public sealed class SmartEnumConverterUpperCase<T> : JsonConverter<EnumRange<T>> where T : SmartEnum
+    public sealed class SmartEnumConverterUpperCase<TSmartEnum> : JsonConverter<EnumRange<TSmartEnum>> where TSmartEnum : SmartEnum
     {
-        public override EnumRange<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => SmartEnumConverter.Read<T>(ref reader);
-        public override void Write(Utf8JsonWriter writer, EnumRange<T> value, JsonSerializerOptions options) => SmartEnumConverter.Write<T>(writer, value, FormatOptions.Uppercase);
+        public override EnumRange<TSmartEnum> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => SmartEnumConverter.Read<TSmartEnum>(ref reader);
+        public override void Write(Utf8JsonWriter writer, EnumRange<TSmartEnum> value, JsonSerializerOptions options) => SmartEnumConverter.Write<TSmartEnum>(writer, value, FormatOptions.Uppercase);
+        public override int GetHashCode() => base.GetHashCode();
+        public override bool Equals(object obj) => obj is SmartEnumConverterUpperCase<TSmartEnum> c && c is not null;
     }
 
     /// <summary>
@@ -47,38 +53,40 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
     /// <para>If an incorrect string, or integer value is sent; an exception is thrown.</para>
     /// <para>The string json value input is expected to be CSV (case insensitive), the output smart enum value(s) will be OriginalCase.</para>
     /// </summary>
-    public sealed class SmartEnumConverterOriginalCase<T> : JsonConverter<EnumRange<T>> where T : SmartEnum
+    public sealed class SmartEnumConverterOriginalCase<TSmartEnum> : JsonConverter<EnumRange<TSmartEnum>> where TSmartEnum : SmartEnum
     {
-        public override EnumRange<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => SmartEnumConverter.Read<T>(ref reader);
-        public override void Write(Utf8JsonWriter writer, EnumRange<T> value, JsonSerializerOptions options) => SmartEnumConverter.Write<T>(writer, value, FormatOptions.Original);
+        public override EnumRange<TSmartEnum> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => SmartEnumConverter.Read<TSmartEnum>(ref reader);
+        public override void Write(Utf8JsonWriter writer, EnumRange<TSmartEnum> value, JsonSerializerOptions options) => SmartEnumConverter.Write<TSmartEnum>(writer, value, FormatOptions.Original);
+        public override int GetHashCode() => base.GetHashCode();
+        public override bool Equals(object obj) => obj is SmartEnumConverterOriginalCase<TSmartEnum> c && c is not null;
     }
 
     file abstract class SmartEnumConverter
     {
-        public static EnumRange<T> Read<T>(ref Utf8JsonReader reader) where T : SmartEnum
+        public static EnumRange<TSmartEnum> Read<TSmartEnum>(ref Utf8JsonReader reader) where TSmartEnum : SmartEnum
         {
-            EnumRange<T> result = default;
+            EnumRange<TSmartEnum> result = default;
 
             if (reader.TokenType == JsonTokenType.String)
             {
                 var value = reader.GetString();
                 if (!string.IsNullOrEmpty(value))
                 {
-                    if (SmartEnum<T>.TryParse(value, out var range)) result = range;
-                    else new JsonException($"Unable to convert \"{reader.GetString()}\" to EnumRange<{typeof(T).Name}>.").ThrowError();
+                    if (SmartEnum<TSmartEnum>.TryParse(value, out var range)) result = range;
+                    else new JsonException($"Unable to convert \"{reader.GetString()}\" to EnumRange<{typeof(TSmartEnum).Name}>.").ThrowError();
                 }
             }
             else if (reader.TokenType == JsonTokenType.Number)
             {
-                if (reader.TryGetInt32(out var value) && value >= 0 && SmartEnum<T>.TryParse(value, out var range)) result = range;
-                else new JsonException($"Unable to convert \"{reader.GetString()}\" to EnumRange<{typeof(T).Name}>.").ThrowError();
+                if (reader.TryGetInt32(out var value) && value >= 0 && SmartEnum<TSmartEnum>.TryParse(value, out var range)) result = range;
+                else new JsonException($"Unable to convert \"{reader.GetString()}\" to EnumRange<{typeof(TSmartEnum).Name}>.").ThrowError();
             }
 
-            if (result.Objects == null || result.Objects.Length == 0) result = None<T>.Range;
+            if (result.Objects == null || result.Objects.Length == 0) result = None<TSmartEnum>.Range;
             return result;
         }
 
-        public static void Write<T>(Utf8JsonWriter writer, EnumRange<T> value, FormatOptions format) where T : SmartEnum
+        public static void Write<TSmartEnum>(Utf8JsonWriter writer, EnumRange<TSmartEnum> value, FormatOptions format) where TSmartEnum : SmartEnum
         {
             string names = null;
             if (value.Objects != null && value.Objects.Length != 0) names = value.ToString(format);
@@ -86,8 +94,8 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
         }
     }
 
-    file sealed class None<T> where T : SmartEnum
+    file sealed class None<TSmartEnum> where TSmartEnum : SmartEnum
     {
-        internal static readonly EnumRange<T> Range = SmartEnum<T>.FromValue(0).GetValueOrDefault(new EnumRange<T>());
+        internal static readonly EnumRange<TSmartEnum> Range = SmartEnum<TSmartEnum>.FromValue(0).GetValueOrDefault(new EnumRange<TSmartEnum>());
     }
 }
