@@ -19,7 +19,7 @@
 		<PackageOutputPath>..//../nupkg</PackageOutputPath>
 		<id>FrameworkContainers</id>
 		<Authors>Matthew Dove</Authors>
-		<Version>4.1.0</Version>
+		<Version>4.2.0</Version>
 		<Copyright>Matthew Dove. All rights reserved.</Copyright>
 		<PackageLicenseExpression></PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Matthew-Dove/FrameworkContainers</RepositoryUrl>
@@ -30,7 +30,13 @@
 The general idea is to replace common services, with simple types instead, reducing overheads when creating new projects.
 Common services include http, sql, and serialization.
 		</Description>
-		<PackageReleaseNotes>Updated nuget package dependencies to the latest versions.</PackageReleaseNotes>
+		<PackageReleaseNotes>Bumped version to 4.2.0.
+
+* Updated downstream dependencies.
+* Added `HttpExtensions` allowing for simple web calls off models, and uris.
+* Added a json converter for `SmartEnum&lt;T&gt;` - `[JsonConverter(typeof(SmartEnumConverter&lt;T&gt;))]`.
+* Added explicit support for dependency injection though `IServiceCollection`.
+* Added logging configuration from the providers to ContainerExpressions.</PackageReleaseNotes>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 		<PackageIcon>dove.png</PackageIcon>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
