@@ -13,15 +13,22 @@ namespace FrameworkContainers.Infrastructure
             if (factory is null) return sp;
 
             var logger = factory.CreateLogger("ContainerExpressions");
-            SetLogger(logger);
+            SetLoggers(logger);
 
             return sp;
         }
 
-        private static void SetLogger(ILogger logger)
+        private static void SetLoggers(ILogger logger)
         {
             Trace.SetFormattedLogger(logger.LogInformation);
-            Try.SetFormattedExceptionLogger(logger.LogError);
+            Try.SetFormattedExceptionLogger((x, y, z) => SetErrorLogger(logger, x, y, z));
+        }
+
+        private static void SetErrorLogger(ILogger logger, Exception ex, string message, object[] args)
+        {
+            logger.LogError(ex, message, args);
+            var metadata = (string)ex.Data[Try.DataKey];
+            if (metadata != null) logger.LogError("{ErrorMetaData}", metadata);
         }
     }
 }
