@@ -341,6 +341,15 @@ builder.services.AddFrameworkHttpClient();
 builder.services.AddEverythingEverywhereAllAtOnce();
 ```
 
+## Logging Component
+
+Hook up the `ContainerExpressions` `Try`, and `Trace` loggers with a simple extension method at startup:
+```cs
+services.AddLogging();
+var sp = services.BuildServiceProvider();
+sp.AddContainerExpressionsLogging(); // Creates a logger factory for Container Expressions to use.
+```
+
 # Credits
 * [Icon](https://www.flaticon.com/free-icon/bird_2630452) made by [Vitaly Gorbachev](https://www.flaticon.com/authors/vitaly-gorbachev) from [Flaticon](https://www.flaticon.com/).
 
@@ -387,3 +396,4 @@ builder.services.AddEverythingEverywhereAllAtOnce();
 * Added `HttpExtensions` allowing for simple web calls off models, and uris.
 * Added a json converter for `SmartEnum<T>` - `[JsonConverter(typeof(SmartEnumConverter<T>))]`.
 * Added explicit support for dependency injection though `IServiceCollection`.
+* Added logging configuration from the providers to ContainerExpressions.
