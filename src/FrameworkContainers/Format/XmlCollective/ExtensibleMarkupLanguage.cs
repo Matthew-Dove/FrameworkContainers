@@ -11,7 +11,7 @@ namespace FrameworkContainers.Format.XmlCollective
         private static readonly XmlDictionaryReaderQuotas _readerQuotas = new XmlDictionaryReaderQuotas { MaxDepth = Constants.Serialize.MAX_DEPTH, MaxStringContentLength = Constants.Serialize.MAX_READ_LENGTH };
         private static readonly XmlSerializerNamespaces _namespaces = new([XmlQualifiedName.Empty]);
         private static readonly XmlWriterSettings _settings = new() { Indent = true, OmitXmlDeclaration = true, CheckCharacters = false };
-        private static readonly Encoding _encoding = Encoding.UTF8;
+        private static readonly Encoding _encoding = Encoding.Unicode;
 
         /// <summary>Converts an object to its serialized XML format.</summary>
         /// <typeparam name="T">The type of object we are operating on.</typeparam>
