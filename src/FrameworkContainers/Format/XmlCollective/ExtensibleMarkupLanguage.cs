@@ -9,9 +9,9 @@ namespace FrameworkContainers.Format.XmlCollective
     internal static class ExtensibleMarkupLanguage
     {
         private static readonly XmlDictionaryReaderQuotas _readerQuotas = new XmlDictionaryReaderQuotas { MaxDepth = Constants.Serialize.MAX_DEPTH, MaxStringContentLength = Constants.Serialize.MAX_READ_LENGTH };
-        private static readonly XmlSerializerNamespaces _namespaces = new(new[] { XmlQualifiedName.Empty });
+        private static readonly XmlSerializerNamespaces _namespaces = new([XmlQualifiedName.Empty]);
         private static readonly XmlWriterSettings _settings = new() { Indent = true, OmitXmlDeclaration = true, CheckCharacters = false };
-        private static readonly Encoding _encoding = Encoding.Unicode;
+        private static readonly Encoding _encoding = Encoding.UTF8;
 
         /// <summary>Converts an object to its serialized XML format.</summary>
         /// <typeparam name="T">The type of object we are operating on.</typeparam>
@@ -21,8 +21,7 @@ namespace FrameworkContainers.Format.XmlCollective
         {
             using var stream = new StringWriterWithEncoding(_encoding);
             using var writer = XmlWriter.Create(stream, _settings);
-            var serializer = new XmlSerializer(value.GetType());
-            serializer.Serialize(writer, value, _namespaces);
+            Serializer<T>.Instance.Serialize(writer, value, _namespaces);
             return stream.ToString();
         }
 
@@ -35,8 +34,12 @@ namespace FrameworkContainers.Format.XmlCollective
             static void OnClose(XmlDictionaryReader _) { }
             using var stream = new StringStream(xml);
             using var reader = XmlDictionaryReader.CreateTextReader(stream, _encoding, _readerQuotas, OnClose);
-            var serializer = new XmlSerializer(typeof(T));
-            return (T)serializer.Deserialize(reader);
+            return (T)Serializer<T>.Instance.Deserialize(reader);
+        }
+
+        private static class Serializer<T>
+        {
+            public static readonly XmlSerializer Instance = new XmlSerializer(typeof(T));
         }
     }
 }
