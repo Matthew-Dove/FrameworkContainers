@@ -397,3 +397,8 @@ sp.AddContainerExpressionsLogging(); // Creates a logger factory for Container E
 * Added a json converter for `SmartEnum<T>` - `[JsonConverter(typeof(SmartEnumConverter<T>))]`.
 * Added explicit support for dependency injection though `IServiceCollection`.
 * Added logging configuration from the providers to ContainerExpressions.
+
+## 4.2.1
+
+* Cached Xml Serializer by type for performance.
+* Updated nuget packages.
