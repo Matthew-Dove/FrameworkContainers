@@ -402,3 +402,7 @@ sp.AddContainerExpressionsLogging(); // Creates a logger factory for Container E
 
 * Cached Xml Serializer by type for performance.
 * Updated nuget packages.
+
+## 5.0.0
+
+* Breaking change to the dependency injection method `AddServicesByConvention`, to target internal classes with the option: `bool scanInternals`.

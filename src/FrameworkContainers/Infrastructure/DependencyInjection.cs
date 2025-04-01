@@ -2,12 +2,11 @@
 using FrameworkContainers.Format.XmlCollective;
 using FrameworkContainers.Network.HttpCollective;
 using FrameworkContainers.Network.SqlCollective;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Reflection;
 
-namespace FrameworkContainers.Infrastructure
+namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>Adds types to your dependency injection framework.</summary>
     public static class DependencyInjection
@@ -20,12 +19,13 @@ namespace FrameworkContainers.Infrastructure
         /// <param name="services">The service collection used for dependency injection.</param>
         /// <param name="assembly">The caller's main assembly i.e. Assembly.GetExecutingAssembly().GetName().FullName;.</param>
         /// <param name="isSandbox">When in sandbox mode, check if a sandbox implementation exists, and prefer that version.</param>
+        /// <param name="scanInternals">Includes internal classes as targets for dependency injection matches.</param>
         /// <param name="assemblyStartsWith">Adds any referenced assemblies starting with this name.</param>
         /// <param name="explicitlyNamedAssemblies">Add any assemblies that may not be loaded yet, but you'd like included.</param>
         /// <returns></returns>
-        public static IServiceCollection AddServicesByConvention(this IServiceCollection services, string assembly, bool isSandbox = false, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
+        public static IServiceCollection AddServicesByConvention(this IServiceCollection services, string assembly, bool isSandbox = false, bool scanInternals = false, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
         {
-            AddServicesByConvention((x, y) => services.AddSingleton(x, y), assembly, isSandbox, assemblyStartsWith, explicitlyNamedAssemblies);
+            AddServicesByConvention((x, y) => services.AddSingleton(x, y), assembly, isSandbox, scanInternals, assemblyStartsWith, explicitlyNamedAssemblies);
             return services;
         }
 
@@ -37,16 +37,17 @@ namespace FrameworkContainers.Infrastructure
         /// <param name="resolver">A wrapper around the dependency injection framework you're using.</param>
         /// <param name="assembly">The caller's main assembly i.e. Assembly.GetExecutingAssembly().GetName().FullName;.</param>
         /// <param name="isSandbox">When in sandbox mode, check if a sandbox implementation exists, and prefer that version.</param>
+        /// <param name="scanInternals">Includes internal classes as targets for dependency injection matches.</param>
         /// <param name="assemblyStartsWith">Adds any referenced assemblies starting with this name.</param>
         /// <param name="explicitlyNamedAssemblies">Add any assemblies that may not be loaded yet, but you'd like included.</param>
-        public static void AddServicesByConvention(Action<Type, Type> resolver, string assembly, bool isSandbox = false, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
+        public static void AddServicesByConvention(Action<Type, Type> resolver, string assembly, bool isSandbox = false, bool scanInternals = false, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
         {
-            var types = GetTypesFromAssemblies(assembly, assemblyStartsWith, explicitlyNamedAssemblies);
+            var types = GetTypesFromAssemblies(assembly, scanInternals, assemblyStartsWith, explicitlyNamedAssemblies);
             AddServicesByConvention(types, resolver, isSandbox);
         }
 
         /// <summary>Scans all assemblies supplied, extracting the exported types.</summary>
-        private static Type[] GetTypesFromAssemblies(string assembly, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
+        private static Type[] GetTypesFromAssemblies(string assembly, bool scanInternals = false, string assemblyStartsWith = null, params string[] explicitlyNamedAssemblies)
         {
             var mainAssembly = Assembly.Load(assembly);
             var explicitAssemblies = explicitlyNamedAssemblies.Select(Assembly.Load);
@@ -60,7 +61,15 @@ namespace FrameworkContainers.Infrastructure
             }
 
             var assemblies = new Assembly[] { mainAssembly }.Concat(referencedAssemblies).Concat(explicitAssemblies).Concat(explicitReferencedAssemblies).Distinct();
-            return assemblies.SelectMany(x => x.GetExportedTypes()).ToArray();
+            try
+            {
+                if (scanInternals) return assemblies.SelectMany(x => x.GetTypes()).ToArray();
+                return assemblies.SelectMany(x => x.GetExportedTypes()).ToArray();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                return ex.Types.Where(x => x != null).ToArray();
+            }
         }
 
         /// <summary>

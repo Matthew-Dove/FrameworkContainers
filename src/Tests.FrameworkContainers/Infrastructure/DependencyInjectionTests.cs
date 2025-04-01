@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FrameworkContainers.Infrastructure;
 using FrameworkContainers.Format.XmlCollective;
 using System;
 using FrameworkContainers.Format.JsonCollective;
@@ -14,7 +13,13 @@ namespace Tests.FrameworkContainers.Infrastructure
     {
         private const string _assembly = "Tests.FrameworkContainers";
 
-        private IServiceCollection _services = new ServiceCollection();
+        private IServiceCollection _services;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            _services = new ServiceCollection();
+        }
 
         [TestMethod]
         public void FindServicesForInterfacesByNamingConvention()
@@ -26,6 +31,18 @@ namespace Tests.FrameworkContainers.Infrastructure
             var pong = message.GetMessage();
 
             Assert.AreEqual("Pong", pong);
+        }
+
+        [TestMethod]
+        public void FindInternalClassesForDI()
+        {
+            _services.AddServicesByConvention(_assembly, scanInternals: true);
+            var sp = _services.BuildServiceProvider();
+
+            var hidden = sp.GetService<IHiddenService>();
+            var aboo = hidden.Peek();
+
+            Assert.AreEqual("aboo", aboo);
         }
 
         [TestMethod]
@@ -111,6 +128,16 @@ namespace Tests.FrameworkContainers.Infrastructure
     }
 
     #region DI Test Services
+
+    public interface IHiddenService
+    {
+        string Peek();
+    }
+
+    internal class HiddenService : IHiddenService
+    {
+        public string Peek() => "aboo";
+    }
 
     public interface IPingService
     {

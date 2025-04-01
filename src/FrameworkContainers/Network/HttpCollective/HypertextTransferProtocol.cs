@@ -18,7 +18,7 @@ namespace FrameworkContainers.Network.HttpCollective;
 
 internal static class HypertextTransferProtocol
 {
-    internal static readonly HttpMethod Patch = new HttpMethod(Constants.Http.PATCH); // Patch is missing from .net standard 2.0 (is there in 2.1).
+    internal static readonly HttpMethod Patch = new HttpMethod(Constants.Http.PATCH); // Patch is missing from .net standard 2.0 (it is there in 2.1).
     private static readonly MediaTypeHeaderValue _jsonContent = new MediaTypeHeaderValue(Constants.Http.JSON_CONTENT) { CharSet = Encoding.UTF8.WebName };
 
     private static readonly int DNS_RENEW_MILLISECONDS = (int)TimeSpan.FromSeconds(300).TotalMilliseconds;
