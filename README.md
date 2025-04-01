@@ -406,3 +406,4 @@ sp.AddContainerExpressionsLogging(); // Creates a logger factory for Container E
 ## 5.0.0
 
 * Breaking change to the dependency injection method `AddServicesByConvention`, to target internal classes with the option: `bool scanInternals`.
+* Replaced static `HttpClient` with the `IHttpClientFactory` implementation.

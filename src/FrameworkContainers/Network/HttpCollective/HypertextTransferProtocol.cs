@@ -2,7 +2,6 @@
 using FrameworkContainers.Models.Exceptions;
 using FrameworkContainers.Models;
 using FrameworkContainers.Network.HttpCollective.Models;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net;
@@ -13,6 +12,7 @@ using System;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FrameworkContainers.Network.HttpCollective;
 
@@ -21,10 +21,8 @@ internal static class HypertextTransferProtocol
     internal static readonly HttpMethod Patch = new HttpMethod(Constants.Http.PATCH); // Patch is missing from .net standard 2.0 (it is there in 2.1).
     private static readonly MediaTypeHeaderValue _jsonContent = new MediaTypeHeaderValue(Constants.Http.JSON_CONTENT) { CharSet = Encoding.UTF8.WebName };
 
-    private static readonly int DNS_RENEW_MILLISECONDS = (int)TimeSpan.FromSeconds(300).TotalMilliseconds;
-    private readonly static System.Net.Http.HttpClient _client = new System.Net.Http.HttpClient();
-    private readonly static HashSet<Uri> _uris = new HashSet<Uri>();
-    private readonly static object _lock = new object();
+    private static readonly ServiceProvider _sp;
+    private static readonly IHttpClientFactory _factory;
 
     static HypertextTransferProtocol()
     {
@@ -33,21 +31,11 @@ internal static class HypertextTransferProtocol
         ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Ssl3;
         ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Tls;
         ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Tls11;
-    }
 
-    private static void AddDnsRenew(Uri uri)
-    {
-        if (!_uris.Contains(uri))
-        {
-            lock (_lock)
-            {
-                if (!_uris.Contains(uri))
-                {
-                    ServicePointManager.FindServicePoint(uri).ConnectionLeaseTimeout = DNS_RENEW_MILLISECONDS;
-                    _uris.Add(uri);
-                }
-            }
-        }
+        var services = new ServiceCollection();
+        services.AddHttpClient();
+        _sp = services.BuildServiceProvider();
+        _factory = _sp.GetService<IHttpClientFactory>();
     }
 
     // Generic sync string send, and receive.
@@ -162,7 +150,7 @@ internal static class HypertextTransferProtocol
             var useToken = CancellationToken.None.Equals(options.WebClient.CancellationToken);
             var useClient = options.WebClient.HttpClient == null;
             var token = options.WebClient.CancellationToken;
-            var client = useClient ? _client : options.WebClient.HttpClient;
+            var client = useClient ? _factory.CreateClient() : options.WebClient.HttpClient;
 
             if (useToken)
             {
@@ -170,7 +158,6 @@ internal static class HypertextTransferProtocol
                 token = cts.Token;
             }
 
-            AddDnsRenew(url);
             httpRequest = new HttpRequestMessage(httpMethod, url);
             foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
             if (!string.IsNullOrEmpty(body) && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put || httpMethod == Patch))
@@ -237,7 +224,7 @@ internal static class HypertextTransferProtocol
             var useToken = CancellationToken.None.Equals(options.WebClient.CancellationToken);
             var useClient = options.WebClient.HttpClient == null;
             var token = options.WebClient.CancellationToken;
-            var client = useClient ? _client : options.WebClient.HttpClient;
+            var client = useClient ? _factory.CreateClient() : options.WebClient.HttpClient;
 
             if (useToken)
             {
@@ -245,7 +232,6 @@ internal static class HypertextTransferProtocol
                 token = cts.Token;
             }
 
-            AddDnsRenew(url);
             httpRequest = new HttpRequestMessage(httpMethod, url);
             foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
             httpRequest.Content = JsonContent.Create<TRequest>(request, _jsonContent, options);
@@ -281,7 +267,7 @@ internal static class HypertextTransferProtocol
             var useToken = CancellationToken.None.Equals(options.WebClient.CancellationToken);
             var useClient = options.WebClient.HttpClient == null;
             var token = options.WebClient.CancellationToken;
-            var client = useClient ? _client : options.WebClient.HttpClient;
+            var client = useClient ? _factory.CreateClient() : options.WebClient.HttpClient;
 
             if (useToken)
             {
@@ -289,7 +275,6 @@ internal static class HypertextTransferProtocol
                 token = cts.Token;
             }
 
-            AddDnsRenew(url);
             httpRequest = new HttpRequestMessage(httpMethod, url);
             foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
             httpRequest.Content = JsonContent.Create<TRequest>(request, _jsonContent, options);
@@ -351,7 +336,7 @@ internal static class HypertextTransferProtocol
             var useToken = CancellationToken.None.Equals(options.WebClient.CancellationToken);
             var useClient = options.WebClient.HttpClient == null;
             var token = options.WebClient.CancellationToken;
-            var client = useClient ? _client : options.WebClient.HttpClient;
+            var client = useClient ? _factory.CreateClient() : options.WebClient.HttpClient;
 
             if (useToken)
             {
@@ -359,7 +344,6 @@ internal static class HypertextTransferProtocol
                 token = cts.Token;
             }
 
-            AddDnsRenew(url);
             httpRequest = new HttpRequestMessage(httpMethod, url);
             foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
 
@@ -420,7 +404,7 @@ internal static class HypertextTransferProtocol
             var useToken = CancellationToken.None.Equals(options.WebClient.CancellationToken);
             var useClient = options.WebClient.HttpClient == null;
             var token = options.WebClient.CancellationToken;
-            var client = useClient ? _client : options.WebClient.HttpClient;
+            var client = useClient ? _factory.CreateClient() : options.WebClient.HttpClient;
 
             if (useToken)
             {
@@ -428,7 +412,6 @@ internal static class HypertextTransferProtocol
                 token = cts.Token;
             }
 
-            AddDnsRenew(url);
             httpRequest = new HttpRequestMessage(httpMethod, url);
             foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
             if (!string.IsNullOrEmpty(body) && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put || httpMethod == Patch))
