@@ -14,6 +14,9 @@ public static class Http
     public static readonly HttpResponse Response = HttpResponse.Instance;
     public static readonly HttpMaybe Maybe = HttpMaybe.Instance;
 
+    /// <summary>Tear down the underlying HTTP Client, and dispose of any resources (only call this when your application is shutting down).</summary>
+    public static void TearDown() => HypertextTransferProtocol.TearDown();
+
     private static HttpStatus IdentityValueStatus<E>(Task<Either<string, E>> t) where E : Exception => t.Result.Match(HttpStatus.Create, Throw<HttpStatus>);
 
     private static HttpStatus IdentityValueStatus<E>(Task<Either<HttpStatus, E>> t) where E : Exception => t.Result.Match(Identity, Throw<HttpStatus>);
