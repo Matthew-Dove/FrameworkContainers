@@ -97,9 +97,16 @@ namespace Tests.FrameworkContainers.Infrastructure
             var sp = _services.BuildServiceProvider();
 
             var client = sp.GetService<IHttpClient<Model, Model>>();
-
             Assert.IsNotNull(client);
             Assert.IsInstanceOfType<HttpClient<Model, Model>>(client);
+
+            var maybe = sp.GetService<IHttpMaybe<Model, Model>>();
+            Assert.IsNotNull(maybe);
+            Assert.IsInstanceOfType<HttpMaybe<Model, Model>>(maybe);
+
+            var response = sp.GetService<IHttpResponse<Model, Model>>();
+            Assert.IsNotNull(response);
+            Assert.IsInstanceOfType<HttpResponse<Model, Model>>(response);
         }
 
         [TestMethod]

@@ -170,6 +170,14 @@ namespace Microsoft.Extensions.DependencyInjection
             resolver(typeof(IHttpClient), typeof(HttpClient));
             resolver(typeof(IHttpClient<>), typeof(HttpClient<>));
             resolver(typeof(IHttpClient<,>), typeof(HttpClient<,>));
+
+            resolver(typeof(IHttpMaybe), typeof(HttpMaybe));
+            resolver(typeof(IHttpMaybe<>), typeof(HttpMaybe<>));
+            resolver(typeof(IHttpMaybe<,>), typeof(HttpMaybe<,>));
+
+            resolver(typeof(IHttpResponse), typeof(HttpResponse));
+            resolver(typeof(IHttpMaybe<>), typeof(HttpResponse<>));
+            resolver(typeof(IHttpResponse<,>), typeof(HttpResponse<,>));
         }
     }
 }

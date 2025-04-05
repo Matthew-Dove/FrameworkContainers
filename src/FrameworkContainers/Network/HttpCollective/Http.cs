@@ -11,8 +11,8 @@ namespace FrameworkContainers.Network.HttpCollective;
 
 public static class Http
 {
-    public static readonly HttpResponse Response = HttpResponse.Instance;
-    public static readonly HttpMaybe Maybe = HttpMaybe.Instance;
+    public static readonly IHttpResponse Response = HttpResponse.Instance;
+    public static readonly IHttpMaybe Maybe = HttpMaybe.Instance;
 
     /// <summary>Tear down the underlying HTTP Client, and dispose of any resources (only call this when your application is shutting down).</summary>
     public static void TearDown() => HypertextTransferProtocol.TearDown();

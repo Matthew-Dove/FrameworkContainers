@@ -8,8 +8,8 @@ namespace FrameworkContainers.Network.HttpCollective;
 /// <summary>Dependency injection alterative to the static class.</summary>
 public interface IHttpClient
 {
-    HttpMaybe Maybe { get; }
-    HttpResponse Response { get; }
+    IHttpMaybe Maybe { get; }
+    IHttpResponse Response { get; }
 
     Http245 Post245(string body, Either<string, Uri> url, string contentType, params Header[] headers);
     Http245 Post245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
@@ -104,8 +104,8 @@ public interface IHttpClient
 
 public sealed class HttpClient : IHttpClient
 {
-    public HttpMaybe Maybe => Http.Maybe;
-    public HttpResponse Response => Http.Response;
+    public IHttpMaybe Maybe => Http.Maybe;
+    public IHttpResponse Response => Http.Response;
 
     public Http245 Post245(string body, Either<string, Uri> url, string contentType, params Header[] headers) => Http.Post245(body, url, contentType, headers);
     public Http245 Post245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers) => Http.Post245(body, url, contentType, options, headers);
@@ -201,8 +201,8 @@ public sealed class HttpClient : IHttpClient
 /// <summary>Dependency injection alterative to the static class (for a single type).</summary>
 public interface IHttpClient<T>
 {
-    HttpMaybe<T> Maybe { get; }
-    HttpResponse<T> Response { get; }
+    IHttpMaybe<T> Maybe { get; }
+    IHttpResponse<T> Response { get; }
 
     HttpStatus PostJsonStatus(T model, Either<string, Uri> url, params Header[] headers);
     HttpStatus PostJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
@@ -243,8 +243,8 @@ public interface IHttpClient<T>
 
 public sealed class HttpClient<T> : IHttpClient<T>
 {
-    public HttpMaybe<T> Maybe => HttpMaybe<T>.Instance;
-    public HttpResponse<T> Response => HttpResponse<T>.Instance;
+    public IHttpMaybe<T> Maybe => HttpMaybe<T>.Instance;
+    public IHttpResponse<T> Response => HttpResponse<T>.Instance;
 
     public HttpStatus PostJsonStatus(T model, Either<string, Uri> url, params Header[] headers) => Http.PostJsonStatus<T>(model, url, headers);
     public HttpStatus PostJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PostJsonStatus<T>(model, url, options, headers);
@@ -286,8 +286,8 @@ public sealed class HttpClient<T> : IHttpClient<T>
 /// <summary>Dependency injection alterative to the static class (for a two types).</summary>
 public interface IHttpClient<TRequest, TResponse>
 {
-    HttpMaybe<TRequest, TResponse> Maybe { get; }
-    HttpResponse<TRequest, TResponse> Response { get; }
+    IHttpMaybe<TRequest, TResponse> Maybe { get; }
+    IHttpResponse<TRequest, TResponse> Response { get; }
 
     TResponse PostJson(TRequest model, Either<string, Uri> url, params Header[] headers);
     TResponse PostJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
@@ -310,8 +310,8 @@ public interface IHttpClient<TRequest, TResponse>
 
 public sealed class HttpClient<TRequest, TResponse> : IHttpClient<TRequest, TResponse>
 {
-    public HttpMaybe<TRequest, TResponse> Maybe => HttpMaybe<TRequest, TResponse>.Instance;
-    public HttpResponse<TRequest, TResponse> Response => HttpResponse<TRequest, TResponse>.Instance;
+    public IHttpMaybe<TRequest, TResponse> Maybe => HttpMaybe<TRequest, TResponse>.Instance;
+    public IHttpResponse<TRequest, TResponse> Response => HttpResponse<TRequest, TResponse>.Instance;
 
     public TResponse PostJson(TRequest model, Either<string, Uri> url, params Header[] headers) => Http.PostJson<TRequest, TResponse>(model, url, headers);
     public TResponse PostJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => Http.PostJson<TRequest, TResponse>(model, url, options, headers);

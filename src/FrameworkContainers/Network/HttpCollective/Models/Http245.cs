@@ -13,6 +13,8 @@
             StatusCode = statusCode;
             Body = body;
         }
+
+        public static Http245 Create(Header[] headers, int statusCode, string body) => new Http245(headers, statusCode, body);
     }
 
     /// <summary>Maps to a 100 range of http status codes.</summary>

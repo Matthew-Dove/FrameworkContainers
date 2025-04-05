@@ -9,11 +9,102 @@ using System.Threading.Tasks;
 
 namespace FrameworkContainers.Network.HttpCollective;
 
-public sealed class HttpMaybe
+public interface IHttpMaybe
 {
-    internal static readonly HttpMaybe Instance = new HttpMaybe();
+    Maybe<Http245> Post245(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Maybe<Http245> Post245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Maybe<HttpBody> Post(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Maybe<HttpBody> Post(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Maybe<HttpStatus> PostStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Maybe<HttpStatus> PostStatus(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Maybe<HttpStatus> PostJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<HttpStatus> PostJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Maybe<TResponse> PostJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<TResponse> PostJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
-    private HttpMaybe() { }
+    Maybe<Http245> Put245(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Maybe<Http245> Put245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Maybe<HttpBody> Put(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Maybe<HttpBody> Put(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Maybe<HttpStatus> PutStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Maybe<HttpStatus> PutStatus(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Maybe<HttpStatus> PutJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<HttpStatus> PutJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Maybe<TResponse> PutJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<TResponse> PutJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Maybe<Http245> Patch245(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Maybe<Http245> Patch245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Maybe<HttpBody> Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Maybe<HttpBody> Patch(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Maybe<HttpStatus> PatchStatus(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Maybe<HttpStatus> PatchStatus(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Maybe<HttpStatus> PatchJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<HttpStatus> PatchJsonStatus<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Maybe<TResponse> PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<TResponse> PatchJson<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Maybe<Http245> Get245(Either<string, Uri> url, params Header[] headers);
+    Maybe<Http245> Get245(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Maybe<HttpBody> Get(Either<string, Uri> url, params Header[] headers);
+    Maybe<HttpBody> Get(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Maybe<HttpStatus> GetStatus(Either<string, Uri> url, params Header[] headers);
+    Maybe<HttpStatus> GetStatus(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Maybe<TResponse> GetJson<TResponse>(Either<string, Uri> url, params Header[] headers);
+    Maybe<TResponse> GetJson<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Maybe<HttpStatus> DeleteStatus(Either<string, Uri> url, params Header[] headers);
+    Maybe<HttpStatus> DeleteStatus(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<Http245>> Post245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Maybe<Http245>> Post245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Task<Maybe<HttpBody>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Maybe<HttpBody>> PostAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Task<Maybe<HttpStatus>> PostStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Maybe<HttpStatus>> PostStatusAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Task<Maybe<HttpStatus>> PostJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<HttpStatus>> PostJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Task<Maybe<TResponse>> PostJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<TResponse>> PostJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<Http245>> Put245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Maybe<Http245>> Put245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Task<Maybe<HttpBody>> PutAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Maybe<HttpBody>> PutAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Task<Maybe<HttpStatus>> PutStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Maybe<HttpStatus>> PutStatusAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Task<Maybe<HttpStatus>> PutJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<HttpStatus>> PutJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Task<Maybe<TResponse>> PutJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<TResponse>> PutJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<Http245>> Patch245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Maybe<Http245>> Patch245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Task<Maybe<HttpBody>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Maybe<HttpBody>> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Task<Maybe<HttpStatus>> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers);
+    Task<Maybe<HttpStatus>> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers);
+    Task<Maybe<HttpStatus>> PatchJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<HttpStatus>> PatchJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Task<Maybe<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<Http245>> Get245Async(Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<Http245>> Get245Async(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Task<Maybe<HttpBody>> GetAsync(Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<HttpBody>> GetAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Task<Maybe<HttpStatus>> GetStatusAsync(Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<HttpStatus>> GetStatusAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Task<Maybe<TResponse>> GetJsonAsync<TResponse>(Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<TResponse>> GetJsonAsync<TResponse>(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<HttpStatus>> DeleteStatusAsync(Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<HttpStatus>> DeleteStatusAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+}
+
+public sealed class HttpMaybe : IHttpMaybe
+{
+    internal static readonly IHttpMaybe Instance = new HttpMaybe();
 
     private static Maybe<HttpStatus> IdentityMaybeStatus<E>(Task<Either<string, E>> t) where E : Exception => t.Result.Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.CreateError<HttpStatus>);
 
@@ -35,6 +126,18 @@ public sealed class HttpMaybe
         return body => HypertextTransferProtocol
             .Send(body, url.Match(static x => new Uri(x), Identity), Constants.Http.JSON_CONTENT, options, headers, httpMethod)
             .Match(Parse<T>(options), Maybe.CreateError<T>);
+    }
+
+    public Maybe<Http245> Post245(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Post245(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public Maybe<Http245> Post245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.POST)
+            .Match(Maybe.Create, Maybe.CreateError<Http245>);
     }
 
     public Maybe<HttpBody> Post(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -87,6 +190,18 @@ public sealed class HttpMaybe
         );
     }
 
+    public Maybe<Http245> Put245(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Put245(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public Maybe<Http245> Put245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PUT)
+            .Match(Maybe.Create, Maybe.CreateError<Http245>);
+    }
+
     public Maybe<HttpBody> Put(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return Put(body, url, contentType, HttpOptions.Default, headers);
@@ -135,6 +250,18 @@ public sealed class HttpMaybe
             Send<TResponse>(Constants.Http.PUT, url, options, headers),
             Maybe.CreateError<TResponse>
         );
+    }
+
+    public Maybe<Http245> Patch245(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Patch245(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public Maybe<Http245> Patch245(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, Constants.Http.PATCH)
+            .Match(Maybe.Create, Maybe.CreateError<Http245>);
     }
 
     public Maybe<HttpBody> Patch(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -187,6 +314,18 @@ public sealed class HttpMaybe
         );
     }
 
+    public Maybe<Http245> Get245(Either<string, Uri> url, params Header[] headers)
+    {
+        return Get245(url, HttpOptions.Default, headers);
+    }
+
+    public Maybe<Http245> Get245(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, Constants.Http.GET)
+            .Match(Maybe.Create, Maybe.CreateError<Http245>);
+    }
+
     public Maybe<HttpBody> Get(Either<string, Uri> url, params Header[] headers)
     {
         return Get(url, HttpOptions.Default, headers);
@@ -235,6 +374,18 @@ public sealed class HttpMaybe
             .Match(static x => Maybe.Create(HttpStatus.Create(x)), Maybe.CreateError<HttpStatus>);
     }
 
+    public Task<Maybe<Http245>> Post245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Post245Async(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public Task<Maybe<Http245>> Post245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Post)
+            .ContinueWith(IdentityMaybe);
+    }
+
     public Task<Maybe<HttpBody>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return PostAsync(body, url, contentType, HttpOptions.Default, headers);
@@ -280,6 +431,18 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HttpMethod.Post)
+            .ContinueWith(IdentityMaybe);
+    }
+
+    public Task<Maybe<Http245>> Put245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Put245Async(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public Task<Maybe<Http245>> Put245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Put)
             .ContinueWith(IdentityMaybe);
     }
 
@@ -331,6 +494,18 @@ public sealed class HttpMaybe
             .ContinueWith(IdentityMaybe);
     }
 
+    public Task<Maybe<Http245>> Patch245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers)
+    {
+        return Patch245Async(body, url, contentType, HttpOptions.Default, headers);
+    }
+
+    public Task<Maybe<Http245>> Patch245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch)
+            .ContinueWith(IdentityMaybe);
+    }
+
     public Task<Maybe<HttpBody>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
     {
         return PatchAsync(body, url, contentType, HttpOptions.Default, headers);
@@ -376,6 +551,18 @@ public sealed class HttpMaybe
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HypertextTransferProtocol.Patch)
+            .ContinueWith(IdentityMaybe);
+    }
+
+    public Task<Maybe<Http245>> Get245Async(Either<string, Uri> url, params Header[] headers)
+    {
+        return Get245Async(url, HttpOptions.Default, headers);
+    }
+
+    public Task<Maybe<Http245>> Get245Async(Either<string, Uri> url, HttpOptions options, params Header[] headers)
+    {
+        return HypertextTransferProtocol
+            .Send245Async(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get)
             .ContinueWith(IdentityMaybe);
     }
 
@@ -428,11 +615,48 @@ public sealed class HttpMaybe
     }
 }
 
-public sealed class HttpMaybe<T>
+public interface IHttpMaybe<T>
 {
-    internal static readonly HttpMaybe<T> Instance = new HttpMaybe<T>();
+    Maybe<HttpStatus> PostJsonStatus(T model, Either<string, Uri> url, params Header[] headers);
+    Maybe<HttpStatus> PostJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Maybe<T> PostJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<T> PostJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
-    private HttpMaybe() { }
+    Maybe<HttpStatus> PutJsonStatus(T model, Either<string, Uri> url, params Header[] headers);
+    Maybe<HttpStatus> PutJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Maybe<T> PutJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<T> PutJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Maybe<HttpStatus> PatchJsonStatus(T model, Either<string, Uri> url, params Header[] headers);
+    Maybe<HttpStatus> PatchJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Maybe<T> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<T> PatchJson<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Maybe<T> GetJson(Either<string, Uri> url, params Header[] headers);
+    Maybe<T> GetJson(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<HttpStatus>> PostJsonStatusAsync(T model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<HttpStatus>> PostJsonStatusAsync(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Task<Maybe<T>> PostJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<T>> PostJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<HttpStatus>> PutJsonStatusAsync(T model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<HttpStatus>> PutJsonStatusAsync(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Task<Maybe<T>> PutJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<T>> PutJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<HttpStatus>> PatchJsonStatusAsync(T model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<HttpStatus>> PatchJsonStatusAsync(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+    Task<Maybe<T>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<T>> PatchJsonAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<T>> GetJsonAsync(Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<T>> GetJsonAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers);
+}
+
+public sealed class HttpMaybe<T> : IHttpMaybe<T>
+{
+    internal static readonly IHttpMaybe<T> Instance = new HttpMaybe<T>();
 
     public Maybe<HttpStatus> PostJsonStatus(T model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PostJsonStatus<T>(model, url, headers);
     public Maybe<HttpStatus> PostJsonStatus(T model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PostJsonStatus<T>(model, url, options, headers);
@@ -471,11 +695,30 @@ public sealed class HttpMaybe<T>
     public Task<Maybe<T>> GetJsonAsync(Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.GetJsonAsync<T>(url, options, headers);
 }
 
-public sealed class HttpMaybe<TRequest, TResponse>
+public interface IHttpMaybe<TRequest, TResponse>
 {
-    internal static readonly HttpMaybe<TRequest, TResponse> Instance = new HttpMaybe<TRequest, TResponse>();
+    Maybe<TResponse> PostJson(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<TResponse> PostJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
 
-    private HttpMaybe() { }
+    Maybe<TResponse> PutJson(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<TResponse> PutJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Maybe<TResponse> PatchJson(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Maybe<TResponse> PatchJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<TResponse>> PostJsonAsync(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<TResponse>> PostJsonAsync(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<TResponse>> PutJsonAsync(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<TResponse>> PutJsonAsync(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+
+    Task<Maybe<TResponse>> PatchJsonAsync(TRequest model, Either<string, Uri> url, params Header[] headers);
+    Task<Maybe<TResponse>> PatchJsonAsync(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers);
+}
+
+public sealed class HttpMaybe<TRequest, TResponse> : IHttpMaybe<TRequest, TResponse>
+{
+    internal static readonly IHttpMaybe<TRequest, TResponse> Instance = new HttpMaybe<TRequest, TResponse>();
 
     public Maybe<TResponse> PostJson(TRequest model, Either<string, Uri> url, params Header[] headers) => HttpMaybe.Instance.PostJson<TRequest, TResponse>(model, url, headers);
     public Maybe<TResponse> PostJson(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers) => HttpMaybe.Instance.PostJson<TRequest, TResponse>(model, url, options, headers);
