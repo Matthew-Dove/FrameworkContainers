@@ -3,6 +3,7 @@ using FrameworkContainers.Format.JsonCollective.Models;
 using FrameworkContainers.Models;
 using System;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace FrameworkContainers.Network.HttpCollective.Models
 {
@@ -23,7 +24,7 @@ namespace FrameworkContainers.Network.HttpCollective.Models
         internal WebClientOptions WebClient { get; }
 
         /// <summary>A custom function to use when logging the http request, and response (null when not set).</summary>
-        internal Action<HttpRequestBody, HttpResponseBody> Log { get; }
+        internal Func<HttpRequestBody, HttpResponseBody, ValueTask> Log { get; }
 
         public HttpOptions(int timeoutSeconds = default, JsonOptions json = null, WebClientOptions webClient = null, HttpLogger log = null)
         {

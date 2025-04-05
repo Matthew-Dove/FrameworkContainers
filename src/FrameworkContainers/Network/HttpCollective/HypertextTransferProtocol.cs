@@ -99,7 +99,7 @@ internal static class HypertextTransferProtocol
             response = new HttpException($"Error calling {httpMethod}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, Array.Empty<Header>());
         }
 
-        if (captureHttpBody) options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
+        if (captureHttpBody) options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody)).GetAwaiter().GetResult();
 
         return response;
     }
@@ -155,7 +155,7 @@ internal static class HypertextTransferProtocol
             response = new HttpException($"Error calling {httpMethod}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, ex, Array.Empty<Header>());
         }
 
-        if (captureHttpBody) options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
+        if (captureHttpBody) options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody)).GetAwaiter().GetResult();
 
         return response;
     }
@@ -225,7 +225,7 @@ internal static class HypertextTransferProtocol
                 if (options) response = httpResponse.Value?.ReasonPhrase ?? Constants.Http.DEFAULT_HTTP_DESCRIPTION;
             }
 
-            if (captureHttpBody) options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
+            if (captureHttpBody) await options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
         }
         catch (Exception ex)
         {
@@ -279,7 +279,7 @@ internal static class HypertextTransferProtocol
                 httpRequestBody = await httpRequest.Content.ReadAsStringAsync().ConfigureAwait(false);
                 httpResponseBody = await httpResponse.TryGetBody().ConfigureAwait(false);
 
-                options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
+                await options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
             }
         }
         catch (Exception ex)
@@ -364,7 +364,7 @@ internal static class HypertextTransferProtocol
                 response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, httpResponseBody, httpResponse, rawHeaders);
             }
 
-            if (captureHttpBody) options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
+            if (captureHttpBody) await options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
         }
         catch (Exception ex)
         {
@@ -445,7 +445,7 @@ internal static class HypertextTransferProtocol
                 response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, httpResponseBody, httpResponse, rawHeaders);
             }
 
-            if (captureHttpBody) options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
+            if (captureHttpBody) await options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
 
         }
         catch (Exception ex)
@@ -522,7 +522,7 @@ internal static class HypertextTransferProtocol
                 response = new Http245(rawHeaders, rawStatusCode, httpResponseBody);
             }
 
-            if (captureHttpBody) options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
+            if (captureHttpBody) await options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
         }
         catch (Exception ex)
         {

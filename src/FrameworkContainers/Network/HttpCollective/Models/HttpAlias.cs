@@ -1,6 +1,7 @@
 ﻿using ContainerExpressions.Containers;
 using FrameworkContainers.Models;
 using System;
+using System.Threading.Tasks;
 
 namespace FrameworkContainers.Network.HttpCollective.Models
 {
@@ -65,9 +66,9 @@ namespace FrameworkContainers.Network.HttpCollective.Models
     }
 
     /// <summary>A custom function to use when logging the http request, and response.</summary>
-    public sealed class HttpLogger : Alias<Action<HttpRequestBody, HttpResponseBody>>
+    public sealed class HttpLogger : Alias<Func<HttpRequestBody, HttpResponseBody, ValueTask>>
     {
-        public HttpLogger(Action<HttpRequestBody, HttpResponseBody> value) : base(value.ThrowIfNull("Custom http logger cannot be null.")) { }
-        public static HttpLogger Create(Action<HttpRequestBody, HttpResponseBody> value) => new HttpLogger(value);
+        public HttpLogger(Func<HttpRequestBody, HttpResponseBody, ValueTask> value) : base(value.ThrowIfNull("Custom http logger cannot be null.")) { }
+        public static HttpLogger Create(Func<HttpRequestBody, HttpResponseBody, ValueTask> value) => new HttpLogger(value);
     }
 }

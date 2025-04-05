@@ -108,7 +108,7 @@ namespace Tests.FrameworkContainers.Network
         {
             var data = new { Name = "capture me" };
             string request = null, response = null;
-            var log = HttpLogger.Create((requestBody, responseBody) => { request = requestBody; response = responseBody; });
+            var log = HttpLogger.Create((requestBody, responseBody) => { request = requestBody; response = responseBody; return ValueTask.CompletedTask; });
 
             _ = await Http.PostJsonAsync<object, JsonElement>(data, $"{_url}/api/users", log);
 
