@@ -34,7 +34,17 @@ namespace FrameworkContainers.Network.HttpCollective.Models
             Json = json ?? JsonOptions.Default;
             WebClient = webClient ?? WebClientOptions.Default;
             RetrieveHttpStatus = false;
-            Log = log?.Value;
+            Log = log?.Value.Match(
+                static left => new Func<HttpRequestBody, HttpResponseBody, ValueTask>((request, response) =>
+                {
+                    Try.Run(() => left(request, response), "Error calling custom http logger.");
+                    return new ValueTask();
+                }),
+                static right => new Func<HttpRequestBody, HttpResponseBody, ValueTask>((request, response) =>
+                {
+                    return new ValueTask(Try.RunAsync(() => right(request, response), "Error calling custom http logger."));
+                })
+            );
         }
 
         internal HttpOptions(HttpOptions options, bool retrieveHttpStatus)

@@ -108,7 +108,26 @@ namespace Tests.FrameworkContainers.Network
         {
             var data = new { Name = "capture me" };
             string request = null, response = null;
-            var log = HttpLogger.Create((requestBody, responseBody) => { request = requestBody; response = responseBody; return ValueTask.CompletedTask; });
+            var log = HttpLogger.Create((requestBody, responseBody) => { request = requestBody; response = responseBody; });
+
+            _ = await Http.PostJsonAsync<object, JsonElement>(data, $"{_url}/api/users", log);
+
+            Assert.IsFalse(string.IsNullOrEmpty(request));
+            Assert.IsFalse(string.IsNullOrEmpty(response));
+
+            var result = Json.ToModel<JsonElement>(response);
+
+            Assert.AreEqual("POST Success", result.GetProperty("message").GetString());
+            var receivedData = result.GetProperty("receivedData");
+            Assert.AreEqual("capture me", receivedData.GetProperty("name").GetString());
+        }
+
+        [TestMethod]
+        public async Task CaptureHttpBodyAsync()
+        {
+            var data = new { Name = "capture me" };
+            string request = null, response = null;
+            var log = HttpLogger.CreateAsync(async (requestBody, responseBody) => { await Task.Delay(1); request = requestBody; response = responseBody; });
 
             _ = await Http.PostJsonAsync<object, JsonElement>(data, $"{_url}/api/users", log);
 
