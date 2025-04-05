@@ -31,8 +31,10 @@
 The general idea is to replace common services, with simple types instead, reducing overheads when creating new projects.
 Common services include http, sql, and serialization.
 		</Description>
-		<PackageReleaseNotes>* Cached Xml Serializer by type for performance.
-* Updated nuget packages.</PackageReleaseNotes>
+		<PackageReleaseNotes>Breaking change to the dependency injection method `AddServicesByConvention`, to target internal classes with the option: `bool scanInternals`.
+Replaced static `HttpClient` with the `IHttpClientFactory` implementation.
+Add ability to get raw request, and raw response as a callback http option in framework's http.
+Added interfaces for Response, and Maybe on HttpClient; so they can be mocked in tests.</PackageReleaseNotes>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 		<PackageIcon>dove.png</PackageIcon>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
