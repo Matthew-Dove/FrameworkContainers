@@ -106,6 +106,9 @@ namespace Tests.FrameworkContainers.Format
             [JsonConverter(typeof(OptionConverter<Schedule>))]
             public Schedule Schedule { get; set; }
 
+            [JsonConverter(typeof(OptionConverter<OptionInt, int>))]
+            public OptionInt OptionInt { get; set; }
+
             public string PascalCase { get; set; }
 
             public string camelCase { get; set; }
@@ -144,12 +147,19 @@ namespace Tests.FrameworkContainers.Format
             private Schedule(string value) : base(value) { }
         }
 
+        private class OptionInt : Option<int>
+        {
+            public static readonly OptionInt Field = new(42);
+            private OptionInt(int value) : base(value) { }
+        }
+
         private class VariantModel
         {
             public EnumRange<Colour> SmartEnum { get; set; }
             public Enum Enum { get; set; }
             public int Int { get; set; }
             public Schedule Schedule { get; set; }
+            public OptionInt OptionInt { get; set; }
         }
 
         #endregion
@@ -964,6 +974,44 @@ namespace Tests.FrameworkContainers.Format
             var model = Json.ToModel<Model>(json);
         }
 
+        [TestMethod]
+        public void EC_OptionT_OptionInt_Null()
+        {
+            var json = $"{{\"optionInt\": null}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.IsNull(model.OptionInt);
+        }
+
+        [TestMethod]
+        public void EC_OptionT_OptionInt_IsMatch()
+        {
+            var json = $"{{\"optionInt\": 42}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(OptionInt.Field, model.OptionInt);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatDeserializeException))]
+        public void EC_OptionT_OptionInt_NoMatch()
+        {
+            var json = $"{{\"optionInt\": 24}}";
+
+            var model = Json.ToModel<Model>(json);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatDeserializeException))]
+        public void EC_OptionT_OptionInt_WrongType()
+        {
+            var json = $"{{\"optionInt\": \"42\"}}";
+
+            var model = Json.ToModel<Model>(json);
+        }
+
         #endregion
 
         #region Serialization Errors
@@ -1237,6 +1285,7 @@ namespace Tests.FrameworkContainers.Format
             converters.AddEnumConverter<Enum>();
             converters.AddSmartEnumConverter<Colour>();
             converters.AddOptionConverter<Schedule>();
+            converters.AddOptionConverter<OptionInt, int>();
 
             var options = JsonOptions.WithConverters(converters: converters.ToArray());
             var model = new VariantModel();
@@ -1248,6 +1297,7 @@ namespace Tests.FrameworkContainers.Format
             Assert.AreEqual(Enum.Zero, nosj.Enum);
             Assert.AreEqual(0, nosj.Int);
             Assert.AreEqual(null, nosj.Schedule);
+            Assert.AreEqual(null, nosj.OptionInt);
         }
 
         [TestMethod]
@@ -1258,6 +1308,7 @@ namespace Tests.FrameworkContainers.Format
             settings.Converters.AddEnumConverter<Enum>();
             settings.Converters.AddSmartEnumConverter<Colour>();
             settings.Converters.AddOptionConverter<Schedule>();
+            settings.Converters.AddOptionConverter<OptionInt, int>();
 
             var model = new VariantModel();
 
@@ -1268,6 +1319,7 @@ namespace Tests.FrameworkContainers.Format
             Assert.AreEqual(Enum.Zero, nosj.Enum);
             Assert.AreEqual(0, nosj.Int);
             Assert.AreEqual(null, nosj.Schedule);
+            Assert.AreEqual(null, nosj.OptionInt);
         }
 
         #endregion

@@ -17,6 +17,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
         public override void Write(Utf8JsonWriter writer, EnumRange<TSmartEnum> value, JsonSerializerOptions options) => SmartEnumConverter.Write<TSmartEnum>(writer, value, FormatOptions.Lowercase);
         public override int GetHashCode() => base.GetHashCode();
         public override bool Equals(object obj) => obj is SmartEnumConverter<TSmartEnum> c && c is not null;
+        public override bool CanConvert(Type typeToConvert) => typeof(EnumRange<TSmartEnum>).IsAssignableFrom(typeToConvert);
     }
 
     /// <summary>
@@ -31,6 +32,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
         public override void Write(Utf8JsonWriter writer, EnumRange<TSmartEnum> value, JsonSerializerOptions options) => SmartEnumConverter.Write<TSmartEnum>(writer, value, FormatOptions.Lowercase);
         public override int GetHashCode() => base.GetHashCode();
         public override bool Equals(object obj) => obj is SmartEnumConverterLowerCase<TSmartEnum> c && c is not null;
+        public override bool CanConvert(Type typeToConvert) => typeof(EnumRange<TSmartEnum>).IsAssignableFrom(typeToConvert);
     }
 
     /// <summary>
@@ -45,6 +47,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
         public override void Write(Utf8JsonWriter writer, EnumRange<TSmartEnum> value, JsonSerializerOptions options) => SmartEnumConverter.Write<TSmartEnum>(writer, value, FormatOptions.Uppercase);
         public override int GetHashCode() => base.GetHashCode();
         public override bool Equals(object obj) => obj is SmartEnumConverterUpperCase<TSmartEnum> c && c is not null;
+        public override bool CanConvert(Type typeToConvert) => typeof(EnumRange<TSmartEnum>).IsAssignableFrom(typeToConvert);
     }
 
     /// <summary>
@@ -59,6 +62,7 @@ namespace FrameworkContainers.Format.JsonCollective.Models.Converters
         public override void Write(Utf8JsonWriter writer, EnumRange<TSmartEnum> value, JsonSerializerOptions options) => SmartEnumConverter.Write<TSmartEnum>(writer, value, FormatOptions.Original);
         public override int GetHashCode() => base.GetHashCode();
         public override bool Equals(object obj) => obj is SmartEnumConverterOriginalCase<TSmartEnum> c && c is not null;
+        public override bool CanConvert(Type typeToConvert) => typeof(EnumRange<TSmartEnum>).IsAssignableFrom(typeToConvert);
     }
 
     file abstract class SmartEnumConverter

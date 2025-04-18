@@ -47,5 +47,14 @@ namespace FrameworkContainers.Format.JsonCollective
                 converters.Add(converter);
             }
         }
+
+        public static void AddOptionConverter<TOption, TValue>(this IList<JsonConverter> converters) where TOption : Option<TValue>
+        {
+            var converter = new OptionConverter<TOption, TValue>();
+            if (!converters.Contains(converter))
+            {
+                converters.Add(converter);
+            }
+        }
     }
 }
