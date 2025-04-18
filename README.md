@@ -162,23 +162,25 @@ You can add converters to `JsonOptions`, or to `JsonSerializerOptions` as follow
 var converters = JsonOptions.GetJsonConverters(); // Get's all primitive "default" converters (int, bool, etc).
 converters.AddEnumConverter<Enum>(); // Add any enum properties you have.
 converters.AddSmartEnumConverter<Colour>(); // Add any smart enum properties you have.
+converters.AddOptionConverter<Schedule>(); // Add any Option properties you have.
 
 var options = JsonOptions.WithConverters(converters: converters.ToArray());
-var payload = new OptionsModel();
+var payload = new VariantModel();
 
 var json = Json.FromModel(payload, options); // Json converters are sent in with the options.
-var model = Json.ToModel<OptionsModel>(json, options);
+var model = Json.ToModel<VariantModel>(json, options);
 
 // JsonSerializerOptions (i.e. System.Text.Json):
 var settings = new JsonSerializerOptions();
 settings.AddJsonConverters();
 settings.Converters.AddEnumConverter<Enum>();
 settings.Converters.AddSmartEnumConverter<Colour>();
+settings.Converters.AddOptionConverter<Schedule>();
 
-var payload = new OptionsModel();
+var payload = new VariantModel();
 
 var json = JsonSerializer.Serialize(payload, settings);
-var model = JsonSerializer.Deserialize<OptionsModel>(json, settings);
+var model = JsonSerializer.Deserialize<VariantModel>(json, settings);
 ```
 
 ## Xml Component
@@ -409,3 +411,8 @@ sp.AddContainerExpressionsLogging(); // Creates a logger factory for Container E
 * Replaced static `HttpClient` with the `IHttpClientFactory` implementation.
 * Add ability to get raw request, and raw response as a callback http option in framework's http.
 * Added interfaces for Response, and Maybe on HttpClient; so they can be mocked in tests.
+
+## 6.0.0
+
+* Added support for `Option` json serialization.
+* Bumped supported dotnet framework from **netstandard2.0**, to **netstandard2.1**.

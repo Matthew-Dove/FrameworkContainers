@@ -103,6 +103,9 @@ namespace Tests.FrameworkContainers.Format
             [JsonConverter(typeof(SmartEnumConverter<NoZero>))]
             public EnumRange<NoZero> SmartEnumNoZero { get; set; }
 
+            [JsonConverter(typeof(OptionConverter<Schedule>))]
+            public Schedule Schedule { get; set; }
+
             public string PascalCase { get; set; }
 
             public string camelCase { get; set; }
@@ -130,11 +133,23 @@ namespace Tests.FrameworkContainers.Format
             private NoZero(int value) : base(value) { }
         }
 
-        private class OptionsModel
+        private class Schedule : Option
+        {
+            public static Schedule None { get; } = new(string.Empty);
+
+            public static readonly Schedule Work = new("work");
+            public static readonly Schedule Sleep = new("sleep");
+            public static readonly Schedule Play = new("play");
+
+            private Schedule(string value) : base(value) { }
+        }
+
+        private class VariantModel
         {
             public EnumRange<Colour> SmartEnum { get; set; }
             public Enum Enum { get; set; }
             public int Int { get; set; }
+            public Schedule Schedule { get; set; }
         }
 
         #endregion
@@ -900,6 +915,55 @@ namespace Tests.FrameworkContainers.Format
             Assert.AreEqual(new EnumRange<NoZero>(), model.SmartEnumNoZero);
         }
 
+        [TestMethod]
+        public void EC_Option_Null_IsOk()
+        {
+            var json = $"{{\"schedule\": null}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.IsNull(model.Schedule);
+        }
+
+        [TestMethod]
+        public void EC_Option_Empty_IsNone()
+        {
+            var json = $"{{\"schedule\": \"\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(Schedule.None, model.Schedule);
+        }
+
+        [TestMethod]
+        public void EC_Option_Value_SameCase()
+        {
+            var json = $"{{\"schedule\": \"play\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(Schedule.Play, model.Schedule);
+        }
+
+        [TestMethod]
+        public void EC_Option_Value_DifferentCase()
+        {
+            var json = $"{{\"schedule\": \"PLAY\"}}";
+
+            var model = Json.ToModel<Model>(json);
+
+            Assert.AreEqual(Schedule.Play, model.Schedule);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FormatDeserializeException))]
+        public void EC_Option_Value_NoMatch()
+        {
+            var json = $"{{\"schedule\": \"hobby\"}}";
+
+            var model = Json.ToModel<Model>(json);
+        }
+
         #endregion
 
         #region Serialization Errors
@@ -1172,16 +1236,18 @@ namespace Tests.FrameworkContainers.Format
             var converters = JsonOptions.GetJsonConverters();
             converters.AddEnumConverter<Enum>();
             converters.AddSmartEnumConverter<Colour>();
+            converters.AddOptionConverter<Schedule>();
 
             var options = JsonOptions.WithConverters(converters: converters.ToArray());
-            var model = new OptionsModel();
+            var model = new VariantModel();
 
             var json = Json.FromModel(model, options);
-            var nosj = Json.ToModel<OptionsModel>(json, options);
+            var nosj = Json.ToModel<VariantModel>(json, options);
 
             Assert.AreEqual(Colour.None, nosj.SmartEnum.Objects.Single());
             Assert.AreEqual(Enum.Zero, nosj.Enum);
             Assert.AreEqual(0, nosj.Int);
+            Assert.AreEqual(null, nosj.Schedule);
         }
 
         [TestMethod]
@@ -1191,15 +1257,17 @@ namespace Tests.FrameworkContainers.Format
             settings.AddJsonConverters();
             settings.Converters.AddEnumConverter<Enum>();
             settings.Converters.AddSmartEnumConverter<Colour>();
+            settings.Converters.AddOptionConverter<Schedule>();
 
-            var model = new OptionsModel();
+            var model = new VariantModel();
 
             var json = JsonSerializer.Serialize(model, settings);
-            var nosj = JsonSerializer.Deserialize<OptionsModel>(json, settings);
+            var nosj = JsonSerializer.Deserialize<VariantModel>(json, settings);
 
             Assert.AreEqual(Colour.None, nosj.SmartEnum.Objects.Single());
             Assert.AreEqual(Enum.Zero, nosj.Enum);
             Assert.AreEqual(0, nosj.Int);
+            Assert.AreEqual(null, nosj.Schedule);
         }
 
         #endregion
