@@ -416,3 +416,7 @@ sp.AddContainerExpressionsLogging(); // Creates a logger factory for Container E
 
 * Added support for `Option` json serialization.
 * Bumped supported dotnet framework from **netstandard2.0**, to **netstandard2.1**.
+
+## 7.0.0
+
+* Bumped supported dotnet framework from **netstandard2.1** to **dotnet8**.
