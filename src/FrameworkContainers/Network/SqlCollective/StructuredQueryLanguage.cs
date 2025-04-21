@@ -74,6 +74,40 @@ namespace FrameworkContainers.Network.SqlCollective
             }
         }
 
+        public static T ExecuteScalar<T>(string usp, SqlOptions options, params SqlParameter[] parameters)
+        {
+            using (var connection = new SqlConnection(options.ConnectionString ?? Sql.ConnectionString))
+            {
+                connection.Open();
+                using (var command = new SqlCommand(usp, connection))
+                {
+                    command.CommandTimeout = options.CommandTimeoutSeconds;
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddRange(parameters);
+                    var scalar = command.ExecuteScalar();
+                    if (scalar is null || scalar == DBNull.Value) return default;
+                    return (T)Convert.ChangeType(scalar, typeof(T));
+                }
+            }
+        }
+
+        public static async Task<T> ExecuteScalarAsync<T>(string usp, SqlOptions options, params SqlParameter[] parameters)
+        {
+            using (var connection = new SqlConnection(options.ConnectionString ?? Sql.ConnectionString))
+            {
+                await connection.OpenAsync();
+                using (var command = new SqlCommand(usp, connection))
+                {
+                    command.CommandTimeout = options.CommandTimeoutSeconds;
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddRange(parameters);
+                    var scalar = await command.ExecuteScalarAsync();
+                    if (scalar is null || scalar == DBNull.Value) return default;
+                    return (T)Convert.ChangeType(scalar, typeof(T));
+                }
+            }
+        }
+
         public static void BulkInsert(string tableName, DataTable dataTable, SqlOptions options)
         {
             using (var bulkCopy = new SqlBulkCopy(options.ConnectionString ?? Sql.ConnectionString))

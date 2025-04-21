@@ -34,6 +34,16 @@ namespace FrameworkContainers.Network.SqlCollective
             return StructuredQueryLanguage.ExecuteNonQuery(usp, options, parameters);
         }
 
+        public static T ExecuteScalar<T>(string usp, params SqlParameter[] parameters)
+        {
+            return ExecuteScalar<T>(usp, SqlOptions.Default, parameters);
+        }
+
+        public static T ExecuteScalar<T>(string usp, SqlOptions options, params SqlParameter[] parameters)
+        {
+            return StructuredQueryLanguage.ExecuteScalar<T>(usp, options, parameters);
+        }
+
         public static void BulkInsert(string tableName, DataTable dataTable)
         {
             BulkInsert(tableName, dataTable, SqlOptions.Default);
@@ -62,6 +72,16 @@ namespace FrameworkContainers.Network.SqlCollective
         public static Task<int> ExecuteNonQueryAsync(string usp, SqlOptions options, params SqlParameter[] parameters)
         {
             return StructuredQueryLanguage.ExecuteNonQueryAsync(usp, options, parameters);
+        }
+
+        public static Task<T> ExecuteScalarAsync<T>(string usp, params SqlParameter[] parameters)
+        {
+            return ExecuteScalarAsync<T>(usp, SqlOptions.Default, parameters);
+        }
+
+        public static Task<T> ExecuteScalarAsync<T>(string usp, SqlOptions options, params SqlParameter[] parameters)
+        {
+            return StructuredQueryLanguage.ExecuteScalarAsync<T>(usp, options, parameters);
         }
 
         public static Task BulkInsertAsync(string tableName, DataTable dataTable)
