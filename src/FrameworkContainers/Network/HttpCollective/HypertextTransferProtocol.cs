@@ -1,18 +1,21 @@
 ﻿using ContainerExpressions.Containers;
-using FrameworkContainers.Models.Exceptions;
 using FrameworkContainers.Models;
+using FrameworkContainers.Models.Exceptions;
 using FrameworkContainers.Network.HttpCollective.Models;
-using System.IO;
-using System.Net.Http;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
-using System;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Net.Http.Headers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http;
+using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FrameworkContainers.Network.HttpCollective;
 
@@ -28,15 +31,18 @@ internal static class HypertextTransferProtocol
     static HypertextTransferProtocol()
     {
         ServicePointManager.DefaultConnectionLimit = int.MaxValue;
+        ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls13;
         ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
         ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Ssl3;
         ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Tls;
         ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Tls11;
 
         var services = new ServiceCollection();
+        services.AddLogging(b => b.ClearProviders());
         services.AddHttpClient();
+        services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
         _sp = services.BuildServiceProvider();
-        _factory = _sp.GetService<IHttpClientFactory>();
+        _factory = _sp.GetRequiredService<IHttpClientFactory>();
     }
 
     public static void TearDown()
