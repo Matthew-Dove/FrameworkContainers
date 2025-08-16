@@ -17,7 +17,7 @@
     <PackageOutputPath>..//../nupkg</PackageOutputPath>
     <id>FrameworkContainers</id>
     <Authors>Matthew Dove</Authors>
-    <Version>7.0.0</Version>
+    <Version>7.0.1</Version>
     <Copyright>Matthew Dove. All rights reserved.</Copyright>
     <PackageLicenseExpression>
     </PackageLicenseExpression>
@@ -27,11 +27,11 @@
     <Title>Framework Containers</Title>
     <Description>Framework Containers provides useful parts of frameworks wrapped into single types.
 The general idea is to replace common services, with simple types instead, reducing overheads when creating new projects.
-Common services include http, sql, and serialization.
-		</Description>
-    <PackageReleaseNotes>## 7.0.0
+Common services include http, sql, and serialization.</Description>
+    <PackageReleaseNotes>## 7.0.1
 
-* Bumped supported dotnet framework from **netstandard2.1** to **dotnet8**.</PackageReleaseNotes>
+* Bug fix for HttpClient looking for log, and metric dependencies in some project types.
+* Updated nuget packages.</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>dove.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>

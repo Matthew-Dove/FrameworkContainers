@@ -420,3 +420,7 @@ sp.AddContainerExpressionsLogging(); // Creates a logger factory for Container E
 ## 7.0.0
 
 * Bumped supported dotnet framework from **netstandard2.1** to **dotnet8**.
+
+## 7.0.1
+
+* Bug fix for HttpClient looking for log, and metric dependencies during service collection for DI in some project types.
