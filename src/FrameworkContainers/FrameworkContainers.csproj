@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latestMajor</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ContainerExpressions" Version="15.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
+    <PackageReference Include="ContainerExpressions" Version="16.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-    <PackageReference Include="System.Net.Http.Json" Version="9.0.8" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.8" />
-    <PackageReference Include="System.Text.Json" Version="9.0.8" />
+    <PackageReference Include="System.Net.Http.Json" Version="10.0.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="10.0.0" />
+    <PackageReference Include="System.Text.Json" Version="10.0.0" />
   </ItemGroup>
   <PropertyGroup>
     <PackageOutputPath>..//../nupkg</PackageOutputPath>
@@ -28,10 +28,9 @@
     <Description>Framework Containers provides useful parts of frameworks wrapped into single types.
 The general idea is to replace common services, with simple types instead, reducing overheads when creating new projects.
 Common services include http, sql, and serialization.</Description>
-    <PackageReleaseNotes>## 7.0.1
+    <PackageReleaseNotes>## 8.0.0
 
-* Bug fix for HttpClient looking for log, and metric dependencies in some project types.
-* Updated nuget packages.</PackageReleaseNotes>
+* Updated frameqwork to dotnet 10.</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>dove.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>

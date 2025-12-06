@@ -879,11 +879,10 @@ namespace Tests.FrameworkContainers.Format
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FormatDeserializeException))]
         public void EC_SmartEnum_StringInvalidValue()
         {
             var json = $"{{\"smartEnum\": \"{"blue"}\"}}";
-            var model = Json.ToModel<Model>(json);
+            Assert.ThrowsExactly<FormatDeserializeException>(() => Json.ToModel<Model>(json));
         }
 
         [TestMethod]
@@ -966,12 +965,11 @@ namespace Tests.FrameworkContainers.Format
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FormatDeserializeException))]
         public void EC_Option_Value_NoMatch()
         {
-            var json = $"{{\"schedule\": \"hobby\"}}";
+            var json = $"{{\"schedule\": \"hobby\"}}";      
 
-            var model = Json.ToModel<Model>(json);
+            Assert.ThrowsExactly<FormatDeserializeException>(() => Json.ToModel<Model>(json));
         }
 
         [TestMethod]
@@ -995,21 +993,19 @@ namespace Tests.FrameworkContainers.Format
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FormatDeserializeException))]
         public void EC_OptionT_OptionInt_NoMatch()
         {
             var json = $"{{\"optionInt\": 24}}";
 
-            var model = Json.ToModel<Model>(json);
+            Assert.ThrowsExactly<FormatDeserializeException>(() => Json.ToModel<Model>(json));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FormatDeserializeException))]
         public void EC_OptionT_OptionInt_WrongType()
         {
             var json = $"{{\"optionInt\": \"42\"}}";
 
-            var model = Json.ToModel<Model>(json);
+            Assert.ThrowsExactly<FormatDeserializeException>(() => Json.ToModel<Model>(json));
         }
 
         #endregion

@@ -424,3 +424,7 @@ sp.AddContainerExpressionsLogging(); // Creates a logger factory for Container E
 ## 7.0.1
 
 * Bug fix for HttpClient looking for log, and metric dependencies during service collection for DI in some project types.
+
+## 8.0.0
+
+* Updated frameqwork to dotnet 10.
