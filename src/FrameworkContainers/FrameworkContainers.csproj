@@ -17,7 +17,7 @@
     <PackageOutputPath>..//../nupkg</PackageOutputPath>
     <id>FrameworkContainers</id>
     <Authors>Matthew Dove</Authors>
-    <Version>7.0.1</Version>
+    <Version>8.0.0</Version>
     <Copyright>Matthew Dove. All rights reserved.</Copyright>
     <PackageLicenseExpression>
     </PackageLicenseExpression>
