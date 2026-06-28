@@ -4,20 +4,20 @@
     <LangVersion>latestMajor</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ContainerExpressions" Version="16.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-    <PackageReference Include="System.Net.Http.Json" Version="10.0.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="10.0.0" />
-    <PackageReference Include="System.Text.Json" Version="10.0.0" />
+    <PackageReference Include="ContainerExpressions" Version="16.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
+    <PackageReference Include="System.Net.Http.Json" Version="10.0.9" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="10.0.9" />
+    <PackageReference Include="System.Text.Json" Version="10.0.9" />
   </ItemGroup>
   <PropertyGroup>
     <PackageOutputPath>..//../nupkg</PackageOutputPath>
     <id>FrameworkContainers</id>
     <Authors>Matthew Dove</Authors>
-    <Version>8.0.0</Version>
+    <Version>8.0.1</Version>
     <Copyright>Matthew Dove. All rights reserved.</Copyright>
     <PackageLicenseExpression>
     </PackageLicenseExpression>
@@ -28,9 +28,9 @@
     <Description>Framework Containers provides useful parts of frameworks wrapped into single types.
 The general idea is to replace common services, with simple types instead, reducing overheads when creating new projects.
 Common services include http, sql, and serialization.</Description>
-    <PackageReleaseNotes>## 8.0.0
+    <PackageReleaseNotes>## 8.0.1
 
-* Updated frameqwork to dotnet 10.</PackageReleaseNotes>
+* Updated nuget packages.</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>dove.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>

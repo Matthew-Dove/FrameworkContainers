@@ -428,3 +428,7 @@ sp.AddContainerExpressionsLogging(); // Creates a logger factory for Container E
 ## 8.0.0
 
 * Updated frameqwork to dotnet 10.
+
+## 8.0.1
+
+* Updated nuget packages.
