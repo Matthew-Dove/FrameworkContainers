@@ -395,7 +395,7 @@ public static class Http
     public static Task<Http245> Patch245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
-            .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch)
+            .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Patch)
             .ContinueWith(IdentityValue);
     }
 
@@ -407,7 +407,7 @@ public static class Http
     public static Task<HttpBody> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
-            .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch)
+            .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Patch)
             .ContinueWith(IdentityValueBody);
     }
 
@@ -419,7 +419,7 @@ public static class Http
     public static Task<HttpStatus> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
-            .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, HypertextTransferProtocol.Patch)
+            .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Patch)
             .ContinueWith(IdentityValueStatus);
     }
 
@@ -431,7 +431,7 @@ public static class Http
     public static Task<HttpStatus> PatchJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
-            .SendJsonStatusAsync<TRequest>(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HypertextTransferProtocol.Patch)
+            .SendJsonStatusAsync<TRequest>(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Patch)
             .ContinueWith(IdentityValueStatus);
     }
 
@@ -443,7 +443,7 @@ public static class Http
     public static Task<TResponse> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
-            .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HypertextTransferProtocol.Patch)
+            .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HttpMethod.Patch)
             .ContinueWith(IdentityValue);
     }
 

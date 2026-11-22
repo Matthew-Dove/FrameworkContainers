@@ -139,7 +139,7 @@ namespace FrameworkContainers.Network.SqlCollective
             }
             catch (Exception ex)
             {
-                maybe.With(ex);
+                maybe = maybe.With(ex);
             }
 
             return maybe;

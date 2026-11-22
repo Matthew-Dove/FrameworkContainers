@@ -2,10 +2,6 @@
 using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
 using FrameworkContainers.Network.HttpCollective.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Http;
-using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
@@ -21,35 +17,20 @@ namespace FrameworkContainers.Network.HttpCollective;
 
 internal static class HypertextTransferProtocol
 {
-    internal static readonly HttpMethod Patch = new HttpMethod(Constants.Http.PATCH); // Patch is missing from .net standard 2.0 (it is there in 2.1).
     private static readonly MediaTypeHeaderValue _jsonContent = new MediaTypeHeaderValue(Constants.Http.JSON_CONTENT) { CharSet = Encoding.UTF8.WebName };
 
     private static bool _isDisposed = false;
-    private static readonly ServiceProvider _sp;
-    private static readonly IHttpClientFactory _factory;
-
-    static HypertextTransferProtocol()
+    private static readonly System.Net.Http.HttpClient _client = new (new SocketsHttpHandler
     {
-        ServicePointManager.DefaultConnectionLimit = int.MaxValue;
-        ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls13;
-        ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
-        ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Ssl3;
-        ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Tls;
-        ServicePointManager.SecurityProtocol &= ~SecurityProtocolType.Tls11;
-
-        var services = new ServiceCollection();
-        services.AddLogging(b => b.ClearProviders());
-        services.AddHttpClient();
-        services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
-        _sp = services.BuildServiceProvider();
-        _factory = _sp.GetRequiredService<IHttpClientFactory>();
-    }
+        UseCookies = false,
+        PooledConnectionLifetime = TimeSpan.FromMinutes(2)
+    }) { Timeout = Timeout.InfiniteTimeSpan };
 
     public static void TearDown()
     {
         if (!_isDisposed)
         {
-            if (_sp != null) _sp.Dispose();
+            _client.Dispose();
             _isDisposed = true;
         }
     }
@@ -183,7 +164,7 @@ internal static class HypertextTransferProtocol
             var useToken = CancellationToken.None.Equals(options.WebClient.CancellationToken);
             var useClient = options.WebClient.HttpClient == null;
             var token = options.WebClient.CancellationToken;
-            var client = useClient ? _factory.CreateClient() : options.WebClient.HttpClient;
+            var client = useClient ? _client : options.WebClient.HttpClient;
 
             if (useToken)
             {
@@ -193,7 +174,7 @@ internal static class HypertextTransferProtocol
 
             httpRequest = new HttpRequestMessage(httpMethod, url);
             foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
-            if (!string.IsNullOrEmpty(body) && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put || httpMethod == Patch))
+            if (!string.IsNullOrEmpty(body) && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put || httpMethod == HttpMethod.Patch))
             {
                 httpRequest.Content = new StringContent(body, Encoding.UTF8, contentType);
                 httpRequestBody = body;
@@ -203,7 +184,7 @@ internal static class HypertextTransferProtocol
 
             if (httpResponse.IsValid && httpResponse.Value.IsSuccessStatusCode && httpResponse.Value.Content is object)
             {
-                var raw = await httpResponse.Value.Content.ReadAsStringAsync().ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
+                var raw = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
                 response = raw.GetValueOr(default);
                 httpResponseBody = raw.GetValueOr(default);
                 if (!raw)
@@ -212,7 +193,7 @@ internal static class HypertextTransferProtocol
                     var rawHeaders = Array.Empty<Header>();
                     if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                     {
-                        rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                        rawHeaders = httpResponse.Value.Headers.SelectMany(static x => x.Value.Select(v => new Header(x.Key, v))).ToArray();
                     }
                     response = new HttpException($"Error calling {httpMethod.Method}: [{url}]. Is canceled: {raw.Task.IsCanceled}.", rawStatusCode, string.Empty, raw, rawHeaders);
                 }
@@ -225,7 +206,7 @@ internal static class HypertextTransferProtocol
                 var rawHeaders = Array.Empty<Header>();
                 if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                 {
-                    rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                    rawHeaders = httpResponse.Value.Headers.SelectMany(static x => x.Value.Select(v => new Header(x.Key, v))).ToArray();
                 }
                 response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, httpResponseBody, httpResponse, rawHeaders);
                 if (options) response = httpResponse.Value?.ReasonPhrase ?? Constants.Http.DEFAULT_HTTP_DESCRIPTION;
@@ -265,7 +246,7 @@ internal static class HypertextTransferProtocol
             var useToken = CancellationToken.None.Equals(options.WebClient.CancellationToken);
             var useClient = options.WebClient.HttpClient == null;
             var token = options.WebClient.CancellationToken;
-            var client = useClient ? _factory.CreateClient() : options.WebClient.HttpClient;
+            var client = useClient ? _client : options.WebClient.HttpClient;
 
             if (useToken)
             {
@@ -282,7 +263,7 @@ internal static class HypertextTransferProtocol
 
             if (captureHttpBody)
             {
-                httpRequestBody = await httpRequest.Content.ReadAsStringAsync().ConfigureAwait(false);
+                httpRequestBody = await httpRequest.Content.ReadAsStringAsync().ConfigureAwait(false); // No cancellation token here, as the content is already read.
                 httpResponseBody = await httpResponse.TryGetBody().ConfigureAwait(false);
 
                 await options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));
@@ -320,7 +301,7 @@ internal static class HypertextTransferProtocol
             var useToken = CancellationToken.None.Equals(options.WebClient.CancellationToken);
             var useClient = options.WebClient.HttpClient == null;
             var token = options.WebClient.CancellationToken;
-            var client = useClient ? _factory.CreateClient() : options.WebClient.HttpClient;
+            var client = useClient ? _client : options.WebClient.HttpClient;
 
             if (useToken)
             {
@@ -332,7 +313,7 @@ internal static class HypertextTransferProtocol
             foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
             httpRequest.Content = JsonContent.Create<TRequest>(request, _jsonContent, options);
 
-            if (captureHttpBody) httpRequestBody = await httpRequest.Content.ReadAsStringAsync().ConfigureAwait(false);
+            if (captureHttpBody) httpRequestBody = await httpRequest.Content.ReadAsStringAsync(token).ConfigureAwait(false);
 
             httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWith(HttpResult.Create).ConfigureAwait(false);
 
@@ -340,12 +321,12 @@ internal static class HypertextTransferProtocol
             {
                 if (captureHttpBody)
                 {
-                    var content = await httpResponse.Value.Content.ReadAsStringAsync().ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
+                    var content = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
                     httpResponseBody = content.GetValueOr(string.Empty);
                     httpResponse.Value.Content = new StringContent(httpResponseBody, Encoding.UTF8, "application/json"); // Recreate the content since we've read from the stream.
                 }
 
-                var raw = await httpResponse.Value.Content.ReadFromJsonAsync<TResponse>(options, cts.Token).ContinueWith(HttpResult<TResponse>.Create).ConfigureAwait(false);
+                var raw = await httpResponse.Value.Content.ReadFromJsonAsync<TResponse>(options, token).ContinueWith(HttpResult<TResponse>.Create).ConfigureAwait(false);
                 response = raw.GetValueOr(default);
                 if (!raw)
                 {
@@ -353,7 +334,7 @@ internal static class HypertextTransferProtocol
                     var rawHeaders = Array.Empty<Header>();
                     if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                     {
-                        rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                        rawHeaders = httpResponse.Value.Headers.SelectMany(static x => x.Value.Select(v => new Header(x.Key, v))).ToArray();
                     }
                     response = new HttpException($"Error calling {httpMethod.Method}: [{url}]. Is canceled: {raw.Task.IsCanceled}.", rawStatusCode, string.Empty, raw, rawHeaders);
                 }
@@ -365,7 +346,7 @@ internal static class HypertextTransferProtocol
                 var rawHeaders = Array.Empty<Header>();
                 if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                 {
-                    rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                    rawHeaders = httpResponse.Value.Headers.SelectMany(static x => x.Value.Select(v => new Header(x.Key, v))).ToArray();
                 }
                 response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, httpResponseBody, httpResponse, rawHeaders);
             }
@@ -404,7 +385,7 @@ internal static class HypertextTransferProtocol
             var useToken = CancellationToken.None.Equals(options.WebClient.CancellationToken);
             var useClient = options.WebClient.HttpClient == null;
             var token = options.WebClient.CancellationToken;
-            var client = useClient ? _factory.CreateClient() : options.WebClient.HttpClient;
+            var client = useClient ? _client : options.WebClient.HttpClient;
 
             if (useToken)
             {
@@ -421,12 +402,12 @@ internal static class HypertextTransferProtocol
             {
                 if (captureHttpBody)
                 {
-                    var content = await httpResponse.Value.Content.ReadAsStringAsync().ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
+                    var content = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
                     httpResponseBody = content.GetValueOr(string.Empty);
                     httpResponse.Value.Content = new StringContent(httpResponseBody, Encoding.UTF8, "application/json"); // Recreate the content since we've read from the stream.
                 }
 
-                var raw = await httpResponse.Value.Content.ReadFromJsonAsync<TResponse>(options, cts.Token).ContinueWith(HttpResult<TResponse>.Create).ConfigureAwait(false);
+                var raw = await httpResponse.Value.Content.ReadFromJsonAsync<TResponse>(options, token).ContinueWith(HttpResult<TResponse>.Create).ConfigureAwait(false);
                 response = raw.GetValueOr(default);
                 if (!raw)
                 {
@@ -434,7 +415,7 @@ internal static class HypertextTransferProtocol
                     var rawHeaders = Array.Empty<Header>();
                     if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                     {
-                        rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                        rawHeaders = httpResponse.Value.Headers.SelectMany(static x => x.Value.Select(v => new Header(x.Key, v))).ToArray();
                     }
                     response = new HttpException($"Error calling {httpMethod.Method}: [{url}]. Is canceled: {raw.Task.IsCanceled}.", rawStatusCode, string.Empty, raw, rawHeaders);
                 }
@@ -446,7 +427,7 @@ internal static class HypertextTransferProtocol
                 var rawHeaders = Array.Empty<Header>();
                 if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
                 {
-                    rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                    rawHeaders = httpResponse.Value.Headers.SelectMany(static x => x.Value.Select(v => new Header(x.Key, v))).ToArray();
                 }
                 response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", rawStatusCode, httpResponseBody, httpResponse, rawHeaders);
             }
@@ -486,7 +467,7 @@ internal static class HypertextTransferProtocol
             var useToken = CancellationToken.None.Equals(options.WebClient.CancellationToken);
             var useClient = options.WebClient.HttpClient == null;
             var token = options.WebClient.CancellationToken;
-            var client = useClient ? _factory.CreateClient() : options.WebClient.HttpClient;
+            var client = useClient ? _client : options.WebClient.HttpClient;
 
             if (useToken)
             {
@@ -496,7 +477,7 @@ internal static class HypertextTransferProtocol
 
             httpRequest = new HttpRequestMessage(httpMethod, url);
             foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
-            if (!string.IsNullOrEmpty(body) && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put || httpMethod == Patch))
+            if (!string.IsNullOrEmpty(body) && (httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put || httpMethod == HttpMethod.Patch))
             {
                 httpRequest.Content = new StringContent(body, Encoding.UTF8, contentType);
                 httpRequestBody = body;
@@ -504,28 +485,28 @@ internal static class HypertextTransferProtocol
 
             httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWith(HttpResult.Create).ConfigureAwait(false);
 
-            if (httpResponse.IsValid && httpResponse.Value.IsSuccessStatusCode && httpResponse.Value.Content is object)
+            if (httpResponse.IsValid)
             {
-                var raw = await httpResponse.Value.Content.ReadAsStringAsync().ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
-                httpResponseBody = raw.GetValueOr(default);
-                var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
-                var rawHeaders = Array.Empty<Header>();
-                if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
+                if (httpResponse.Value.IsSuccessStatusCode && httpResponse.Value.Content is object)
                 {
-                    rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
+                    var raw = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
+                    httpResponseBody = raw.GetValueOr(default);
                 }
+                else
+                {
+                    httpResponseBody = await httpResponse.TryGetBody().ConfigureAwait(false);
+                }
+
+                var rawStatusCode = (int)httpResponse.Value.StatusCode;
+                var rawHeaders = httpResponse.Value.Headers.Any()
+                    ? httpResponse.Value.Headers.SelectMany(static x => x.Value.Select(v => new Header(x.Key, v))).ToArray()
+                    : Array.Empty<Header>();
+
                 response = new Http245(rawHeaders, rawStatusCode, httpResponseBody);
             }
             else
             {
-                httpResponseBody = await httpResponse.TryGetBody().ConfigureAwait(false);
-                var rawStatusCode = ((int?)httpResponse.Value?.StatusCode).GetValueOrDefault(Constants.Http.DEFAULT_HTTP_CODE);
-                var rawHeaders = Array.Empty<Header>();
-                if ((httpResponse.Value?.Headers?.Any()).GetValueOrDefault(false))
-                {
-                    rawHeaders = httpResponse.Value.Headers.Select(static x => new Header(x.Key, x.Value.First())).ToArray();
-                }
-                response = new Http245(rawHeaders, rawStatusCode, httpResponseBody);
+                response = new HttpException($"Error calling {httpMethod.Method}: [{url}].", Constants.Http.DEFAULT_HTTP_CODE, string.Empty, httpResponse, Array.Empty<Header>());
             }
 
             if (captureHttpBody) await options.Log(HttpRequestBody.Create(httpRequestBody), HttpResponseBody.Create(httpResponseBody));

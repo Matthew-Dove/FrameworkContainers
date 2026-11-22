@@ -502,7 +502,7 @@ public sealed class HttpMaybe : IHttpMaybe
     public Task<Maybe<Http245>> Patch245Async(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
-            .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch)
+            .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Patch)
             .ContinueWith(IdentityMaybe);
     }
 
@@ -514,7 +514,7 @@ public sealed class HttpMaybe : IHttpMaybe
     public Task<Maybe<HttpBody>> PatchAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
-            .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HypertextTransferProtocol.Patch)
+            .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Patch)
             .ContinueWith(IdentityMaybeBody);
     }
 
@@ -526,7 +526,7 @@ public sealed class HttpMaybe : IHttpMaybe
     public Task<Maybe<HttpStatus>> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
-            .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, HypertextTransferProtocol.Patch).
+            .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Patch).
             ContinueWith(IdentityMaybeStatus);
     }
 
@@ -538,7 +538,7 @@ public sealed class HttpMaybe : IHttpMaybe
     public Task<Maybe<HttpStatus>> PatchJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
-            .SendJsonStatusAsync(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HypertextTransferProtocol.Patch)
+            .SendJsonStatusAsync(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Patch)
             .ContinueWith(IdentityMaybe);
     }
 
@@ -550,7 +550,7 @@ public sealed class HttpMaybe : IHttpMaybe
     public Task<Maybe<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, HttpOptions options, params Header[] headers)
     {
         return HypertextTransferProtocol
-            .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HypertextTransferProtocol.Patch)
+            .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HttpMethod.Patch)
             .ContinueWith(IdentityMaybe);
     }
 

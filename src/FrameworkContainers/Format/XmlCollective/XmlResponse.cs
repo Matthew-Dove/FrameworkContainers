@@ -33,8 +33,8 @@ namespace FrameworkContainers.Format.XmlCollective
 
             try
             {
-                var json = ExtensibleMarkupLanguage.ModelToXml<T>(model);
-                response = response.With(json);
+                var xml = ExtensibleMarkupLanguage.ModelToXml<T>(model);
+                response = response.With(xml);
             }
             catch (Exception ex)
             {

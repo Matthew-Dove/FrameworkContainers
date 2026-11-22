@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FrameworkContainers.Network.HttpCollective.Models
@@ -65,7 +66,8 @@ namespace FrameworkContainers.Network.HttpCollective.Models
         public static async Task<string> TryGetBody(this HttpResult http)
         {
             if (http.Value?.Content == null) return string.Empty;
-            try { return await http.Value.Content.ReadAsStringAsync().ConfigureAwait(false) ?? string.Empty; }
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+            try { return await http.Value.Content.ReadAsStringAsync(cts.Token).ConfigureAwait(false) ?? string.Empty; }
             catch (Exception) { return string.Empty; }
         }
     }
