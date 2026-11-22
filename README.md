@@ -432,3 +432,8 @@ sp.AddContainerExpressionsLogging(); // Creates a logger factory for Container E
 ## 8.0.1
 
 * Updated nuget packages.
+
+## 8.0.2
+
+* Modernised `HttpClient` creation, and `Task<T>` continuations.
+* Updated nuget packages.
