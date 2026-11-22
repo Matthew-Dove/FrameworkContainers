@@ -1,4 +1,5 @@
 ﻿using ContainerExpressions.Containers;
+using FrameworkContainers.Common;
 using FrameworkContainers.Format.JsonCollective;
 using FrameworkContainers.Format.JsonCollective.Models;
 using FrameworkContainers.Models;
@@ -383,7 +384,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Post)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWithSync(IdentityMaybe);
     }
 
     public Task<Maybe<HttpBody>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -395,7 +396,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Post)
-            .ContinueWith(IdentityMaybeBody);
+            .ContinueWithSync(IdentityMaybeBody);
     }
 
     public Task<Maybe<HttpStatus>> PostStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -407,7 +408,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Post)
-            .ContinueWith(IdentityMaybeStatus);
+            .ContinueWithSync(IdentityMaybeStatus);
     }
 
     public Task<Maybe<HttpStatus>> PostJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -419,7 +420,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendJsonStatusAsync(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Post)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWithSync(IdentityMaybe);
     }
 
     public Task<Maybe<TResponse>> PostJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -431,7 +432,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HttpMethod.Post)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWithSync(IdentityMaybe);
     }
 
     public Task<Maybe<Http245>> Put245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -443,7 +444,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Put)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWithSync(IdentityMaybe);
     }
 
     public Task<Maybe<HttpBody>> PutAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -455,7 +456,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Put)
-            .ContinueWith(IdentityMaybeBody);
+            .ContinueWithSync(IdentityMaybeBody);
     }
 
     public Task<Maybe<HttpStatus>> PutStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -467,7 +468,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Put)
-            .ContinueWith(IdentityMaybeStatus);
+            .ContinueWithSync(IdentityMaybeStatus);
     }
 
     public Task<Maybe<HttpStatus>> PutJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -479,7 +480,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendJsonStatusAsync(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Put)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWithSync(IdentityMaybe);
     }
 
     public Task<Maybe<TResponse>> PutJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -491,7 +492,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HttpMethod.Put)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWithSync(IdentityMaybe);
     }
 
     public Task<Maybe<Http245>> Patch245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -503,7 +504,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Patch)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWithSync(IdentityMaybe);
     }
 
     public Task<Maybe<HttpBody>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -515,7 +516,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Patch)
-            .ContinueWith(IdentityMaybeBody);
+            .ContinueWithSync(IdentityMaybeBody);
     }
 
     public Task<Maybe<HttpStatus>> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -539,7 +540,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendJsonStatusAsync(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Patch)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWithSync(IdentityMaybe);
     }
 
     public Task<Maybe<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -551,7 +552,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), options, headers, HttpMethod.Patch)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWithSync(IdentityMaybe);
     }
 
     public Task<Maybe<Http245>> Get245Async(Either<string, Uri> url, params Header[] headers)
@@ -563,7 +564,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .Send245Async(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWithSync(IdentityMaybe);
     }
 
     public Task<Maybe<HttpBody>> GetAsync(Either<string, Uri> url, params Header[] headers)
@@ -575,7 +576,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get)
-            .ContinueWith(IdentityMaybeBody);
+            .ContinueWithSync(IdentityMaybeBody);
     }
 
     public Task<Maybe<HttpStatus>> GetStatusAsync(Either<string, Uri> url, params Header[] headers)
@@ -587,7 +588,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Get)
-            .ContinueWith(IdentityMaybeStatus);
+            .ContinueWithSync(IdentityMaybeStatus);
     }
 
     public Task<Maybe<TResponse>> GetJsonAsync<TResponse>(Either<string, Uri> url, params Header[] headers)
@@ -599,7 +600,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TResponse>(url.Match(static x => new Uri(x), Identity), options, headers, HttpMethod.Get)
-            .ContinueWith(IdentityMaybe);
+            .ContinueWithSync(IdentityMaybe);
     }
 
     public Task<Maybe<HttpStatus>> DeleteStatusAsync(Either<string, Uri> url, params Header[] headers)
@@ -611,7 +612,7 @@ public sealed class HttpMaybe : IHttpMaybe
     {
         return HypertextTransferProtocol
             .SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Delete)
-            .ContinueWith(IdentityMaybeStatus);
+            .ContinueWithSync(IdentityMaybeStatus);
     }
 }
 

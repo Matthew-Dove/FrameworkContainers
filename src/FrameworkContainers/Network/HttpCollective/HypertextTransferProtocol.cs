@@ -1,4 +1,5 @@
 ﻿using ContainerExpressions.Containers;
+using FrameworkContainers.Common;
 using FrameworkContainers.Models;
 using FrameworkContainers.Models.Exceptions;
 using FrameworkContainers.Network.HttpCollective.Models;
@@ -20,11 +21,7 @@ internal static class HypertextTransferProtocol
     private static readonly MediaTypeHeaderValue _jsonContent = new MediaTypeHeaderValue(Constants.Http.JSON_CONTENT) { CharSet = Encoding.UTF8.WebName };
 
     private static bool _isDisposed = false;
-    private static readonly System.Net.Http.HttpClient _client = new (new SocketsHttpHandler
-    {
-        UseCookies = false,
-        PooledConnectionLifetime = TimeSpan.FromMinutes(2)
-    }) { Timeout = Timeout.InfiniteTimeSpan };
+    private static readonly System.Net.Http.HttpClient _client = new (new SocketsHttpHandler { UseCookies = false, PooledConnectionLifetime = TimeSpan.FromMinutes(2) }) { Timeout = Timeout.InfiniteTimeSpan };
 
     public static void TearDown()
     {
@@ -180,11 +177,11 @@ internal static class HypertextTransferProtocol
                 httpRequestBody = body;
             }
 
-            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWith(HttpResult.Create).ConfigureAwait(false);
+            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWithSync(HttpResult.Create).ConfigureAwait(false);
 
             if (httpResponse.IsValid && httpResponse.Value.IsSuccessStatusCode && httpResponse.Value.Content is object)
             {
-                var raw = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
+                var raw = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWithSync(HttpResult<string>.Create).ConfigureAwait(false);
                 response = raw.GetValueOr(default);
                 httpResponseBody = raw.GetValueOr(default);
                 if (!raw)
@@ -258,7 +255,7 @@ internal static class HypertextTransferProtocol
             foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
             httpRequest.Content = JsonContent.Create<TRequest>(request, _jsonContent, options);
 
-            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWith(HttpResult.Create).ConfigureAwait(false);
+            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWithSync(HttpResult.Create).ConfigureAwait(false);
             response = new HttpStatus(httpResponse.Value?.ReasonPhrase ?? Constants.Http.DEFAULT_HTTP_DESCRIPTION);
 
             if (captureHttpBody)
@@ -315,18 +312,18 @@ internal static class HypertextTransferProtocol
 
             if (captureHttpBody) httpRequestBody = await httpRequest.Content.ReadAsStringAsync(token).ConfigureAwait(false);
 
-            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWith(HttpResult.Create).ConfigureAwait(false);
+            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWithSync(HttpResult.Create).ConfigureAwait(false);
 
             if (httpResponse.IsValid && httpResponse.Value.IsSuccessStatusCode && httpResponse.Value.Content is object)
             {
                 if (captureHttpBody)
                 {
-                    var content = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
+                    var content = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWithSync(HttpResult<string>.Create).ConfigureAwait(false);
                     httpResponseBody = content.GetValueOr(string.Empty);
                     httpResponse.Value.Content = new StringContent(httpResponseBody, Encoding.UTF8, "application/json"); // Recreate the content since we've read from the stream.
                 }
 
-                var raw = await httpResponse.Value.Content.ReadFromJsonAsync<TResponse>(options, token).ContinueWith(HttpResult<TResponse>.Create).ConfigureAwait(false);
+                var raw = await httpResponse.Value.Content.ReadFromJsonAsync<TResponse>(options, token).ContinueWithSync(HttpResult<TResponse>.Create).ConfigureAwait(false);
                 response = raw.GetValueOr(default);
                 if (!raw)
                 {
@@ -396,18 +393,18 @@ internal static class HypertextTransferProtocol
             httpRequest = new HttpRequestMessage(httpMethod, url);
             foreach (var header in headers) httpRequest.Headers.Add(header.Key, header.Value);
 
-            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWith(HttpResult.Create).ConfigureAwait(false);
+            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWithSync(HttpResult.Create).ConfigureAwait(false);
 
             if (httpResponse.IsValid && httpResponse.Value.IsSuccessStatusCode && httpResponse.Value.Content is object)
             {
                 if (captureHttpBody)
                 {
-                    var content = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
+                    var content = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWithSync(HttpResult<string>.Create).ConfigureAwait(false);
                     httpResponseBody = content.GetValueOr(string.Empty);
                     httpResponse.Value.Content = new StringContent(httpResponseBody, Encoding.UTF8, "application/json"); // Recreate the content since we've read from the stream.
                 }
 
-                var raw = await httpResponse.Value.Content.ReadFromJsonAsync<TResponse>(options, token).ContinueWith(HttpResult<TResponse>.Create).ConfigureAwait(false);
+                var raw = await httpResponse.Value.Content.ReadFromJsonAsync<TResponse>(options, token).ContinueWithSync(HttpResult<TResponse>.Create).ConfigureAwait(false);
                 response = raw.GetValueOr(default);
                 if (!raw)
                 {
@@ -483,13 +480,13 @@ internal static class HypertextTransferProtocol
                 httpRequestBody = body;
             }
 
-            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWith(HttpResult.Create).ConfigureAwait(false);
+            httpResponse = await client.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, token).ContinueWithSync(HttpResult.Create).ConfigureAwait(false);
 
             if (httpResponse.IsValid)
             {
                 if (httpResponse.Value.IsSuccessStatusCode && httpResponse.Value.Content is object)
                 {
-                    var raw = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWith(HttpResult<string>.Create).ConfigureAwait(false);
+                    var raw = await httpResponse.Value.Content.ReadAsStringAsync(token).ContinueWithSync(HttpResult<string>.Create).ConfigureAwait(false);
                     httpResponseBody = raw.GetValueOr(default);
                 }
                 else

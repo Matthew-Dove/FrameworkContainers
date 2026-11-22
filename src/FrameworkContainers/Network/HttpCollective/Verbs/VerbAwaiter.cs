@@ -1,18 +1,18 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System;
 
 namespace FrameworkContainers.Network.HttpCollective.Verbs
 {
     public readonly struct VerbAwaiter<T> : ICriticalNotifyCompletion
     {
-        public bool IsCompleted => _task.IsCompleted;
-        private readonly Task<T> _task;
+        public bool IsCompleted => _awaiter.IsCompleted;
+        private readonly TaskAwaiter<T> _awaiter;
 
-        public VerbAwaiter(Task<T> task) => _task = task;
+        public VerbAwaiter(Task<T> task) => _awaiter = task.GetAwaiter();
 
-        public void OnCompleted(Action continuation) => _task.ContinueWith(_ => continuation());
-        public void UnsafeOnCompleted(Action continuation) => OnCompleted(continuation);
-        public T GetResult() => _task.GetAwaiter().GetResult();
+        public void OnCompleted(Action continuation) => _awaiter.OnCompleted(continuation);
+        public void UnsafeOnCompleted(Action continuation) => _awaiter.UnsafeOnCompleted(continuation);
+        public T GetResult() => _awaiter.GetResult();
     }
 }

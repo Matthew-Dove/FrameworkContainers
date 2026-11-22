@@ -1,4 +1,5 @@
 ﻿using ContainerExpressions.Containers;
+using FrameworkContainers.Common;
 using FrameworkContainers.Format.JsonCollective;
 using FrameworkContainers.Format.JsonCollective.Models;
 using FrameworkContainers.Models;
@@ -379,7 +380,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Post)
-            .ContinueWith(IdentityResponse);
+            .ContinueWithSync(IdentityResponse);
     }
 
     public Task<Response<HttpBody>> PostAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -391,7 +392,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Post)
-            .ContinueWith(IdentityResponseBody);
+            .ContinueWithSync(IdentityResponseBody);
     }
 
     public Task<Response<HttpStatus>> PostStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -403,7 +404,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Post)
-            .ContinueWith(IdentityResponseStatus);
+            .ContinueWithSync(IdentityResponseStatus);
     }
 
     public Task<Response<HttpStatus>> PostJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -415,7 +416,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendJsonStatusAsync(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Post)
-            .ContinueWith(IdentityResponse);
+            .ContinueWithSync(IdentityResponse);
     }
 
     public Task<Response<TResponse>> PostJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -427,7 +428,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Post)
-            .ContinueWith(IdentityResponse);
+            .ContinueWithSync(IdentityResponse);
     }
 
     public Task<Response<Http245>> Put245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -439,7 +440,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Put)
-            .ContinueWith(IdentityResponse);
+            .ContinueWithSync(IdentityResponse);
     }
 
     public Task<Response<HttpBody>> PutAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -451,7 +452,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Put)
-            .ContinueWith(IdentityResponseBody);
+            .ContinueWithSync(IdentityResponseBody);
     }
 
     public Task<Response<HttpStatus>> PutStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -463,7 +464,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Put)
-            .ContinueWith(IdentityResponseStatus);
+            .ContinueWithSync(IdentityResponseStatus);
     }
 
     public Task<Response<HttpStatus>> PutJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -475,7 +476,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendJsonStatusAsync(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Post)
-            .ContinueWith(IdentityResponse);
+            .ContinueWithSync(IdentityResponse);
     }
 
     public Task<Response<TResponse>> PutJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -487,7 +488,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Put)
-            .ContinueWith(IdentityResponse);
+            .ContinueWithSync(IdentityResponse);
     }
 
     public Task<Response<Http245>> Patch245Async(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -499,7 +500,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .Send245Async(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Patch)
-            .ContinueWith(IdentityResponse);
+            .ContinueWithSync(IdentityResponse);
     }
 
     public Task<Response<HttpBody>> PatchAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -511,7 +512,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, options, headers, HttpMethod.Patch)
-            .ContinueWith(IdentityResponseBody);
+            .ContinueWithSync(IdentityResponseBody);
     }
 
     public Task<Response<HttpStatus>> PatchStatusAsync(string body, Either<string, Uri> url, string contentType, params Header[] headers)
@@ -523,7 +524,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendAsync(body, url.Match(static x => new Uri(x), Identity), contentType, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Patch)
-            .ContinueWith(IdentityResponseStatus);
+            .ContinueWithSync(IdentityResponseStatus);
     }
 
     public Task<Response<HttpStatus>> PatchJsonStatusAsync<TRequest>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -535,7 +536,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendJsonStatusAsync(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Patch)
-            .ContinueWith(IdentityResponse);
+            .ContinueWithSync(IdentityResponse);
     }
 
     public Task<Response<TResponse>> PatchJsonAsync<TRequest, TResponse>(TRequest model, Either<string, Uri> url, params Header[] headers)
@@ -547,7 +548,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TRequest, TResponse>(model, url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Put)
-            .ContinueWith(IdentityResponse);
+            .ContinueWithSync(IdentityResponse);
     }
 
     public Task<Response<Http245>> Get245Async(Either<string, Uri> url, params Header[] headers)
@@ -559,7 +560,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .Send245Async(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get)
-            .ContinueWith(IdentityResponse);
+            .ContinueWithSync(IdentityResponse);
     }
 
     public Task<Response<HttpBody>> GetAsync(Either<string, Uri> url, params Header[] headers)
@@ -571,7 +572,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, options, headers, HttpMethod.Get)
-            .ContinueWith(IdentityResponseBody);
+            .ContinueWithSync(IdentityResponseBody);
     }
 
     public Task<Response<HttpStatus>> GetStatusAsync(Either<string, Uri> url, params Header[] headers)
@@ -583,7 +584,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Get)
-            .ContinueWith(IdentityResponseStatus);
+            .ContinueWithSync(IdentityResponseStatus);
     }
 
     public Task<Response<TResponse>> GetJsonAsync<TResponse>(Either<string, Uri> url, params Header[] headers)
@@ -595,7 +596,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendJsonAsync<TResponse>(url.Match(static x => new Uri(x), Identity), new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Get)
-            .ContinueWith(IdentityResponse);
+            .ContinueWithSync(IdentityResponse);
     }
 
     public Task<Response<HttpStatus>> DeleteStatusAsync(Either<string, Uri> url, params Header[] headers)
@@ -607,7 +608,7 @@ public sealed class HttpResponse : IHttpResponse
     {
         return HypertextTransferProtocol
             .SendAsync(string.Empty, url.Match(static x => new Uri(x), Identity), string.Empty, new HttpOptions(options, retrieveHttpStatus: true), headers, HttpMethod.Delete)
-            .ContinueWith(IdentityResponseStatus);
+            .ContinueWithSync(IdentityResponseStatus);
     }
 }
 
