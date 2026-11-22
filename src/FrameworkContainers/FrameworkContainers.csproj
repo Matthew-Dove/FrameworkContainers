@@ -5,13 +5,13 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ContainerExpressions" Version="16.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
-    <PackageReference Include="System.Net.Http.Json" Version="10.0.9" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="10.0.9" />
-    <PackageReference Include="System.Text.Json" Version="10.0.9" />
+    <PackageReference Include="System.Net.Http.Json" Version="11.0.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="11.0.0" />
+    <PackageReference Include="System.Text.Json" Version="11.0.0" />
   </ItemGroup>
   <PropertyGroup>
     <PackageOutputPath>..//../nupkg</PackageOutputPath>
